@@ -1,8 +1,8 @@
-import Head from "next/head";
-import LayoutPage from "@/components/layout/layout/Layout";
 import Login from "@/components/layout/login-page/Login";
+import Head from "next/head";
+import React from "react";
 
-export default function Home() {
+const LoginPage = () => {
   return (
     <div>
       <Head>
@@ -11,4 +11,6 @@ export default function Home() {
       <Login></Login>
     </div>
   );
-}
+};
+
+export default LoginPage;
