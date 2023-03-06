@@ -31,7 +31,7 @@ const items: MenuItem[] = [
   getItem("Tổng quan", "dashboard", <DashboardOutlined />),
   getItem("Quyền", "sub1", <ApartmentOutlined />, [
     getItem("Quyền", "permission"),
-    getItem("Phân quyền","group-permission")
+    getItem("Phân quyền","group")
   ]),
   getItem("Sản phẩm", "sub2", <SettingOutlined />, [
     getItem("Danh mục", "category"),
