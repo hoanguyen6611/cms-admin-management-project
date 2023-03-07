@@ -7,6 +7,7 @@ export interface categoryState {
   category: Category[];
   id?: number;
   categorySelected?: Category;
+  user?: any;
 }
 
 const initialState: categoryState = {
@@ -28,11 +29,19 @@ export const categorySlice = createSlice({
     setCategoryId: (state, action) => {
       state.id = action.payload;
     },
-    setCategorySelected:(state, action) => {
+    setCategorySelected: (state, action) => {
       state.categorySelected = action.payload;
-    }
+    },
+    setUserLogin: (state, action) => {
+      state.user = action.payload;
+    },
   },
 });
 export default categorySlice.reducer;
-export const { updateIsVisibleFormCategory, isEditCategoryForm, setCategoryId, setCategorySelected } =
-  categorySlice.actions;
+export const {
+  updateIsVisibleFormCategory,
+  isEditCategoryForm,
+  setCategoryId,
+  setCategorySelected,
+  setUserLogin,
+} = categorySlice.actions;

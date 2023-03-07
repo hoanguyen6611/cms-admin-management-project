@@ -4,11 +4,13 @@ import { createSlice } from "@reduxjs/toolkit";
 export interface permissionState {
   isVisibleFormPermission: boolean;
   permission: Permission[];
+  user: any;
 }
 
 const initialState: permissionState = {
   isVisibleFormPermission: false,
   permission: [],
+  user: {},
 };
 
 export const permissionSlice = createSlice({
@@ -18,7 +20,11 @@ export const permissionSlice = createSlice({
     updateIsVisibleFormPermission: (state, action) => {
       state.isVisibleFormPermission = action.payload;
     },
+    setUserLogin: (state, action) => {
+      state.user = action.payload;
+    },
   },
 });
 export default permissionSlice.reducer;
-export const { updateIsVisibleFormPermission } = permissionSlice.actions;
+export const { updateIsVisibleFormPermission, setUserLogin } =
+  permissionSlice.actions;
