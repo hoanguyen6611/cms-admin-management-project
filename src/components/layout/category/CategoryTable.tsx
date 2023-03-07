@@ -24,6 +24,7 @@ const CategoryTable = () => {
   const { data, isFetching } = useGetCategorysQuery();
   const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [category, setCategory] = useState([]);
   const deleteConfirmCategory = (record: any) => {
     Modal.confirm({
       title: "Bạn có chắc chắn muốn xoá danh mục sản phẩm này không?",
@@ -45,7 +46,7 @@ const CategoryTable = () => {
       }
     );
     if (res.data.result) {
-      // getCategory();
+      getCategory();
       notification.open({
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -93,20 +94,20 @@ const CategoryTable = () => {
       },
     },
   ];
-  // const getCategory = async () => {
-  //   const token = localStorage.getItem("token");
-  //   const res = await axios.get(
-  //     "https://tech-api.herokuapp.com/v1/product-category/list",
-  //     {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     }
-  //   );
-  //   setCategory(res.data.data || []);
-  // };
+  const getCategory = async () => {
+    const token = localStorage.getItem("token");
+    const res = await axios.get(
+      "https://tech-api.herokuapp.com/v1/product-category/list",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    setCategory(res.data.data || []);
+  };
   useEffect(() => {
-    // getCategory();
+    getCategory();
   }, []);
   const showModal = () => {
     dispatch(updateIsVisibleFormCategory(true));
@@ -150,7 +151,8 @@ const CategoryTable = () => {
         <Table
           rowSelection={rowSelection}
           columns={columns}
-          dataSource={!isFetching ? data?.data : []}
+          // dataSource={!isFetching ? data?.data : []}
+          dataSource={category}
         />
       </>
     </div>

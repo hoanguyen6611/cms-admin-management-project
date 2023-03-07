@@ -3,6 +3,8 @@ import {
   ApartmentOutlined,
   SettingOutlined,
   DashboardOutlined,
+  SnippetsOutlined,
+  UserSwitchOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
@@ -28,15 +30,21 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem("Tổng quan", "", <DashboardOutlined />),
+  getItem("Tổng quan", " ", <DashboardOutlined />),
   getItem("Quyền", "sub1", <ApartmentOutlined />, [
     getItem("Quyền", "permission"),
-    getItem("Phân quyền","group")
+    getItem("Phân quyền", "group"),
   ]),
   getItem("Sản phẩm", "sub2", <SettingOutlined />, [
     getItem("Danh mục", "category"),
     getItem("Sản phẩm", "product"),
   ]),
+  getItem("Giao dịch", "sub3",<SnippetsOutlined />, [
+    getItem("Đơn hàng","order")
+  ]),
+  getItem("Nhân viên", "sub4",<UserSwitchOutlined />, [
+    getItem("Chấm công","salary")
+  ])
 ];
 
 const LayoutPage = (props: any) => {
@@ -65,18 +73,18 @@ const LayoutPage = (props: any) => {
           defaultSelectedKeys={["dashboard"]}
           mode="inline"
           items={items}
-          onClick={(info: any) => {
-            router.push(`${info.key}`);
+          onClick={(info) => {
+            router.push(`/${info.key}`);
           }}
         />
       </Sider>
       <Layout className="site-layout">
         <Header style={{ padding: 0, background: colorBgContainer }} />
         <Content style={{ margin: "0 16px" }}>
-          <Breadcrumb style={{ margin: "16px 0" }}>
+          {/* <Breadcrumb style={{ margin: "16px 0" }}>
             <Breadcrumb.Item>{props.pathOne}</Breadcrumb.Item>
             <Breadcrumb.Item>{props.pathTwo}</Breadcrumb.Item>
-          </Breadcrumb>
+          </Breadcrumb> */}
           <div
             style={{
               padding: 24,

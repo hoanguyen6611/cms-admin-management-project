@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, notification, Table } from "antd";
+import { Button, Modal, notification, Space, Table, Upload } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import {
@@ -7,7 +7,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   CloseOutlined,
-  UploadOutlined
+  UploadOutlined,
 } from "@ant-design/icons";
 import { updateVisibleFormProduct } from "@/redux/productSlice";
 import { useDispatch } from "react-redux";
@@ -125,19 +125,22 @@ const ProductTable = () => {
   return (
     <div>
       <>
-        <div className="flex justify-end">
-          <Button className="mb-2 color-red" onClick={showModal}>
+        <Space>
+          <Button className="" onClick={showModal}>
             Tạo mới
           </Button>
-          <Button className="">
-            <UploadOutlined />
-          </Button>
-        </div>
+          <Upload>
+            <Button>
+              <UploadOutlined /> Click to Upload
+            </Button>
+          </Upload>
+        </Space>
         <ProductForm></ProductForm>
         <Table
           rowSelection={rowSelection}
           columns={columns}
           dataSource={product}
+          className="mt-4"
         />
       </>
     </div>
