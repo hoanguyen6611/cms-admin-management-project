@@ -9,7 +9,7 @@ import {
   updateIsVisibleFormCategory,
 } from "@/redux/categorySlice";
 import { RootState } from "@/redux/store";
-import { useCreateCategoryMutation } from "./category.service";
+import { useCreateCategoryMutation } from "../category.service";
 
 const CategoryForm = () => {
   const [createCategory, setCreateCategory] = useState(false);

@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 
 const Dashboard = () => {
-  return (
-    <div>
-    </div>
-  );
+  console.log(process.env.URL_HOST);
+  return <div>Tổng quan</div>;
 };
 
 export default Dashboard;

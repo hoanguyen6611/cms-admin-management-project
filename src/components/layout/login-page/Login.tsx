@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { CheckOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { EKey } from "@/models/general";
+import styles from './Login.module.scss';
 // import * as yup from "yup";
 // import { useForm, useController } from "react-hook-form";
 // import { yupResolver } from "@hookform/resolvers/yup";
@@ -33,6 +34,7 @@ const Login = () => {
         app: "cms",
       }
     );
+    console.log(data);
     if (data.result) {
       notification.open({
         message: data.message,
@@ -40,6 +42,7 @@ const Login = () => {
       });
       await router.push("/");
       localStorage.setItem(EKey.TOKEN, data.data.token);
+      localStorage.setItem('username', data.data.username);
     } else {
       notification.open({
         message: data.message,

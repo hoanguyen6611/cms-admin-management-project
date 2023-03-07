@@ -1,9 +1,10 @@
-import { Modal, notification, Switch } from "antd";
+import { Modal, notification, Switch, Button } from "antd";
 import axios from "axios";
 import React, { useState } from "react";
 import { CheckOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { updateIsVisibleFormPermission } from "@/redux/permissionSlice";
+import styles from './PermissionForm.module.scss';
 
 const PermissionForm = (isModalOpen: any) => {
   const dispatch = useDispatch();

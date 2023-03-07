@@ -5,9 +5,11 @@ import {
   DashboardOutlined,
   SnippetsOutlined,
   UserSwitchOutlined,
+  UserOutlined,
+  SmileOutlined,
 } from "@ant-design/icons";
-import type { MenuProps } from "antd";
-import { Breadcrumb, Layout, Menu, theme } from "antd";
+import { Avatar, MenuProps } from "antd";
+import { Breadcrumb, Layout, Menu, theme, Dropdown } from "antd";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
@@ -39,12 +41,59 @@ const items: MenuItem[] = [
     getItem("Danh mục", "category"),
     getItem("Sản phẩm", "product"),
   ]),
-  getItem("Giao dịch", "sub3",<SnippetsOutlined />, [
-    getItem("Đơn hàng","order")
+  getItem("Giao dịch", "sub3", <SnippetsOutlined />, [
+    getItem("Đơn hàng", "order"),
   ]),
-  getItem("Nhân viên", "sub4",<UserSwitchOutlined />, [
-    getItem("Chấm công","salary")
-  ])
+  getItem("Nhân viên", "sub4", <UserSwitchOutlined />, [
+    getItem("Chấm công", "salary"),
+  ]),
+];
+
+const itemList: MenuProps["items"] = [
+  {
+    key: "1",
+    label: (
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://www.antgroup.com"
+      >
+        1st menu item
+      </a>
+    ),
+  },
+  {
+    key: "2",
+    label: (
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://www.aliyun.com"
+      >
+        2nd menu item (disabled)
+      </a>
+    ),
+    icon: <SmileOutlined />,
+    disabled: true,
+  },
+  {
+    key: "3",
+    label: (
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://www.luohanacademy.com"
+      >
+        3rd menu item (disabled)
+      </a>
+    ),
+    disabled: true,
+  },
+  {
+    key: "4",
+    danger: true,
+    label: "a danger item",
+  },
 ];
 
 const LayoutPage = (props: any) => {
@@ -79,7 +128,12 @@ const LayoutPage = (props: any) => {
         />
       </Sider>
       <Layout className="site-layout">
-        <Header style={{ padding: 0, background: colorBgContainer }} />
+        <Header style={{ padding: 0, background: colorBgContainer }}>
+          <div className="flex items-end flex-col m-4">
+            <Avatar size={40} icon={<UserOutlined />} />
+          </div>
+          {/* {localStorage.getItem("username")} */}
+        </Header>
         <Content style={{ margin: "0 16px" }}>
           {/* <Breadcrumb style={{ margin: "16px 0" }}>
             <Breadcrumb.Item>{props.pathOne}</Breadcrumb.Item>

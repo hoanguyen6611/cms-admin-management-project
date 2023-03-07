@@ -9,7 +9,7 @@ import {
   CloseOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import CategoryForm from "./CategoryForm";
+import CategoryForm from "../category-form/CategoryForm";
 import { useDispatch } from "react-redux";
 import {
   isEditCategoryForm,
@@ -17,8 +17,9 @@ import {
   setCategorySelected,
   updateIsVisibleFormCategory,
 } from "@/redux/categorySlice";
-import { useGetCategorysQuery } from "./category.service";
+import { useGetCategorysQuery } from "../category.service";
 import { Category } from "@/models/category";
+import styles from "./CategoryTable.module.scss";
 
 const CategoryTable = () => {
   const { data, isFetching } = useGetCategorysQuery();
@@ -143,7 +144,7 @@ const CategoryTable = () => {
           <Button className="mb-2" onClick={showModal}>
             Tạo mới
           </Button>
-          <Button className="">
+          <Button className={styles.red}>
             <UploadOutlined />
           </Button>
         </div>

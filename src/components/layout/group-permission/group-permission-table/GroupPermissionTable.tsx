@@ -1,33 +1,12 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Modal,
-  notification,
-  Radio,
-  Space,
-  Switch,
-  Table,
-  Tag,
-} from "antd";
+import { Button, Modal, notification, Switch, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { CheckOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useRouter } from "next/dist/client/router";
 import Link from "antd/es/typography/Link";
-
-interface Permission {
-  id: number;
-  status: number;
-  modifiedDate: string;
-  createdDate: string;
-  modifiedBy: string;
-  createdBy: string;
-  name: string;
-  action: string;
-  showMenu: boolean;
-  description: string;
-  nameGroup: string;
-}
+import { Permission } from "@/models/permission";
+import styles from './GroupPermissionTable.module.scss';
 
 const GroupPermissionTable = () => {
   const router = useRouter();
@@ -70,10 +49,7 @@ const GroupPermissionTable = () => {
       render: (record) => {
         return (
           <>
-            <Link href={`/group-permission/${record}`}>
-              <EditOutlined
-              />
-            </Link>
+            <EditOutlined />
             <DeleteOutlined
               style={{ color: "red", marginLeft: 12 }}
               onClick={() => {

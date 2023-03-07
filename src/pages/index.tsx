@@ -8,10 +8,7 @@ const Home = () => {
       <Head>
         <title>Tổng quan</title>
       </Head>
-      <LayoutPage> Tổng quan
-        {/* <h1>Tổng quan</h1> */}
-        <Dashboard></Dashboard>
-      </LayoutPage>
+      <Dashboard></Dashboard>
     </div>
   );
 };
