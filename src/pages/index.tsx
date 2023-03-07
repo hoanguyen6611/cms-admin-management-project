@@ -1,14 +1,14 @@
 import Head from "next/head";
-import LayoutPage from "@/components/layout/layout/Layout";
-import Login from "@/components/layout/login-page/Login";
+import Dashboard from "@/components/layout/dashboard/DashBoard";
 
-export default function Home() {
+const Home = () => {
   return (
     <div>
       <Head>
-        <title>Login Admin</title>
+        <title>Tổng quan</title>
       </Head>
-      <Login></Login>
+      <Dashboard></Dashboard>
     </div>
   );
-}
+};
+export default Home;

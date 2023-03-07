@@ -3,6 +3,7 @@ import { Layout, Menu, notification, theme } from "antd";
 import { useRouter } from "next/router";
 import { CheckOutlined } from "@ant-design/icons";
 import axios from "axios";
+import { EKey } from "@/models/general";
 // import * as yup from "yup";
 // import { useForm, useController } from "react-hook-form";
 // import { yupResolver } from "@hookform/resolvers/yup";
@@ -22,9 +23,9 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
-  const login = async (e: SyntheticEvent) => {
+  const login = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const res = await axios.post(
+    const { data } = await axios.post(
       "https://tech-api.herokuapp.com/v1/account/login",
       {
         username: username,
@@ -32,16 +33,16 @@ const Login = () => {
         app: "cms",
       }
     );
-    if (res.data.result) {
+    if (data.result) {
       notification.open({
-        message: res.data.message,
+        message: data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
-      await router.push("/dashboard");
-      localStorage.setItem("token", res.data.data.token);
+      await router.push("/");
+      localStorage.setItem(EKey.TOKEN, data.data.token);
     } else {
       notification.open({
-        message: res.data.message,
+        message: data.message,
       });
     }
   };

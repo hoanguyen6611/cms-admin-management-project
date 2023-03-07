@@ -28,7 +28,7 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem("Tổng quan", "dashboard", <DashboardOutlined />),
+  getItem("Tổng quan", "", <DashboardOutlined />),
   getItem("Quyền", "sub1", <ApartmentOutlined />, [
     getItem("Quyền", "permission"),
     getItem("Phân quyền","group")
