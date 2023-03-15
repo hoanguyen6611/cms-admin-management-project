@@ -1,4 +1,4 @@
-import CategoryShow from "@/components/category/category";
+import CategoryShow from "@/components/category/Category";
 import Head from "next/head";
 import React from "react";
 

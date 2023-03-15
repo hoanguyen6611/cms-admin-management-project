@@ -40,20 +40,20 @@ const CategoryForm = () => {
   const [fileList, setFileList] = useState([]);
   useEffect(() => {
     // getCategorySelected();
-    async function fetchData() {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(
-        `https://tech-api.herokuapp.com/v1/product-category/get/${categorySelector.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(res.data.data);
-    }
-    fetchData();
-  }, [categorySelector.id, categorySelector.isEdit]);
+    // async function fetchData() {
+    //   const token = localStorage.getItem("token");
+    //   const res = await axios.get(
+    //     `https://tech-api.herokuapp.com/v1/product-category/get/${categorySelector.id}`,
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //       },
+    //     }
+    //   );
+    //   console.log(res.data.data);
+    // }
+    // fetchData();
+  }, []);
 
   const createFormCategory = async () => {
     const token = localStorage.getItem("token");
