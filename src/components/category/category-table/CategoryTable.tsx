@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, notification, Table } from "antd";
+import { Modal, notification, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import {
@@ -7,22 +7,18 @@ import {
   DeleteOutlined,
   EditOutlined,
   CloseOutlined,
-  UploadOutlined,
 } from "@ant-design/icons";
-import CategoryForm from "../category-form/CategoryForm";
 import { useDispatch } from "react-redux";
 import {
   isEditCategoryForm,
   setCategoryId,
-  setCategorySelected,
+  setCategorySelectedBy,
   updateIsVisibleFormCategory,
 } from "@/redux/categorySlice";
-import { useGetCategorysQuery } from "../category.service";
 import { Category } from "@/models/category";
 import styles from "./CategoryTable.module.scss";
 
 const CategoryTable = () => {
-  const { data, isFetching } = useGetCategorysQuery();
   const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [category, setCategory] = useState([]);
@@ -61,23 +57,7 @@ const CategoryTable = () => {
   };
   const columns: ColumnsType<Category> = [
     {
-      title: "Mã danh mục",
-      dataIndex: "id",
-      key: "id",
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: "Tên danh mục",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Ghi chú",
-      dataIndex: "note",
-      key: "note",
-    },
-    {
-      title: "Action",
+      title: "",
       dataIndex: "id",
       key: "action",
       render: (record) => {
@@ -94,6 +74,22 @@ const CategoryTable = () => {
         );
       },
     },
+    {
+      title: "Mã danh mục",
+      dataIndex: "id",
+      key: "id",
+      render: (text) => <a>{text}</a>,
+    },
+    {
+      title: "Tên danh mục",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Ghi chú",
+      dataIndex: "note",
+      key: "note",
+    },
   ];
   const getCategory = async () => {
     const token = localStorage.getItem("token");
@@ -105,29 +101,28 @@ const CategoryTable = () => {
         },
       }
     );
+    res.data.data.map((data: any) => {
+      data.key = data.id;
+    });
     setCategory(res.data.data || []);
   };
   useEffect(() => {
     getCategory();
   }, []);
-  const showModal = () => {
-    dispatch(updateIsVisibleFormCategory(true));
-  };
-  const isEditCategory = async (record: any) => {
+  const isEditCategory = async (record: number) => {
     dispatch(updateIsVisibleFormCategory(true));
     dispatch(isEditCategoryForm(true));
     dispatch(setCategoryId(record));
-    const token = localStorage.getItem("token");
-    const res = await axios.get(
-      `https://tech-api.herokuapp.com/v1/product-category/get/${record}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    console.log(res.data.data);
-    dispatch(setCategorySelected(res.data.data));
+    // const token = localStorage.getItem("token");
+    // const res = await axios.get(
+    //   `https://tech-api.herokuapp.com/v1/product-category/get/${record}`,
+    //   {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   }
+    // );
+    // dispatch(setCategorySelectedBy(res.data.data));
   };
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     console.log("selectedRowKeys changed: ", newSelectedRowKeys);
@@ -137,26 +132,14 @@ const CategoryTable = () => {
     selectedRowKeys,
     onChange: onSelectChange,
   };
+
   return (
-    <div>
-      <>
-        <div className="flex justify-end ml-4">
-          <Button className="mb-2" onClick={showModal}>
-            Tạo mới
-          </Button>
-          <Button className={styles.red}>
-            <UploadOutlined />
-          </Button>
-        </div>
-        <CategoryForm></CategoryForm>
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          // dataSource={!isFetching ? data?.data : []}
-          dataSource={category}
-        />
-      </>
-    </div>
+    <Table
+      rowSelection={rowSelection}
+      columns={columns}
+      // dataSource={!isFetching ? data?.data : []}
+      dataSource={category}
+    />
   );
 };
 

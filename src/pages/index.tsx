@@ -1,6 +1,5 @@
+import Dashboard from "@/components/dashboard/DashBoard";
 import Head from "next/head";
-import Dashboard from "@/components/layout/dashboard/DashBoard";
-import LayoutPage from "@/components/layout/layout/Layout";
 
 const Home = () => {
   return (

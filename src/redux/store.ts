@@ -9,12 +9,12 @@ export const store = configureStore({
     permission: permissionReducer,
     product: productReducer,
     category: categoryReducer,
-    [categoryApi.reducerPath]: categoryApi.reducer,
+    // [categoryApi.reducerPath]: categoryApi.reducer,
   },
   devTools: true,
-  middleware(getDefaultMiddleware) {
-    return getDefaultMiddleware().concat(categoryApi.middleware);
-  },
+  // middleware(getDefaultMiddleware) {
+  //   return getDefaultMiddleware().concat(categoryApi.middleware);
+  // },
 });
 setupListeners(store.dispatch);
 export type RootState = ReturnType<typeof store.getState>;

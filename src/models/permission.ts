@@ -1,10 +1,10 @@
 export interface Permission {
-  id: number;
+  id?: number;
   status: number;
-  modifiedDate: string;
-  createdDate: string;
-  modifiedBy: string;
-  createdBy: string;
+  modifiedDate?: string;
+  createdDate?: string;
+  modifiedBy?: string;
+  createdBy?: string;
   name: string;
   action: string;
   showMenu: boolean;

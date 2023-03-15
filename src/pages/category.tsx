@@ -1,5 +1,4 @@
-import CategoryTable from "@/components/layout/category/category-table/CategoryTable";
-import LayoutPage from "@/components/layout/layout/Layout";
+import CategoryShow from "@/components/category/category";
 import Head from "next/head";
 import React from "react";
 
@@ -7,9 +6,9 @@ const Category = () => {
   return (
     <div>
       <Head>
-        <title>Danh mục sản phẩm</title>
+        <title>Nhóm hàng hoá</title>
       </Head>
-      <CategoryTable></CategoryTable>
+      <CategoryShow></CategoryShow>
     </div>
   );
 };

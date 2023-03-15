@@ -6,7 +6,7 @@ import { CheckOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useRouter } from "next/dist/client/router";
 import Link from "antd/es/typography/Link";
 import { Permission } from "@/models/permission";
-import styles from './GroupPermissionTable.module.scss';
+import styles from "./GroupPermissionTable.module.scss";
 
 const GroupPermissionTable = () => {
   const router = useRouter();
@@ -79,6 +79,9 @@ const GroupPermissionTable = () => {
         },
       }
     );
+    res.data.data.data.map((data: any) => {
+      data.key = data.id;
+    });
     setPermission(res.data.data.data || []);
   };
   useEffect(() => {

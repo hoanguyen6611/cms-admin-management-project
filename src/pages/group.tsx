@@ -1,4 +1,5 @@
-import GroupPermissionTable from "@/components/layout/group-permission/group-permission-table/GroupPermissionTable";
+
+import GroupPermissionTable from "@/components/group-permission/group-permission-table/GroupPermissionTable";
 import Head from "next/head";
 import React from "react";
 

@@ -5,7 +5,7 @@ export interface CategoryResponse {
 }
 
 export interface Category {
-  id: number
+  id?: number
   name: string
   orderSort?: number
   note: string

@@ -1,58 +1,47 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Modal,
-  notification,
-  Radio,
-  Space,
-  Switch,
-  Table,
-  Tag,
-} from "antd";
+import { Button, Modal, notification, Space, Table, Upload } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import axios from "axios";
 import {
   CheckOutlined,
-  EditOutlined,
   DeleteOutlined,
+  EditOutlined,
   CloseOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
-import { updateIsVisibleFormPermission } from "@/redux/permissionSlice";
-import PermissionForm from "../permission-form/PermissionForm";
-import styles from "./PermissionTable.module.scss";
+import { isEditProductForm, updateVisibleFormProduct } from "@/redux/productSlice";
+import { useDispatch } from "react-redux";
+import ProductForm from "../product-form/ProductForm";
 
-interface Permission {
+interface Product {
   id: number;
-  status: number;
   modifiedDate: string;
   createdDate: string;
   modifiedBy: string;
   createdBy: string;
-  name: string;
-  action: string;
-  showMenu: boolean;
   description: string;
-  nameGroup: string;
+  name: string;
+  price: number;
+  image: string;
+  saleOff: number;
 }
 
-const PermissionTable = () => {
-  const dispatch = useDispatch();
-  const [permission, setPermission] = useState([]);
+const ProductTable = () => {
+  const [product, setProduct] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const deletePermission = async (record: any) => {
+  const dispatch = useDispatch();
+  const deleteProduct = async (record: any) => {
     const token = localStorage.getItem("token");
     const res = await axios.delete(
-      `https://tech-api.herokuapp.com/v1/permission/delete/${record}`,
+      `https://tech-api.herokuapp.com/v1/product/delete/${record}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       }
     );
-    console.log(res);
     if (res.data.result) {
-      getPermission();
+      getProduct();
       notification.open({
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -65,40 +54,40 @@ const PermissionTable = () => {
     }
   };
 
-  const columns: ColumnsType<Permission> = [
+  const columns: ColumnsType<Product> = [
     {
-      title: "Mã quyền",
+      title: "Mã sản phẩm",
       dataIndex: "id",
       key: "id",
       render: (text) => <a>{text}</a>,
     },
     {
-      title: "Tên quyền",
+      title: "Tên sản phẩm",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Action",
-      dataIndex: "action",
-      key: "action",
-    },
-    {
-      title: "Thông tin quyền",
+      title: "Thông tin sản phẩm",
       dataIndex: "description",
       key: "description",
+    },
+    {
+      title: "Giá",
+      dataIndex: "price",
+      key: "price",
     },
     {
       title: "Action",
       dataIndex: "id",
       key: "action",
-      render: (record) => {
+      render: (record: number) => {
         return (
           <>
-            <EditOutlined />
+            <EditOutlined onClick={() => isEditProduct(record)} />
             <DeleteOutlined
               style={{ color: "red", marginLeft: 12 }}
               onClick={() => {
-                deletePermission(record);
+                deleteProduct(record);
               }}
             />
           </>
@@ -106,26 +95,32 @@ const PermissionTable = () => {
       },
     },
   ];
-  const getPermission = async () => {
+  const isEditProduct = (record: number) => {
+    console.log(typeof record);
+    dispatch(updateVisibleFormProduct(true));
+    dispatch(isEditProductForm(true));
+  };
+  const getProduct = async () => {
     const token = localStorage.getItem("token");
     const res = await axios.get(
-      "https://tech-api.herokuapp.com/v1/permission/list",
+      "https://tech-api.herokuapp.com/v1/product/list",
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       }
     );
-    setPermission(res.data.data.data || []);
+    res.data.data.data.map((data: any) => {
+      data.key = data.id;
+    });
+    setProduct(res.data.data.data || []);
   };
   useEffect(() => {
-    getPermission();
+    getProduct();
   }, []);
-
   const showModal = () => {
-    dispatch(updateIsVisibleFormPermission(true));
+    dispatch(updateVisibleFormProduct(true));
   };
-
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
@@ -137,17 +132,27 @@ const PermissionTable = () => {
   };
   return (
     <div>
-      <Button className="mb-2" onClick={showModal}>
-        Tạo mới quyền
-      </Button>
-      <PermissionForm></PermissionForm>
-      <Table
-        rowSelection={rowSelection}
-        columns={columns}
-        dataSource={permission}
-      />
+      <>
+        <Space>
+          <Button className="" onClick={showModal}>
+            Tạo mới
+          </Button>
+          <Upload>
+            <Button>
+              <UploadOutlined /> Click to Upload
+            </Button>
+          </Upload>
+        </Space>
+        <ProductForm></ProductForm>
+        <Table
+          rowSelection={rowSelection}
+          columns={columns}
+          dataSource={product}
+          className="mt-4"
+        />
+      </>
     </div>
   );
 };
 
-export default PermissionTable;
+export default ProductTable;

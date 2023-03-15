@@ -1,4 +1,4 @@
-import Login from "@/components/layout/login-page/Login";
+import Login from "@/components/login-page/Login";
 import Head from "next/head";
 import React from "react";
 
