@@ -2,7 +2,6 @@ import { configureStore } from "@reduxjs/toolkit";
 import permissionReducer from "./permissionSlice";
 import productReducer from "./productSlice";
 import categoryReducer from "./categorySlice";
-import { categoryApi } from "@/components/layout/category/category.service";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
 export const store = configureStore({
   reducer: {
