@@ -1,14 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {
-  Button,
-  Modal,
   notification,
-  Radio,
-  Space,
-  Switch,
   Table,
-  Tag,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import {
@@ -17,9 +11,7 @@ import {
   DeleteOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
-import { updateIsVisibleFormPermission } from "@/redux/permissionSlice";
-import PermissionForm from "../permission-form/PermissionForm";
+import { useSelector } from "react-redux";
 import styles from "./PermissionTable.module.scss";
 import { useRouter } from "next/router";
 import { RootState } from "@/redux/store";
@@ -41,7 +33,6 @@ interface Permission {
 const PermissionTable = () => {
   const router = useRouter();
   const user = useSelector((state: RootState) => state.permission);
-  const dispatch = useDispatch();
   const [permission, setPermission] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const deletePermission = async (record: any) => {
@@ -71,28 +62,7 @@ const PermissionTable = () => {
 
   const columns: ColumnsType<Permission> = [
     {
-      title: "Mã quyền",
-      dataIndex: "id",
-      key: "id",
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: "Tên quyền",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Action",
-      dataIndex: "action",
-      key: "action",
-    },
-    {
-      title: "Thông tin quyền",
-      dataIndex: "description",
-      key: "description",
-    },
-    {
-      title: "Action",
+      title: "",
       dataIndex: "id",
       key: "action",
       render: (record) => {
@@ -108,6 +78,22 @@ const PermissionTable = () => {
           </>
         );
       },
+    },
+    {
+      title: "Mã quyền",
+      dataIndex: "id",
+      key: "id",
+      render: (text) => <a>{text}</a>,
+    },
+    {
+      title: "Tên quyền",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
     },
   ];
   const getPermission = async () => {
@@ -129,10 +115,6 @@ const PermissionTable = () => {
     getPermission();
   }, []);
 
-  const showModal = () => {
-    dispatch(updateIsVisibleFormPermission(true));
-  };
-
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
@@ -148,17 +130,11 @@ const PermissionTable = () => {
     }
   }, [!user]);
   return (
-    <div>
-      <Button className="mb-2" onClick={showModal}>
-        Thêm vai trò
-      </Button>
-      <PermissionForm></PermissionForm>
-      <Table
-        rowSelection={rowSelection}
-        columns={columns}
-        dataSource={permission}
-      />
-    </div>
+    <Table
+      rowSelection={rowSelection}
+      columns={columns}
+      dataSource={permission}
+    />
   );
 };
 

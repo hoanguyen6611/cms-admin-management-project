@@ -1,5 +1,5 @@
 
-import ProductTable from "@/components/product/product-table/ProductTable";
+import ProductShow from "@/components/product/Product";
 import Head from "next/head";
 import React from "react";
 
@@ -9,7 +9,7 @@ const Product = () => {
       <Head>
         <title>Hàng hoá</title>
       </Head>
-      <ProductTable></ProductTable>
+      <ProductShow></ProductShow>
     </div>
   );
 };

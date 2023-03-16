@@ -9,7 +9,10 @@ import {
   CloseOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import { isEditProductForm, updateVisibleFormProduct } from "@/redux/productSlice";
+import {
+  isEditProductForm,
+  updateVisibleFormProduct,
+} from "@/redux/productSlice";
 import { useDispatch } from "react-redux";
 import ProductForm from "../product-form/ProductForm";
 
@@ -56,28 +59,7 @@ const ProductTable = () => {
 
   const columns: ColumnsType<Product> = [
     {
-      title: "Mã sản phẩm",
-      dataIndex: "id",
-      key: "id",
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: "Tên sản phẩm",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Thông tin sản phẩm",
-      dataIndex: "description",
-      key: "description",
-    },
-    {
-      title: "Giá",
-      dataIndex: "price",
-      key: "price",
-    },
-    {
-      title: "Action",
+      title: "",
       dataIndex: "id",
       key: "action",
       render: (record: number) => {
@@ -93,6 +75,22 @@ const ProductTable = () => {
           </>
         );
       },
+    },
+    {
+      title: "Mã sản phẩm",
+      dataIndex: "id",
+      key: "id",
+      render: (text) => <a>{text}</a>,
+    },
+    {
+      title: "Tên sản phẩm",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Giá",
+      dataIndex: "price",
+      key: "price",
     },
   ];
   const isEditProduct = (record: number) => {
@@ -131,27 +129,12 @@ const ProductTable = () => {
     onChange: onSelectChange,
   };
   return (
-    <div>
-      <>
-        <Space>
-          <Button className="" onClick={showModal}>
-            Tạo mới
-          </Button>
-          <Upload>
-            <Button>
-              <UploadOutlined /> Click to Upload
-            </Button>
-          </Upload>
-        </Space>
-        <ProductForm></ProductForm>
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={product}
-          className="mt-4"
-        />
-      </>
-    </div>
+    <Table
+      rowSelection={rowSelection}
+      columns={columns}
+      dataSource={product}
+      className="mt-4"
+    />
   );
 };
 

@@ -9,7 +9,7 @@ import {
   InputRef,
   Modal,
   notification,
-  Popconfirm,
+  Radio,
   Row,
   Select,
   Switch,
@@ -27,12 +27,9 @@ import { ProductCreate } from "@/models/product";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import styles from "./ProductForm.module.scss";
-import {
-  ref,
-  UploadResult,
-  uploadBytesResumable,
-} from "firebase/storage";
+import { ref, UploadResult, uploadBytesResumable } from "firebase/storage";
 import { storage } from "@/utils/firebase";
+import type { RadioChangeEvent } from "antd";
 
 const schema = yup
   .object({
@@ -173,7 +170,7 @@ const ProductForm = () => {
   const product = useSelector((state: any) => state.product);
   const [category, setCategory] = useState([]);
   const [saleOff, setSaleOff] = useState(false);
-  const [status, setStatus] = useState(0);
+  const [status, setStatus] = useState(1);
   const [orderSort, setOrderSort] = useState(0);
   const [image, setImage] = useState<File>();
   const [imageUpload, setImageUpload] = useState("");
@@ -213,26 +210,26 @@ const ProductForm = () => {
         isSoldOut: soldOut,
         saleOff: numberSaleOff,
         categoryId: Number(categoryId),
-        tags: "#my_hashtag",
+        // tags: "#my_hashtag",
         image: imageUpload,
         status: status,
-        productConfigs: [
-          {
-            isRequired: required,
-            name: nameConfig,
-            status: statusConfig,
-            variants: [
-              {
-                description: "string",
-                image: "string",
-                name: "string",
-                orderSort: 0,
-                price: 0,
-                status: 0,
-              },
-            ],
-          },
-        ],
+        // productConfigs: [
+        //   {
+        //     isRequired: required,
+        //     name: nameConfig,
+        //     status: statusConfig,
+        //     variants: [
+        //       {
+        //         description: "string",
+        //         image: "string",
+        //         name: "string",
+        //         orderSort: 0,
+        //         price: 0,
+        //         status: 0,
+        //       },
+        //     ],
+        //   },
+        // ],
       },
       {
         headers: {
@@ -324,47 +321,58 @@ const ProductForm = () => {
       // console.log("Có ảnh nè");
     }
   };
+
+  const onChange = (e: RadioChangeEvent) => {
+    console.log("radio checked", e.target.value);
+    setStatus(e.target.value);
+  };
+
   return (
     <div>
       <Modal
         title={product.isEdit ? "Cập nhập sản phẩm" : "Tạo mới sản phẩm"}
         open={product.isVisibleFormProduct}
-        onOk={handleSubmit(handleOk)}
+        onOk={handleOk}
         okType={"danger"}
         onCancel={handleCancel}
         width={1200}
       >
         <Form
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 14 }}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 10 }}
           layout="horizontal"
         >
           <Row>
             <Col span={12}>
-              <Form.Item label="Tên sản phẩm" name="name">
-                <Input
-                  {...register("name")}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <p className={styles.warning}>{errors.name?.message}</p>
+              <Form.Item
+                label="Tên sản phẩm"
+                name="name"
+                wrapperCol={{ offset: 8, span: 16 }}
+              >
+                <Input onChange={(e) => setName(e.target.value)} />
+                {/* <p className={styles.warning}>{errors.name?.message}</p> */}
               </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item label="Giá sản phẩm" name="price">
+            <Col span={6}>
+              <Form.Item
+                label="Giá sản phẩm"
+                name="price"
+                wrapperCol={{ offset: 8, span: 16 }}
+              >
                 <InputNumber
-                  style={{ width: 350 }}
                   onChange={(e: any) => setPrice(e)}
                 />
                 {/* <p className={styles.warning}>{errors.price?.message}</p> */}
               </Form.Item>
             </Col>
-          </Row>
-          <Row>
-            <Col span={12}>
-              <Form.Item label="Nhóm sản phẩm" name="category">
+            <Col span={6}>
+              <Form.Item
+                label="Nhóm sản phẩm"
+                name="category"
+                wrapperCol={{ offset: 8, span: 16 }}
+              >
                 <Select
                   defaultValue="Chọn nhóm sản phẩm"
-                  style={{ width: 200 }}
                   onChange={handleChange}
                   onClick={getCategory}
                   options={category}
@@ -377,6 +385,8 @@ const ProductForm = () => {
                 </button>
               </Form.Item>
             </Col>
+          </Row>
+          <Row>
             <Col span={12}>
               <Form.Item label="Sold out" name="soldOut">
                 <div className="ml-10">
@@ -387,8 +397,6 @@ const ProductForm = () => {
                 </div>
               </Form.Item>
             </Col>
-          </Row>
-          <Row>
             <Col span={!saleOff ? 12 : 8}>
               <Form.Item label="Sale Off" name="isSaleOff">
                 <Switch
@@ -408,29 +416,18 @@ const ProductForm = () => {
             </Col>
             <Col span={!saleOff ? 12 : 8}>
               <Form.Item label="Trạng thái" name="status">
-                <InputNumber
-                  style={{ width: 200 }}
-                  onChange={(e: any) => setStatus(e)}
-                />
+                <Radio.Group onChange={onChange} value={1}>
+                  <Radio value={0}>Khoá</Radio>
+                  <Radio value={1}>Mở</Radio>
+                </Radio.Group>
               </Form.Item>
             </Col>
           </Row>
-          <Row>
-            <Col span={12}>
-              <Form.Item label="Thông tin sản phẩm" name="description">
-                <TextArea rows={4} onChange={(e) => setDes(e.target.value)} />
-                {/* <p className={styles.warning}>{errors.description?.message}</p> */}
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="Tags" name="tags">
-                <Input
-                  addonBefore="#"
-                  onChange={(e) => console.log(e.target.value)}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
+          <Row></Row>
+          <Form.Item label="Chi tiết sản phẩm" name="description">
+            <TextArea rows={4} onChange={(e) => setDes(e.target.value)} />
+            {/* <p className={styles.warning}>{errors.description?.message}</p> */}
+          </Form.Item>
           <Form.Item>
             <Upload
               listType="picture-card"
@@ -445,7 +442,7 @@ const ProductForm = () => {
             </Upload>
             <Button onClick={uploadImage}>Upload</Button>
           </Form.Item>
-          <Card className="mb-4" title="Other">
+          {/* <Card className="mb-4" title="Other">
             <Row>
               <Col span={12}>
                 <Form.Item label="Name config" name="nameConfig">
@@ -469,19 +466,16 @@ const ProductForm = () => {
                   <Col span={8}>
                     <Form.Item label="Tên biến thể" name="name">
                       <Input onChange={(e) => setName(e.target.value)} />
-                      {/* <p className={styles.warning}>{errors.name?.message}</p> */}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
                     <Form.Item label="Giá biến thể" name="price">
                       <InputNumber onChange={(e: any) => setPrice(e)} />
-                      {/* <p className={styles.warning}>{errors.price?.message}</p> */}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
                     <Form.Item label="Thông tin biến thể" name="description">
                       <TextArea onChange={(e) => setDes(e.target.value)} />
-                      {/* <p className={styles.warning}>{errors.description?.message}</p> */}
                     </Form.Item>
                   </Col>
                 </Row>
@@ -499,7 +493,7 @@ const ProductForm = () => {
                 </Row>
               </Col>
             </Row>
-          </Card>
+          </Card> */}
         </Form>
       </Modal>
       <Modal

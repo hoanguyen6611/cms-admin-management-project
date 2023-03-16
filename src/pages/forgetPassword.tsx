@@ -7,6 +7,7 @@ const ForgetPassword = () => {
       <Head>
         <title>Quên mật khẩu</title>
       </Head>
+      <h1>Đặt lại mât khẩu</h1>
     </div>
   );
 };

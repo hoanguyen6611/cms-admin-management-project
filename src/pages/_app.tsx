@@ -7,7 +7,10 @@ import { store } from "@/redux/store";
 import LayoutPage from "@/components/layout/layout/Layout";
 
 export default function App({ Component, pageProps, ...appProps }: AppProps) {
-  if ([`/login`].includes(appProps.router.pathname))
+  if (
+    [`/login`].includes(appProps.router.pathname) ||
+    [`/forgetPassword`].includes(appProps.router.pathname)
+  )
     return (
       <Provider store={store}>
         <Component {...pageProps} />

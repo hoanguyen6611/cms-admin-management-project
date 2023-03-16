@@ -1,17 +1,17 @@
 import React, { useEffect } from "react";
-import CategoryTable from "@/components/category/category-table/CategoryTable";
-import CategoryForm from "./category-form/CategoryForm";
-import { useDispatch } from "react-redux";
-import { updateIsVisibleFormCategory } from "@/redux/categorySlice";
 import { Button } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import { useDispatch } from "react-redux";
+import { updateVisibleFormProduct } from "@/redux/productSlice";
+import ProductTable from "./product-table/ProductTable";
+import ProductForm from "./product-form/ProductForm";
 import { useRouter } from "next/router";
 
-const CategoryShow = () => {
+const ProductShow = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const showModal = () => {
-    dispatch(updateIsVisibleFormCategory(true));
+    dispatch(updateVisibleFormProduct(true));
   };
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -21,6 +21,7 @@ const CategoryShow = () => {
       }
     }
   }, [router]);
+
   return (
     <div>
       <div className="flex justify-end ml-4">
@@ -31,10 +32,10 @@ const CategoryShow = () => {
           <UploadOutlined />
         </Button>
       </div>
-      <CategoryTable></CategoryTable>
-      <CategoryForm></CategoryForm>
+      <ProductTable></ProductTable>
+      <ProductForm></ProductForm>
     </div>
   );
 };
 
-export default CategoryShow;
+export default ProductShow;

@@ -1,4 +1,4 @@
-import PermissionTable from "@/components/permission/permission-table/PermissionTable";
+import PermissionShow from "@/components/permission/Permission";
 import Head from "next/head";
 import React from "react";
 
@@ -8,7 +8,7 @@ const Permission = () => {
       <Head>
         <title>Quản lý quyền</title>
       </Head>
-      <PermissionTable></PermissionTable>
+      <PermissionShow></PermissionShow>
     </div>
   );
 };

@@ -1,6 +1,10 @@
 import { Category } from "@/models/category";
 import { createSlice } from "@reduxjs/toolkit";
 
+const initialCategory: Category = {
+  name: "",
+  note: "",
+};
 export interface categoryState {
   isVisibleFormCategory: boolean;
   isEdit: boolean;
@@ -14,6 +18,7 @@ const initialState: categoryState = {
   isVisibleFormCategory: false,
   isEdit: false,
   categorys: [],
+  category: initialCategory,
 };
 
 export const categorySlice = createSlice({

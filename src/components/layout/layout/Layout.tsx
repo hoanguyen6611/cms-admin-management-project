@@ -132,7 +132,6 @@ const LayoutPage = (props: any) => {
           <div className="flex items-end flex-col m-4">
             <Avatar size={40} icon={<UserOutlined />} />
           </div>
-          {/* {localStorage.getItem("username")} */}
         </Header>
         <Content style={{ margin: "0 16px" }}>
           {/* <Breadcrumb style={{ margin: "16px 0" }}>
