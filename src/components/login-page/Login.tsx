@@ -7,7 +7,7 @@ import { EKey } from "@/models/general";
 import styles from "./Login.module.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { setUserLogin } from "@/redux/permissionSlice";
+import { setUserLogin } from "@/redux/permission/permissionSlice";
 import * as yup from "yup";
 import { useForm, useController } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";

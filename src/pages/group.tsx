@@ -1,5 +1,4 @@
-
-import GroupPermissionTable from "@/components/group-permission/group-permission-table/GroupPermissionTable";
+import GroupPermissionShow from "@/components/group-permission/GroupPermission";
 import Head from "next/head";
 import React from "react";
 
@@ -9,7 +8,7 @@ const Group = () => {
       <Head>
         <title>Phân quyền </title>
       </Head>
-      <GroupPermissionTable></GroupPermissionTable>
+      <GroupPermissionShow></GroupPermissionShow>
     </div>
   );
 };

@@ -1,14 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
-import permissionReducer from "./permissionSlice";
-import productReducer from "./productSlice";
-import categoryReducer from "./categorySlice";
+import permissionReducer from "./permission/permissionSlice";
+import permissionGroupReducer from "./group-permission/groupPermissionSlice";
+import productReducer from "./product/productSlice";
+import categoryReducer from "./category/categorySlice";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
 export const store = configureStore({
   reducer: {
     permission: permissionReducer,
+    permissionGroup: permissionGroupReducer,
     product: productReducer,
     category: categoryReducer,
-    // [categoryApi.reducerPath]: categoryApi.reducer,
   },
   devTools: true,
   // middleware(getDefaultMiddleware) {

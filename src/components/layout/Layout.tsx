@@ -11,7 +11,6 @@ import {
 import { Avatar, MenuProps } from "antd";
 import { Breadcrumb, Layout, Menu, theme, Dropdown } from "antd";
 import { useRouter } from "next/router";
-import Link from "next/link";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -33,7 +32,7 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem("Tổng quan", "", <DashboardOutlined />),
-  getItem("Vai trò và phân quyền", "sub1", <ApartmentOutlined />, [
+  getItem("Vai trò & phân quyền", "sub1", <ApartmentOutlined />, [
     getItem("Quyền", "permission"),
     getItem("Phân quyền", "group"),
   ]),
@@ -47,53 +46,6 @@ const items: MenuItem[] = [
   getItem("Nhân viên", "sub4", <UserSwitchOutlined />, [
     getItem("Chấm công", "salary"),
   ]),
-];
-
-const itemList: MenuProps["items"] = [
-  {
-    key: "1",
-    label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.antgroup.com"
-      >
-        1st menu item
-      </a>
-    ),
-  },
-  {
-    key: "2",
-    label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.aliyun.com"
-      >
-        2nd menu item (disabled)
-      </a>
-    ),
-    icon: <SmileOutlined />,
-    disabled: true,
-  },
-  {
-    key: "3",
-    label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.luohanacademy.com"
-      >
-        3rd menu item (disabled)
-      </a>
-    ),
-    disabled: true,
-  },
-  {
-    key: "4",
-    danger: true,
-    label: "a danger item",
-  },
 ];
 
 const LayoutPage = (props: any) => {

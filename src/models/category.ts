@@ -12,3 +12,11 @@ export interface Category {
   status?: number
   icon?: string
 }
+export interface Variant  {
+  description:string,
+  image:string,
+  name:string,
+  orderSort: number,
+  price: number,
+  status: number,
+};

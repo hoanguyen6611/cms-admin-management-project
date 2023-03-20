@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Button } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
-import { updateVisibleFormProduct } from "@/redux/productSlice";
+import { updateVisibleFormProduct } from "@/redux/product/productSlice";
 import ProductTable from "./product-table/ProductTable";
 import ProductForm from "./product-form/ProductForm";
 import { useRouter } from "next/router";
@@ -28,7 +28,7 @@ const ProductShow = () => {
         <Button className="mb-2" onClick={showModal}>
           Tạo mới
         </Button>
-        <Button>
+        <Button className="ml-2">
           <UploadOutlined />
         </Button>
       </div>

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Modal, notification, Table } from "antd";
+import React, { useState, createContext } from "react";
+import { Modal, notification, Table, Spin } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import {
@@ -12,16 +12,39 @@ import { useDispatch } from "react-redux";
 import {
   isEditCategoryForm,
   setCategoryId,
-  setCategorySelectedBy,
   updateIsVisibleFormCategory,
-} from "@/redux/categorySlice";
+} from "@/redux/category/categorySlice";
 import { Category } from "@/models/category";
 import styles from "./CategoryTable.module.scss";
+import useSWR, { mutate } from "swr";
+import { actions, useStoreContext } from "@/store";
+
+const fetcher = async (url: string) => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  res.data.data.map((data: any) => {
+    data.key = data.id;
+  });
+  return res.data.data;
+};
 
 const CategoryTable = () => {
+  const {
+    data: category,
+    error,
+    mutate,
+  } = useSWR(
+    "https://tech-api.herokuapp.com/v1/product-category/list",
+    fetcher
+  );
+  // mutate({ ...data }, false);
+  const [state, dispatchs] = useStoreContext();
   const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [category, setCategory] = useState([]);
   const deleteConfirmCategory = (record: any) => {
     Modal.confirm({
       title: "Bạn có chắc chắn muốn xoá danh mục sản phẩm này không?",
@@ -43,7 +66,6 @@ const CategoryTable = () => {
       }
     );
     if (res.data.result) {
-      getCategory();
       notification.open({
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -63,7 +85,10 @@ const CategoryTable = () => {
       render: (record) => {
         return (
           <>
-            <EditOutlined onClick={() => isEditCategory(record)} />
+            <EditOutlined
+              style={{ color: "green" }}
+              onClick={() => isEditCategory(record)}
+            />
             <DeleteOutlined
               style={{ color: "red", marginLeft: 12 }}
               onClick={() => {
@@ -85,44 +110,13 @@ const CategoryTable = () => {
       dataIndex: "name",
       key: "name",
     },
-    {
-      title: "Ghi chú",
-      dataIndex: "note",
-      key: "note",
-    },
   ];
-  const getCategory = async () => {
-    const token = localStorage.getItem("token");
-    const res = await axios.get(
-      "https://tech-api.herokuapp.com/v1/product-category/list",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    res.data.data.map((data: any) => {
-      data.key = data.id;
-    });
-    setCategory(res.data.data || []);
-  };
-  useEffect(() => {
-    getCategory();
-  }, []);
   const isEditCategory = async (record: number) => {
     dispatch(updateIsVisibleFormCategory(true));
     dispatch(isEditCategoryForm(true));
     dispatch(setCategoryId(record));
-    // const token = localStorage.getItem("token");
-    // const res = await axios.get(
-    //   `https://tech-api.herokuapp.com/v1/product-category/get/${record}`,
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //   }
-    // );
-    // dispatch(setCategorySelectedBy(res.data.data));
+    dispatchs(actions.setIdCategoryForm(record));
+    dispatchs(actions.changeVisibleFormCategory(true));
   };
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     console.log("selectedRowKeys changed: ", newSelectedRowKeys);
@@ -132,12 +126,20 @@ const CategoryTable = () => {
     selectedRowKeys,
     onChange: onSelectChange,
   };
+  type ContextValue = boolean;
+  const Context = createContext<ContextValue>(false);
+  if (error) return <div>An error has occured</div>;
+  if (!category)
+    return (
+      <div className={styles.example}>
+        <Spin />
+      </div>
+    );
 
   return (
     <Table
       rowSelection={rowSelection}
       columns={columns}
-      // dataSource={!isFetching ? data?.data : []}
       dataSource={category}
     />
   );

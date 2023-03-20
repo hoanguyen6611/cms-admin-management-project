@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import PermissionForm from "./permission-form/PermissionForm";
 import { Button } from "antd";
 import { useDispatch } from "react-redux";
-import { updateIsVisibleFormPermission } from "@/redux/permissionSlice";
+import { updateIsVisibleFormPermission } from "@/redux/permission/permissionSlice";
 import { useRouter } from "next/router";
 import PermissionTable from "./permission-table/PermissionTable";
 

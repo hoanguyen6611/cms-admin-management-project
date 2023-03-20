@@ -6,11 +6,12 @@ import {
   InputNumber,
   Modal,
   notification,
+  Radio,
   Row,
   Select,
   Upload,
 } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 const { TextArea } = Input;
 import { CheckOutlined, PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
@@ -18,43 +19,71 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   isEditCategoryForm,
   updateIsVisibleFormCategory,
-} from "@/redux/categorySlice";
+} from "@/redux/category/categorySlice";
 import { RootState } from "@/redux/store";
 import { ref, UploadResult, uploadBytesResumable } from "firebase/storage";
 import { storage } from "@/utils/firebase";
-import Image from "next/image";
+import type { RadioChangeEvent } from "antd";
+import useSWR, { mutate } from "swr";
+import { Category } from "@/models";
+import Context from "@/store/Context";
+import { actions, useStoreContext } from "@/store";
+import { NULL } from "sass";
+
+const fetcher = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(
+    "https://tech-api.herokuapp.com/v1/product-category/list",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  res.data.data.map((data: any) => {
+    data.value = data.id;
+    data.label = data.name;
+  });
+  return res.data.data;
+};
+const fetchers = async (url: string) => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data.data;
+};
 
 const CategoryForm = () => {
   const categorySelector = useSelector((state: RootState) => state.category);
+  const [state, dispatchs] = useStoreContext();
+  const { data, error } = useSWR("product-category/list", fetcher);
+  const { data: category } = useSWR(
+    `https://tech-api.herokuapp.com/v1/product-category/get/${state.idCategory}`,
+    fetchers
+  );
   const [createCategory, setCreateCategory] = useState(false);
-  const [id, setId] = useState();
-  const [name, setName] = useState("");
+  const [id, setId] = useState<number>();
+  const [name, setName] = useState("hello");
   const [parentId, setParentId] = useState("");
-  const [status, setStatus] = useState(categorySelector.category?.status);
+  const [status, setStatus] = useState(1);
   const [orderSort, setOrderSort] = useState(0);
   const [note, setNote] = useState("");
   const [icon, setIcon] = useState<File>();
   const [iconUpload, setIconUpload] = useState("");
-  const [category, setCategory] = useState([]);
   const dispatch = useDispatch();
   const [fileList, setFileList] = useState([]);
-  useEffect(() => {
-    // getCategorySelected();
-    // async function fetchData() {
-    //   const token = localStorage.getItem("token");
-    //   const res = await axios.get(
-    //     `https://tech-api.herokuapp.com/v1/product-category/get/${categorySelector.id}`,
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${token}`,
-    //       },
-    //     }
-    //   );
-    //   console.log(res.data.data);
-    // }
-    // fetchData();
-  }, []);
 
+  useEffect(() => {
+    setName(category?.name);
+    setId(category?.id);
+    setStatus(category?.status);
+    setOrderSort(category?.orderSort);
+    setNote(category?.note);
+    setIconUpload(category?.icon);
+  }, [category]);
   const createFormCategory = async () => {
     const token = localStorage.getItem("token");
     if (id) {
@@ -67,6 +96,7 @@ const CategoryForm = () => {
           status: status,
           icon: iconUpload,
           id: id,
+          parentId: parentId,
         },
         {
           headers: {
@@ -75,9 +105,9 @@ const CategoryForm = () => {
         }
       );
       if (res.data.result) {
-        getCategory();
         dispatch(updateIsVisibleFormCategory(false));
-        getCategory();
+        dispatchs(actions.changeVisibleFormCategory(false));
+        setValueForm();
         notification.open({
           message: res.data.message,
           icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -92,6 +122,7 @@ const CategoryForm = () => {
           orderSort: orderSort,
           status: status,
           icon: iconUpload,
+          parentId: parentId,
         },
         {
           headers: {
@@ -100,9 +131,9 @@ const CategoryForm = () => {
         }
       );
       if (res.data.result) {
-        getCategory();
         dispatch(updateIsVisibleFormCategory(false));
-        getCategory();
+        dispatchs(actions.changeVisibleFormCategory(false));
+        setValueForm();
         notification.open({
           message: res.data.message,
           icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -113,36 +144,19 @@ const CategoryForm = () => {
   const cancelCreateCategory = () => {
     dispatch(updateIsVisibleFormCategory(false));
     dispatch(isEditCategoryForm(false));
-  };
-  const getCategory = async () => {
-    const token = localStorage.getItem("token");
-    const res = await axios.get(
-      "https://tech-api.herokuapp.com/v1/product-category/list",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    res.data.data.map((data: any) => {
-      data.value = data.id;
-      data.label = data.name;
-    });
-    setCategory(res.data.data || []);
-  };
-  const getCategorySelected = async (id: number | undefined) => {
-    const token = localStorage.getItem("token");
-    const res = await axios.get(
-      `https://tech-api.herokuapp.com/v1/product-category/get/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    dispatchs(actions.changeVisibleFormCategory(false));
+    setValueForm();
   };
   const handleFileSelected = (file: any) => {
     setIcon(file);
+  };
+  const setValueForm = () => {
+    setName("");
+    setId(0);
+    setStatus(1);
+    setOrderSort(0);
+    setNote("");
+    setIconUpload("");
   };
   const uploadImage = () => {
     if (!icon) {
@@ -159,7 +173,6 @@ const CategoryForm = () => {
       });
     }
   };
-  const icons = categorySelector.category?.icon;
   return (
     <div>
       <Modal
@@ -168,7 +181,7 @@ const CategoryForm = () => {
             ? "Cập nhập danh mục sản phẩm"
             : "Tạo mới danh mục sản phẩm"
         }
-        open={categorySelector.isVisibleFormCategory}
+        open={state.isVisibleFormCategory}
         okType={"danger"}
         onOk={createFormCategory}
         onCancel={cancelCreateCategory}
@@ -179,12 +192,13 @@ const CategoryForm = () => {
           wrapperCol={{ span: 14 }}
           layout="horizontal"
         >
-          <Row>
+          <Row gutter={16}>
             <Col span={12}>
               {categorySelector.category?.name}
               <Form.Item
                 label="Tên danh mục"
                 name="nameCategory"
+                initialValue={name}
                 rules={[
                   {
                     required: true,
@@ -192,20 +206,18 @@ const CategoryForm = () => {
                   },
                 ]}
               >
-                <Input
-                  value={categorySelector.category?.name}
-                  onChange={(e) => setName(e.target.value)}
-                />
+                <Input value={name} onChange={(e) => setName(e.target.value)} />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item label="Danh mục cha" name="parentId">
                 <div className="flex">
                   <Select
-                    onClick={getCategory}
-                    defaultValue="Chọn nhóm danh mục cha"
+                    defaultValue={
+                      category ? category : "Chọn nhóm danh mục cha"
+                    }
                     onChange={(e) => setParentId(e)}
-                    options={category}
+                    options={data}
                   />
                   <button
                     className="ml-2"
@@ -217,60 +229,65 @@ const CategoryForm = () => {
               </Form.Item>
             </Col>
           </Row>
-          <Row>
+          <Row gutter={16}>
             <Col span={12}>
               {categorySelector.category?.status}
               <Form.Item label="Trạng thái" name="status">
-                <InputNumber
-                  style={{ width: 200 }}
-                  onChange={(e: any) => setStatus(e)}
-                  defaultValue={categorySelector.category?.status}
-                />
+                <Radio.Group
+                  onChange={(e: RadioChangeEvent) => {
+                    setStatus(e.target.value);
+                  }}
+                  value={status}
+                >
+                  <Radio value={0}>Khoá</Radio>
+                  <Radio value={1}>Mở</Radio>
+                </Radio.Group>
               </Form.Item>
             </Col>
             <Col span={12}>
               {categorySelector.category?.orderSort}
-              <Form.Item label="Order Sort" name="orderSort">
+              <Form.Item
+                label="Order Sort"
+                name="orderSort"
+                initialValue={orderSort}
+              >
                 <InputNumber
                   style={{ width: 200 }}
                   onChange={(e: any) => setOrderSort(e)}
-                  value={categorySelector.category?.orderSort}
+                  value={orderSort}
                 />
               </Form.Item>
             </Col>
           </Row>
-          <Row>
+          <Row gutter={16}>
             <Col span={24}>
-              {categorySelector.category?.note}
-              <Form.Item label="Ghi chú" name="note">
+              <Form.Item label="Ghi chú" name="note" initialValue={note}>
                 <TextArea
-                  value={categorySelector.category?.note}
+                  value={note}
                   rows={4}
                   onChange={(e) => setNote(e.target.value)}
                 />
               </Form.Item>
             </Col>
           </Row>
-          <Form.Item>
-            {/* <Image
-              src="https://cdn.tgdd.vn/Files/2017/01/19/939425/cach-cai-hinh-nen-may-tinh-khong-bi-mo_1280x720-800-resize.jpg"
-              alt="Picture of the author"
-              width={500}
-              height={500}
-            /> */}
-            <Upload
-              listType="picture-card"
-              onChange={(e) => handleFileSelected(e.file)}
-            >
-              {fileList.length >= 8 ? null : (
-                <div>
-                  <PlusOutlined />
-                  <div style={{ marginTop: 8 }}>Upload</div>
-                </div>
-              )}
-            </Upload>
-            <Button onClick={uploadImage}>Upload</Button>
-          </Form.Item>
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item>
+                <Upload
+                  listType="picture-card"
+                  onChange={(e) => handleFileSelected(e.file)}
+                >
+                  {fileList.length >= 8 ? null : (
+                    <div>
+                      <PlusOutlined />
+                      <div style={{ marginTop: 8 }}>Upload</div>
+                    </div>
+                  )}
+                </Upload>
+                <Button onClick={uploadImage}>Upload</Button>
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
       </Modal>
     </div>

@@ -4,7 +4,8 @@ import "react-toastify/dist/ReactToastify.css";
 import type { AppProps } from "next/app";
 import { Provider } from "react-redux";
 import { store } from "@/redux/store";
-import LayoutPage from "@/components/layout/layout/Layout";
+import LayoutPage from "@/components/layout/Layout";
+import { Providers } from "@/store/Provider";
 
 export default function App({ Component, pageProps, ...appProps }: AppProps) {
   if (
@@ -12,15 +13,19 @@ export default function App({ Component, pageProps, ...appProps }: AppProps) {
     [`/forgetPassword`].includes(appProps.router.pathname)
   )
     return (
-      <Provider store={store}>
-        <Component {...pageProps} />
-      </Provider>
+      <Providers>
+        <Provider store={store}>
+          <Component {...pageProps} />
+        </Provider>
+      </Providers>
     );
   return (
-    <Provider store={store}>
-      <LayoutPage>
-        <Component {...pageProps} />
-      </LayoutPage>
-    </Provider>
+    <Providers>
+      <Provider store={store}>
+        <LayoutPage>
+          <Component {...pageProps} />
+        </LayoutPage>
+      </Provider>
+    </Providers>
   );
 }

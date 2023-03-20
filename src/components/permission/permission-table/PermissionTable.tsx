@@ -1,9 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import {
-  notification,
-  Table,
-} from "antd";
+import { notification, Table, Spin } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import {
   CheckOutlined,
@@ -15,22 +12,27 @@ import { useSelector } from "react-redux";
 import styles from "./PermissionTable.module.scss";
 import { useRouter } from "next/router";
 import { RootState } from "@/redux/store";
+import { Permission } from "@/models";
+import useSWR from "swr";
 
-interface Permission {
-  id: number;
-  status: number;
-  modifiedDate: string;
-  createdDate: string;
-  modifiedBy: string;
-  createdBy: string;
-  name: string;
-  action: string;
-  showMenu: boolean;
-  description: string;
-  nameGroup: string;
-}
+const fetcher = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(
+    "https://tech-api.herokuapp.com/v1/permission/list",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  res.data.data.data.map((data: any) => {
+    data.key = data.id;
+  });
+  return res.data.data.data;
+};
 
 const PermissionTable = () => {
+  const { data, error } = useSWR("/permission", fetcher);
   const router = useRouter();
   const user = useSelector((state: RootState) => state.permission);
   const [permission, setPermission] = useState([]);
@@ -45,9 +47,7 @@ const PermissionTable = () => {
         },
       }
     );
-    console.log(res);
     if (res.data.result) {
-      getPermission();
       notification.open({
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -68,7 +68,7 @@ const PermissionTable = () => {
       render: (record) => {
         return (
           <>
-            <EditOutlined />
+            <EditOutlined style={{ color: "green" }} />
             <DeleteOutlined
               style={{ color: "red", marginLeft: 12 }}
               onClick={() => {
@@ -96,25 +96,6 @@ const PermissionTable = () => {
       key: "action",
     },
   ];
-  const getPermission = async () => {
-    const token = localStorage.getItem("token");
-    const res = await axios.get(
-      "https://tech-api.herokuapp.com/v1/permission/list",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    res.data.data.data.map((data: any) => {
-      data.key = data.id;
-    });
-    setPermission(res.data.data.data || []);
-  };
-  useEffect(() => {
-    getPermission();
-  }, []);
-
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
@@ -129,12 +110,15 @@ const PermissionTable = () => {
       router.push("/login");
     }
   }, [!user]);
+  if (error) return <div>An error has occured</div>;
+  if (!data)
+    return (
+      <div className={styles.example}>
+        <Spin />
+      </div>
+    );
   return (
-    <Table
-      rowSelection={rowSelection}
-      columns={columns}
-      dataSource={permission}
-    />
+    <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
   );
 };
 

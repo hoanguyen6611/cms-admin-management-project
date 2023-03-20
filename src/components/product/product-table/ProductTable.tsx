@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, notification, Space, Table, Upload } from "antd";
+import { notification, Table, Spin } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import {
@@ -7,30 +7,34 @@ import {
   DeleteOutlined,
   EditOutlined,
   CloseOutlined,
-  UploadOutlined,
 } from "@ant-design/icons";
 import {
   isEditProductForm,
   updateVisibleFormProduct,
-} from "@/redux/productSlice";
+} from "@/redux/product/productSlice";
 import { useDispatch } from "react-redux";
-import ProductForm from "../product-form/ProductForm";
+import useSWR from "swr";
+import { Product } from "@/models";
+import styles from "./ProductTable.module.scss";
 
-interface Product {
-  id: number;
-  modifiedDate: string;
-  createdDate: string;
-  modifiedBy: string;
-  createdBy: string;
-  description: string;
-  name: string;
-  price: number;
-  image: string;
-  saleOff: number;
-}
+const fetcher = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(
+    "https://tech-api.herokuapp.com/v1/product/list",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  res.data.data.data.map((data: any) => {
+    data.key = data.id;
+  });
+  return res.data.data.data;
+};
 
 const ProductTable = () => {
-  const [product, setProduct] = useState([]);
+  const { data, error } = useSWR("/product", fetcher);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const dispatch = useDispatch();
   const deleteProduct = async (record: any) => {
@@ -44,7 +48,6 @@ const ProductTable = () => {
       }
     );
     if (res.data.result) {
-      getProduct();
       notification.open({
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -65,7 +68,10 @@ const ProductTable = () => {
       render: (record: number) => {
         return (
           <>
-            <EditOutlined onClick={() => isEditProduct(record)} />
+            <EditOutlined
+              style={{ color: "green" }}
+              onClick={() => isEditProduct(record)}
+            />
             <DeleteOutlined
               style={{ color: "red", marginLeft: 12 }}
               onClick={() => {
@@ -98,27 +104,6 @@ const ProductTable = () => {
     dispatch(updateVisibleFormProduct(true));
     dispatch(isEditProductForm(true));
   };
-  const getProduct = async () => {
-    const token = localStorage.getItem("token");
-    const res = await axios.get(
-      "https://tech-api.herokuapp.com/v1/product/list",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    res.data.data.data.map((data: any) => {
-      data.key = data.id;
-    });
-    setProduct(res.data.data.data || []);
-  };
-  useEffect(() => {
-    getProduct();
-  }, []);
-  const showModal = () => {
-    dispatch(updateVisibleFormProduct(true));
-  };
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
@@ -128,11 +113,18 @@ const ProductTable = () => {
     selectedRowKeys,
     onChange: onSelectChange,
   };
+  if (error) return <div>An error has occured</div>;
+  if (!data)
+    return (
+      <div className={styles.example}>
+        <Spin />
+      </div>
+    );
   return (
     <Table
       rowSelection={rowSelection}
       columns={columns}
-      dataSource={product}
+      dataSource={data}
       className="mt-4"
     />
   );
