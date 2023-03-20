@@ -21,7 +21,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateVisibleFormProduct } from "@/redux/product/productSlice";
 const { TextArea } = Input;
 import * as yup from "yup";
-import { ProductCreate } from "@/models/product";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import styles from "./ProductForm.module.scss";
