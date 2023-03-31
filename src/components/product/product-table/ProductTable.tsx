@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { notification, Table, Spin, Tag } from "antd";
+import { notification, Table, Spin, Tag, Modal } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import {
@@ -44,6 +44,16 @@ const ProductTable = () => {
   const [state, dispatchs] = useStoreContext();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const dispatch = useDispatch();
+  const deleteConfirmProduct = (record: any) => {
+    Modal.confirm({
+      title: "Bạn có chắc chắn muốn xoá danh mục sản phẩm này không?",
+      okText: "OK",
+      okType: "danger",
+      onOk: () => {
+        deleteProduct(record);
+      },
+    });
+  };
   const deleteProduct = async (record: any) => {
     const token = localStorage.getItem("token");
     const res = await axios.delete(
@@ -85,7 +95,7 @@ const ProductTable = () => {
       render: (text) => (
         <Tag
           style={
-            text === 1 ? { width: 80, height: 30 } : { width: 120, height: 30 }
+            text === 1 ? { width: 80, height: 25 } : { width: 112, height: 25 }
           }
           color={text === 1 ? "green" : "red"}
           key={text}
@@ -108,7 +118,7 @@ const ProductTable = () => {
             <DeleteOutlined
               style={{ color: "red", marginLeft: 12 }}
               onClick={() => {
-                deleteProduct(record);
+                deleteConfirmProduct(record);
               }}
             />
           </>
@@ -117,7 +127,6 @@ const ProductTable = () => {
     },
   ];
   const isEditProduct = (record: number) => {
-    console.log(process.env.URL_HOST);
     dispatch(updateVisibleFormProduct(true));
     dispatch(isEditProductForm(true));
     dispatchs(actions.setIdProductForm(record));

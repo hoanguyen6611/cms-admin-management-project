@@ -40,6 +40,7 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { useStoreContext } from "@/store";
 import CurrencyInput from "react-currency-input-field";
+import { isEditProductForm } from "@/redux/product/productSlice";
 
 const schema = yup
   .object({
@@ -82,42 +83,36 @@ const fetchers = async (url: string) => {
   return res.data.data;
 };
 const Variants = () => {
+  const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [name, setName] = useState("");
   const [des, setDes] = useState("");
   const [price, setPrice] = useState(0);
-  const [image, setImage] = useState<File>();
-  const [imageUpload, setImageUpload] = useState("");
+  const [image, setImage] = useState("");
+  const [imageUpload, setImageUpload] = useState<File>();
   const [status, setStatus] = useState(0);
   const [orderSort, setOrderSort] = useState(0);
-  const value = {
-    description: des,
-    image: imageUpload,
-    name: name,
-    orderSort: orderSort,
-    price: price,
-    status: status,
-  };
-  const addVariant = () => {
-    variants.push(value);
-    console.log(variants);
-  };
-  const handleFileSelected = (file: any) => {
-    setImage(file);
-  };
-  const uploadImage = () => {
-    if (!image) {
+  const uploadImageProduct = async () => {
+    if (!imageUpload) {
       notification.open({
         message: "Upload ảnh chưa thành công",
       });
     } else {
-      const imageRef = ref(storage, `images/${image.name}`);
-      uploadBytesResumable(imageRef, image).then((res: UploadResult) => {
-        setImageUpload(
-          `https://firebasestorage.googleapis.com/v0/b/music-mp3-page.appspot.com/o/images%2F${image.name}?alt=media&token=16d7e53d-909a-484e-8481-f242d2e3a31f`
-        );
+      const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
+      await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
+        await getDownloadURL(snapshot.ref).then((url) => {
+          setImage(url);
+        });
       });
     }
+  };
+  const addVariant = () => {
+    uploadImageProduct();
+    variants.push({ ...form.getFieldsValue(), image: image });
+    console.log(variants);
+  };
+  const handleFileSelected = (file: any) => {
+    setImageUpload(file.target.files[0]);
   };
   return (
     <div>
@@ -125,38 +120,46 @@ const Variants = () => {
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"
+        form={form}
       >
         <Row>
           <Col span={8}>
             <Form.Item label="Tên" name="name">
-              <Input onChange={(e) => setName(e.target.value)} />
+              <Input
+                style={{ width: 200 }}
+                onChange={(e) => setName(e.target.value)}
+              />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item label="Thông tin" name="description">
-              <Input onChange={(e) => setDes(e.target.value)} />
+              <Input
+                style={{ width: 200 }}
+                onChange={(e) => setDes(e.target.value)}
+              />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item label="Giá" name="price">
-              <InputNumber onChange={(e: any) => setPrice(e)} />
+              <InputNumber
+                style={{ width: 200 }}
+                onChange={(e: any) => setPrice(e)}
+              />
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col span={12}>
             <Form.Item label="Hình ảnh" name="image">
-              <Upload
-                listType="picture-card"
-                onChange={(e) => handleFileSelected(e.file)}
-              >
-                {fileList.length >= 8 ? null : (
-                  <div>
-                    <PlusOutlined />
-                    <div style={{ marginTop: 8 }}>Upload</div>
-                  </div>
-                )}
-              </Upload>
+              <Button variant="contained" component="label">
+                Tải ảnh lên
+                <input
+                  hidden
+                  accept="image/*"
+                  type="file"
+                  onChange={(e) => handleFileSelected(e)}
+                />
+              </Button>
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -173,7 +176,7 @@ const Variants = () => {
           </Col>
         </Row>
       </Form>
-      {/* <Button onClick={addVariant}>Thêm</Button> */}
+      <Button onClick={addVariant}>Thêm</Button>
     </div>
   );
 };
@@ -197,16 +200,15 @@ const ProductForm = () => {
   } = useForm<FormData>({
     resolver: yupResolver(schema),
   });
+  const product = useSelector((state: any) => state.product);
   const [id, setId] = useState<number>();
   const [name, setName] = useState("");
   const [des, setDes] = useState("");
   const [price, setPrice] = useState<any>();
-  const product = useSelector((state: any) => state.product);
-  const [category, setCategory] = useState([]);
   const [saleOff, setSaleOff] = useState(false);
   const [status, setStatus] = useState(1);
-  const [image, setImage] = useState<File>();
-  const [imageUpload, setImageUpload] = useState("");
+  const [image, setImage] = useState("");
+  const [imageUpload, setImageUpload] = useState<File>();
   const [numberSaleOff, setNumberSaleOff] = useState(0);
   const [soldOut, setSoldOut] = useState(false);
   const [createCategory, setCreateCategory] = useState(false);
@@ -214,7 +216,6 @@ const ProductForm = () => {
   const [parentId, setParentId] = useState("");
   const [categoryName, setCategoryName] = useState("");
   const [noteCategory, setNoteCategory] = useState("");
-  const [fileList, setFileList] = useState([]);
   const [items, setItems] = useState(initialItems);
   const [activeKey, setActiveKey] = useState(initialItems[0].key);
   const [isRequired, setIsRequired] = useState(true);
@@ -222,50 +223,25 @@ const ProductForm = () => {
   const [statusConfig, setStatusConfig] = useState(1);
   useEffect(() => {
     setId(productItem?.id);
-    setName(productItem?.name);
-    setDes(productItem?.description);
-    setPrice(productItem?.price);
-    setSoldOut(productItem?.soldOut), setCategoryId(productItem?.categoryId);
-    setSaleOff(productItem?.isSaleOff),
-      setNumberSaleOff(productItem?.saleOff),
-      setStatus(productItem?.status),
-      form.setFieldsValue({
-        name: productItem?.name,
-        description: productItem?.description,
-        price: productItem?.price,
-        soldOut: productItem?.soldOut,
-        isSaleOff: productItem?.isSaleOff,
-        saleOff: productItem?.saleOff,
-        status: productItem?.status,
-        imageUpload: productItem?.image,
-      });
+    form.setFieldsValue({
+      name: productItem?.name,
+      description: productItem?.description,
+      price: productItem?.price,
+      soldOut: productItem?.soldOut,
+      isSaleOff: productItem?.isSaleOff,
+      saleOff: productItem?.saleOff,
+      status: productItem?.status,
+      image: productItem?.image,
+    });
   }, [productItem]);
 
-  const newTabIndex = useRef(0);
+  const newTabIndex = useRef(2);
   const dispatch = useDispatch();
   const createProduct = async () => {
     const token = localStorage.getItem("token");
     const res = await axios.post(
       "https://tech-api.herokuapp.com/v1/product/create",
-      {
-        description: des,
-        name: name,
-        price: price,
-        isSaleOff: saleOff,
-        isSoldOut: soldOut,
-        saleOff: numberSaleOff,
-        categoryId: Number(categoryId),
-        image: imageUpload,
-        status: status,
-        // productConfigs: [
-        //   {
-        //     isRequired: isRequired,
-        //     name: nameConfig,
-        //     status: statusConfig,
-        //     variants: variants,
-        //   },
-        // ],
-      },
+      { ...form.getFieldsValue(), image: image },
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -278,31 +254,22 @@ const ProductForm = () => {
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
-    }
+    } 
+    // else {
+    //   notification.open({
+    //     message: res.data.message,
+    //     icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+    //   });
+    // }
   };
   const updateProduct = async () => {
     const token = localStorage.getItem("token");
     const res = await axios.put(
       "https://tech-api.herokuapp.com/v1/product/update",
       {
+        ...form.getFieldsValue(),
         id: id,
-        description: des,
-        name: name,
-        price: price,
-        isSaleOff: saleOff,
-        isSoldOut: soldOut,
-        saleOff: numberSaleOff,
-        categoryId: Number(categoryId),
-        image: imageUpload,
-        status: status,
-        // productConfigs: [
-        //   {
-        //     isRequired: isRequired,
-        //     name: nameConfig,
-        //     status: statusConfig,
-        //     variants: variants,
-        //   },
-        // ],
+        image: image,
       },
       {
         headers: {
@@ -319,15 +286,15 @@ const ProductForm = () => {
     }
   };
   const uploadImageProduct = async () => {
-    if (!image) {
+    if (!imageUpload) {
       notification.open({
         message: "Upload ảnh chưa thành công",
       });
     } else {
-      const imageRef = ref(storage, `images/${image.name + v4()}`);
-      await uploadBytes(imageRef, image).then(async (snapshot) => {
+      const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
+      await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
         await getDownloadURL(snapshot.ref).then((url) => {
-          setImageUpload(url);
+          setImage(url);
         });
       });
     }
@@ -337,14 +304,18 @@ const ProductForm = () => {
     if (id) {
       updateProduct();
       dispatch(updateVisibleFormProduct(false));
+      dispatch(isEditProductForm(false));
     } else {
       createProduct();
       dispatch(updateVisibleFormProduct(false));
+      dispatch(isEditProductForm(false));
     }
   };
 
   const handleCancel = () => {
     dispatch(updateVisibleFormProduct(false));
+    dispatch(isEditProductForm(false));
+    form.resetFields();
   };
   const handleChange = (value: string) => {
     console.log(value);
@@ -382,21 +353,7 @@ const ProductForm = () => {
     }
   };
   const handleFileSelected = (file: any) => {
-    setImage(file.target.files[0]);
-  };
-  const uploadImage = async () => {
-    if (!image) {
-      notification.open({
-        message: "Upload ảnh chưa thành công",
-      });
-    } else {
-      const imageRef = ref(storage, `images/${image.name + v4()}`);
-      await uploadBytes(imageRef, image).then(async (snapshot) => {
-        await getDownloadURL(snapshot.ref).then((url) => {
-          setImageUpload(url);
-        });
-      });
-    }
+    setImageUpload(file.target.files[0]);
   };
 
   const onChangeTabs = (newActiveKey: string) => {
@@ -404,10 +361,10 @@ const ProductForm = () => {
   };
 
   const add = () => {
-    const newActiveKey = `newTab${newTabIndex.current++}`;
+    const newActiveKey = `${newTabIndex.current++}`;
     const newPanes = [...items];
     newPanes.push({
-      label: "Thuộc tính mới",
+      label: `Thuộc tính ${newActiveKey}`,
       children: <Variants></Variants>,
       key: newActiveKey,
     });
@@ -468,6 +425,7 @@ const ProductForm = () => {
                 <Form.Item label="Tên sản phẩm" name="name">
                   <Input
                     {...register("name")}
+                    style={{ width: 300 }}
                     onChange={(e) => setName(e.target.value)}
                   />
                   {/* <p className={styles.warning}>{errors.name?.message}</p> */}
@@ -476,7 +434,7 @@ const ProductForm = () => {
               <Col span={12}>
                 <Form.Item label="Giá sản phẩm" name="price">
                   <InputNumber
-                    style={{ width: 350 }}
+                    style={{ width: 300 }}
                     onChange={(e: any) => setPrice(e)}
                   />
                   {/* <CurrencyInput
@@ -497,23 +455,23 @@ const ProductForm = () => {
             </Row>
             <Row>
               <Col span={12}>
-                <Form.Item label="Nhóm sản phẩm" name="category">
+                <Form.Item label="Nhóm sản phẩm" name="categoryId">
                   <Select
                     defaultValue="Chọn nhóm sản phẩm"
-                    style={{ width: 200 }}
+                    style={{ width: 300 }}
                     onChange={handleChange}
                     options={data}
                   />
-                  <button
+                  {/* <button
                     className="ml-2"
                     onClick={() => setCreateCategory(true)}
                   >
                     <PlusOutlined />
-                  </button>
+                  </button> */}
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="Sold out" name="soldOut">
+                <Form.Item label="Sold out" name="isSoldOut">
                   <div className="ml-10">
                     <Switch
                       style={{ width: 50 }}
@@ -563,23 +521,16 @@ const ProductForm = () => {
                 </Form.Item>
               </Col>
             </Row>
-            <Form.Item name="imageUpload">
-              <Row>
-                <Col span={6}>
-                  <Image width={200} src={imageUpload} />
-                </Col>
-                <Col span={6}>
-                  <Button variant="contained" component="label">
-                    Tải ảnh lên
-                    <input
-                      hidden
-                      accept="image/*"
-                      type="file"
-                      onChange={(e) => handleFileSelected(e)}
-                    />
-                  </Button>
-                </Col>
-              </Row>
+            <Form.Item name="image">
+              <Button variant="contained" component="label">
+                Tải ảnh lên
+                <input
+                  hidden
+                  accept="image/*"
+                  type="file"
+                  onChange={(e) => handleFileSelected(e)}
+                />
+              </Button>
             </Form.Item>
           </Card>
           <Card className="mb-4" title="Thông tin khác">
@@ -623,7 +574,7 @@ const ProductForm = () => {
           </Card>
         </Form>
       </Modal>
-      <Modal
+      {/* <Modal
         title="Tạo mới danh mục sản phẩm"
         open={createCategory}
         okType={"danger"}
@@ -663,7 +614,7 @@ const ProductForm = () => {
             />
           </Form.Item>
         </Form>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };

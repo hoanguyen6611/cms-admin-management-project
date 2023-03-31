@@ -119,7 +119,6 @@ const ChangePermission = () => {
     );
     if (res.data.result) {
       dispatch(updateIsVisibleFormPermissionGroup(false));
-      setValueForm();
       notification.open({
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -129,15 +128,9 @@ const ChangePermission = () => {
   const cancelCreatePermissionGroup = () => {
     dispatch(updateIsVisibleFormPermissionGroup(false));
     dispatch(updateIsEdit(false));
-    setValueForm();
+    form.resetFields();
   };
 
-  const setValueForm = () => {
-    setName("");
-    setDes("");
-    setId(0);
-    setSelectedRowKeys([]);
-  };
 
   const onSelect: TreeProps["onSelect"] = (selectedKeys, info) => {
     console.log("selected", selectedKeys, info);

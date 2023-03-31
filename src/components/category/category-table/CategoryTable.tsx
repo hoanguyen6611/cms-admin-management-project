@@ -85,7 +85,7 @@ const CategoryTable = () => {
       render: (text) => (
         <Tag
           style={
-            text === 1 ? { width: 80, height: 30 } : { width: 120, height: 30 }
+            text === 1 ? { width: 80, height: 25 } : { width: 112, height: 25 }
           }
           color={text === 1 ? "green" : "red"}
           key={text}
@@ -135,11 +135,7 @@ const CategoryTable = () => {
   const Context = createContext<ContextValue>(false);
   // if (error) return <div>An error has occured</div>;
   return (
-    <Table
-      rowSelection={rowSelection}
-      columns={columns}
-      dataSource={data}
-    />
+    <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
   );
 };
 

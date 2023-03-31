@@ -2,6 +2,7 @@ import Image from "next/image";
 import React, { useState, useEffect } from "react";
 
 const Dashboard = () => {
+  console.log(process.env.DB_HOST);
   return (
     <div>
       {/* <Image
