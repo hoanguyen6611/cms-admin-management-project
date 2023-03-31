@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Table } from "antd";
+import { Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Permission } from "@/models/permission";
@@ -49,6 +49,30 @@ const GroupPermissionTable = () => {
 
   const columns: ColumnsType<Permission> = [
     {
+      title: "Tên phân quyền",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Thông tin phân quyền",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      render: (text) => (
+        <Tag
+          style={text === 1 ?{ width: 80, height: 30 }:{ width: 120, height: 30 } }
+          color={text === 1 ? "green" : "red"}
+          key={text}
+        >
+          {text === 1 ? "KÍCH HOẠT" : "CHƯA KÍCH HOẠT"}
+        </Tag>
+      ),
+    },
+    {
       title: "",
       dataIndex: "id",
       key: "action",
@@ -68,22 +92,6 @@ const GroupPermissionTable = () => {
           </>
         );
       },
-    },
-    {
-      title: "Mã phân quyền",
-      dataIndex: "id",
-      key: "id",
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: "Tên phân quyền",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Thông tin phân quyền",
-      dataIndex: "description",
-      key: "description",
     },
   ];
   const isChangePermissionGroup = (record: number) => {

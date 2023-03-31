@@ -33,7 +33,6 @@ function getItem(
 const items: MenuItem[] = [
   getItem("Tổng quan", "", <DashboardOutlined />),
   getItem("Vai trò & phân quyền", "sub1", <ApartmentOutlined />, [
-    getItem("Quyền", "permission"),
     getItem("Phân quyền", "group"),
   ]),
   getItem("Sản phẩm", "sub2", <SettingOutlined />, [

@@ -1,5 +1,5 @@
 import React, { useState, createContext } from "react";
-import { Modal, notification, Table, Spin } from "antd";
+import { Modal, notification, Table, Spin, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import {
@@ -19,29 +19,24 @@ import styles from "./CategoryTable.module.scss";
 import useSWR, { mutate } from "swr";
 import { actions, useStoreContext } from "@/store";
 
-const fetcher = async (url: string) => {
+const fetcher = async () => {
   const token = localStorage.getItem("token");
-  const res = await axios.get(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  res.data.data.map((data: any) => {
+  const res = await axios.get(
+    "https://tech-api.herokuapp.com/v1/product-category/list",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  res.data.data.data.map((data: any) => {
     data.key = data.id;
   });
-  return res.data.data;
+  return res.data.data.data;
 };
 
 const CategoryTable = () => {
-  const {
-    data: category,
-    error,
-    mutate,
-  } = useSWR(
-    "https://tech-api.herokuapp.com/v1/product-category/list",
-    fetcher
-  );
-  // mutate({ ...data }, false);
+  const { data, error } = useSWR("/product-category", fetcher);
   const [state, dispatchs] = useStoreContext();
   const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -79,6 +74,27 @@ const CategoryTable = () => {
   };
   const columns: ColumnsType<Category> = [
     {
+      title: "Tên danh mục",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      render: (text) => (
+        <Tag
+          style={
+            text === 1 ? { width: 80, height: 30 } : { width: 120, height: 30 }
+          }
+          color={text === 1 ? "green" : "red"}
+          key={text}
+        >
+          {text === 1 ? "KÍCH HOẠT" : "CHƯA KÍCH HOẠT"}
+        </Tag>
+      ),
+    },
+    {
       title: "",
       dataIndex: "id",
       key: "action",
@@ -99,17 +115,6 @@ const CategoryTable = () => {
         );
       },
     },
-    {
-      title: "Mã danh mục",
-      dataIndex: "id",
-      key: "id",
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: "Tên danh mục",
-      dataIndex: "name",
-      key: "name",
-    },
   ];
   const isEditCategory = async (record: number) => {
     dispatch(updateIsVisibleFormCategory(true));
@@ -128,19 +133,12 @@ const CategoryTable = () => {
   };
   type ContextValue = boolean;
   const Context = createContext<ContextValue>(false);
-  if (error) return <div>An error has occured</div>;
-  if (!category)
-    return (
-      <div className={styles.example}>
-        <Spin />
-      </div>
-    );
-
+  // if (error) return <div>An error has occured</div>;
   return (
     <Table
       rowSelection={rowSelection}
       columns={columns}
-      dataSource={category}
+      dataSource={data}
     />
   );
 };

@@ -13,7 +13,11 @@ import {
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 const { TextArea } = Input;
-import { CheckOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  CheckOutlined,
+  PlusOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -28,7 +32,6 @@ import useSWR, { mutate } from "swr";
 import { Category } from "@/models";
 import Context from "@/store/Context";
 import { actions, useStoreContext } from "@/store";
-import { NULL } from "sass";
 
 const fetcher = async () => {
   const token = localStorage.getItem("token");
@@ -40,11 +43,11 @@ const fetcher = async () => {
       },
     }
   );
-  res.data.data.map((data: any) => {
+  res.data.data.data.map((data: any) => {
     data.value = data.id;
     data.label = data.name;
   });
-  return res.data.data;
+  return res.data.data.data;
 };
 const fetchers = async (url: string) => {
   const token = localStorage.getItem("token");
@@ -57,6 +60,7 @@ const fetchers = async (url: string) => {
 };
 
 const CategoryForm = () => {
+  const [form] = Form.useForm();
   const categorySelector = useSelector((state: RootState) => state.category);
   const [state, dispatchs] = useStoreContext();
   const { data, error } = useSWR("product-category/list", fetcher);
@@ -77,68 +81,90 @@ const CategoryForm = () => {
   const [fileList, setFileList] = useState([]);
 
   useEffect(() => {
-    setName(category?.name);
     setId(category?.id);
     setStatus(category?.status);
     setOrderSort(category?.orderSort);
     setNote(category?.note);
     setIconUpload(category?.icon);
+    form.setFieldsValue({
+      nameCategory: category?.name,
+      parentId: category?.parentId,
+      note: category?.note,
+      status: category?.status,
+      orderSort: category?.orderSort,
+      id: category?.id
+    });
   }, [category]);
-  const createFormCategory = async () => {
+
+  const createCategoryForm = async () => {
     const token = localStorage.getItem("token");
-    if (id) {
-      const res = await axios.put(
-        "https://tech-api.herokuapp.com/v1/product-category/update",
-        {
-          name: name,
-          note: note,
-          orderSort: orderSort,
-          status: status,
-          icon: iconUpload,
-          id: id,
-          parentId: parentId,
+    const res = await axios.post(
+      "https://tech-api.herokuapp.com/v1/product-category/create",
+      {
+        name: name,
+        note: note,
+        orderSort: orderSort,
+        status: status,
+        icon: iconUpload,
+        parentId: parentId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (res.data.result) {
-        dispatch(updateIsVisibleFormCategory(false));
-        dispatchs(actions.changeVisibleFormCategory(false));
-        setValueForm();
-        notification.open({
-          message: res.data.message,
-          icon: <CheckOutlined style={{ color: "#52c41a" }} />,
-        });
       }
+    );
+    if (res.data.result) {
+      dispatch(updateIsVisibleFormCategory(false));
+      dispatchs(actions.changeVisibleFormCategory(false));
+      form.resetFields();
+      notification.open({
+        message: res.data.message,
+        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+      });
+    }
+  };
+  const updateCategory = async () => {
+    const token = localStorage.getItem("token");
+    const res = await axios.put(
+      "https://tech-api.herokuapp.com/v1/product-category/update",
+      {
+        name: name,
+        note: note,
+        orderSort: orderSort,
+        status: status,
+        icon: iconUpload,
+        id: id,
+        parentId: parentId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (res.data.result) {
+      dispatch(updateIsVisibleFormCategory(false));
+      dispatchs(actions.changeVisibleFormCategory(false));
+      form.resetFields();
+      notification.open({
+        message: res.data.message,
+        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+      });
     } else {
-      const res = await axios.post(
-        "https://tech-api.herokuapp.com/v1/product-category/create",
-        {
-          name: name,
-          note: note,
-          orderSort: orderSort,
-          status: status,
-          icon: iconUpload,
-          parentId: parentId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (res.data.result) {
-        dispatch(updateIsVisibleFormCategory(false));
-        dispatchs(actions.changeVisibleFormCategory(false));
-        setValueForm();
-        notification.open({
-          message: res.data.message,
-          icon: <CheckOutlined style={{ color: "#52c41a" }} />,
-        });
-      }
+      notification.open({
+        message: res.data,
+        icon: <WarningOutlined style={{ color: "red" }} />,
+      });
+    }
+  };
+
+  const handleOk = async () => {
+    console.log(form.getFieldsValue());
+    if (id) {
+      updateCategory();
+    } else {
+      createCategoryForm();
     }
   };
   const cancelCreateCategory = () => {
@@ -183,7 +209,7 @@ const CategoryForm = () => {
         }
         open={state.isVisibleFormCategory}
         okType={"danger"}
-        onOk={createFormCategory}
+        onOk={handleOk}
         onCancel={cancelCreateCategory}
         width={800}
       >
@@ -191,14 +217,13 @@ const CategoryForm = () => {
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 14 }}
           layout="horizontal"
+          form={form}
         >
           <Row gutter={16}>
             <Col span={12}>
-              {categorySelector.category?.name}
               <Form.Item
                 label="Tên danh mục"
                 name="nameCategory"
-                initialValue={name}
                 rules={[
                   {
                     required: true,
@@ -231,7 +256,6 @@ const CategoryForm = () => {
           </Row>
           <Row gutter={16}>
             <Col span={12}>
-              {categorySelector.category?.status}
               <Form.Item label="Trạng thái" name="status">
                 <Radio.Group
                   onChange={(e: RadioChangeEvent) => {
@@ -245,7 +269,6 @@ const CategoryForm = () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              {categorySelector.category?.orderSort}
               <Form.Item
                 label="Order Sort"
                 name="orderSort"

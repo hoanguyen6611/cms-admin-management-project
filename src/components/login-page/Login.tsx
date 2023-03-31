@@ -119,9 +119,6 @@ const Login = () => {
               />
               {/* <p className={styles.warning}>{errors.password?.message}</p> */}
             </Form.Item>
-            <Link className="mb-4" href="/forgetPassword">
-              Quên mật khẩu
-            </Link>
             <div className="flex">
               <Button
                 onClick={login}

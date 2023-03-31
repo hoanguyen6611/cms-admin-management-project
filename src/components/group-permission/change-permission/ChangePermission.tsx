@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Modal, Table, notification } from "antd";
+import { Form, Input, Modal, notification, Tree } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
   updateIsEdit,
@@ -7,11 +7,10 @@ import {
 } from "@/redux/group-permission/groupPermissionSlice";
 import useSWR from "swr";
 import { CheckOutlined } from "@ant-design/icons";
-import { ColumnsType } from "antd/es/table";
-import { Permission } from "@/models";
 import axios from "axios";
 import { useStoreContext } from "@/store";
 const { TextArea } = Input;
+import type { TreeProps } from "antd/es/tree";
 
 const getPermission = async () => {
   const token = localStorage.getItem("token");
@@ -23,10 +22,27 @@ const getPermission = async () => {
       },
     }
   );
+  var items: any;
   res.data.data.data.map((data: any) => {
-    data.key = data.id;
+    data.key = data.key;
+    data.title = data.nameGroup;
+    data.children = [
+      {
+        title: data.name + " ( " + data.action + " )",
+        key: data.id,
+      },
+    ];
   });
-  return res.data.data.data;
+  // for (var i = 0; i < res.data.data.data.length; i++) {
+  //   if (items.indexOf(res.data.data.data[i]) === -1) {
+  //     items.push(res.data.data.data[i])
+  //   }
+  // }
+  const ids = res.data.data.data.map((o: any) => o.nameGroup);
+  const filtered = res.data.data.data.filter(
+    (nameGroup: any, index: any) => !ids.includes(nameGroup, index + 1)
+  );
+  return filtered;
 };
 const fetchers = async (url: string) => {
   const token = localStorage.getItem("token");
@@ -37,9 +53,30 @@ const fetchers = async (url: string) => {
   });
   return res.data.data;
 };
+const getPermissionByAdmin = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(
+    "https://tech-api.herokuapp.com/v1/group/list?kind=1",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  res.data.data.data.map((data: any) => {
+    data.key = data.id;
+  });
+  return res.data.data[0].permissions;
+};
 
 const ChangePermission = () => {
+  const [form] = Form.useForm();
   const { data, error } = useSWR("/permission", getPermission);
+  console.log(data);
+  const { data: groupAdmin } = useSWR(
+    "https://tech-api.herokuapp.com/v1/group/list?kind=1",
+    fetchers
+  );
   const [state, dispatchs] = useStoreContext();
   const { data: group } = useSWR(
     `https://tech-api.herokuapp.com/v1/group/get/${state.idGroupPermission}`,
@@ -51,11 +88,17 @@ const ChangePermission = () => {
   const dispatch = useDispatch();
   const permissionGroup = useSelector((state: any) => state.permissionGroup);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [checkedKeys, setCheckedKeys] = useState<any>();
   useEffect(() => {
     setName(group?.name);
     setDes(group?.description);
     setId(group?.id);
     setSelectedRowKeys(group?.permissions.map((item: any) => item.id));
+    form.setFieldsValue({
+      name: group?.name,
+      description: group?.description,
+      status: group?.status,
+    });
   }, [group]);
 
   const createFormPermissionGroup = async () => {
@@ -89,39 +132,25 @@ const ChangePermission = () => {
     setValueForm();
   };
 
-  const columns: ColumnsType<Permission> = [
-    {
-      title: "Mã quyền",
-      dataIndex: "id",
-      key: "id",
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: "Tên quyền",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Action",
-      dataIndex: "action",
-      key: "action",
-    },
-  ];
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
   const setValueForm = () => {
     setName("");
     setDes("");
     setId(0);
     setSelectedRowKeys([]);
   };
+
+  const onSelect: TreeProps["onSelect"] = (selectedKeys, info) => {
+    console.log("selected", selectedKeys, info);
+  };
+
+  const onCheck: TreeProps["onCheck"] = (checkedKeys, info) => {
+    console.log("onCheck", checkedKeys, info);
+    setCheckedKeys(checkedKeys);
+  };
+  // const onCheck = (checkedKeysValue: React.Key[]) => {
+  //   console.log('onCheck', checkedKeysValue);
+  //   setCheckedKeys(checkedKeysValue);
+  // };
   return (
     <div>
       <Modal
@@ -136,53 +165,23 @@ const ChangePermission = () => {
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 14 }}
           layout="horizontal"
+          form={form}
         >
-          {/* <Form.Item label="Tên" name="name" initialValue={name}>
+          <Form.Item label="Tên" name="name" initialValue={name}>
             <Input
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setName(e.target.value)
               }
             ></Input>
-          </Form.Item> */}
-          <div className="flex flex-col gap-3 mb-5">
-            <label htmlFor="name" className="cursor-pointer">
-              Tên
-            </label>
-            <input
-              name="name"
-              value={name}
-              placeholder="Enter your name"
-              id="name"
-              className="border p-2 rounded-xl"
-              type="text"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setName(e.target.value)
-              }
-            />
-          </div>
-          {/* <Form.Item label="Chi tiết" name="description">
+          </Form.Item>
+          <Form.Item label="Chi tiết" name="description">
             <TextArea rows={4} onChange={(e) => setDes(e.target.value)} />
-          </Form.Item> */}
-          <div className="flex flex-col gap-3 mb-5">
-            <label htmlFor="description" className="cursor-pointer">
-              Chi tiết
-            </label>
-            <input
-              name="description"
-              value={des}
-              placeholder="Enter your description"
-              id="description"
-              type="text"
-              className="border p-2 rounded-xl"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setDes(e.target.value)
-              }
-            />
-          </div>
-          <Table
-            rowSelection={rowSelection}
-            columns={columns}
-            dataSource={data}
+          </Form.Item>
+          <Tree
+            checkable
+            onSelect={onSelect}
+            onCheck={onCheck}
+            treeData={data}
           />
         </Form>
       </Modal>
