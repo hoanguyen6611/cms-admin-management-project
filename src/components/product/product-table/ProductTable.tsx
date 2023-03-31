@@ -46,7 +46,7 @@ const ProductTable = () => {
   const dispatch = useDispatch();
   const deleteConfirmProduct = (record: any) => {
     Modal.confirm({
-      title: "Bạn có chắc chắn muốn xoá danh mục sản phẩm này không?",
+      title: "Bạn có chắc chắn muốn xoá sản phẩm này không?",
       okText: "OK",
       okType: "danger",
       onOk: () => {
