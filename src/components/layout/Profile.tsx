@@ -8,6 +8,7 @@ import React from "react";
 import type { MenuProps } from "antd";
 import axios from "axios";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const Profile = () => {
   const router = useRouter();
@@ -38,7 +39,7 @@ const Profile = () => {
   const items: MenuProps["items"] = [
     {
       key: "1",
-      label: <a href="/account-profile">Quản lý tài khoản</a>,
+      label: <Link href="/account-profile">Quản lý tài khoản</Link>,
     },
     {
       key: "2",
