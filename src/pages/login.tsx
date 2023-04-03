@@ -7,7 +7,7 @@ const LoginPage = () => {
   return (
     <div>
       <Head>
-        <title>Login Admin</title>
+        <title>Đăng nhập</title>
       </Head>
       {/* <Logins></Logins> */}
       <Login></Login>

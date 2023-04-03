@@ -12,29 +12,13 @@ import Link from "next/link";
 
 const Profile = () => {
   const router = useRouter();
-  const logout = async () => {
-    const token = localStorage.getItem("token");
-    const res = await axios.get(
-      "https://tech-api.herokuapp.com/v1/account/logout",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    if (res.data.result) {
-      notification.open({
-        message: "Đăng xuất thành công",
-        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
-      });
-      router.push("/login");
-      localStorage.clear();
-    } else {
-      notification.open({
-        message: res.data,
-        icon: <WarningOutlined style={{ color: "red" }} />,
-      });
-    }
+  const logout = () => {
+    notification.open({
+      message: "Đăng xuất thành công",
+      icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+    });
+    router.push("/login");
+    localStorage.clear();
   };
   const items: MenuProps["items"] = [
     {
