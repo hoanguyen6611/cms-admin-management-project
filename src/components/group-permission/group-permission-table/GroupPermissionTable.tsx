@@ -65,12 +65,12 @@ const GroupPermissionTable = () => {
       render: (text) => (
         <Tag
           style={
-            text === 1 ? { width: 80, height: 25 } : { width: 112, height: 25 }
+            text === 1 ? { width: 80, height: 25 } : { width: 50, height: 25 }
           }
           color={text === 1 ? "green" : "red"}
           key={text}
         >
-          {text === 1 ? "KÍCH HOẠT" : "CHƯA KÍCH HOẠT"}
+          {text === 1 ? "KÍCH HOẠT" : "KHOÁ"}
         </Tag>
       ),
     },

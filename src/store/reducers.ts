@@ -1,11 +1,15 @@
-import { IS_VISIBLE_CATEGORY_FORM, SET_ID_CATEGORY_FORM, SET_ID_GROUP_PERMISSION_FORM, SET_ID_PRODUCT_FORM } from "./constants";
+import { IS_VISIBLE_CATEGORY_FORM, SET_ID_CATEGORY_FORM, SET_ID_GROUP_PERMISSION_FORM, SET_ID_PRODUCT_FORM, SET_VARIANT } from "./constants";
 
-export const initialState: any = {
+
+export const initialState = {
   isVisibleFormCategory: false,
   isEditFormCategory: false,
   idCategory: 0,
   idProduct: 0,
-  idGroupPermission: 0
+  idGroupPermission: 0,
+  variant: {},
+  category: {
+  }
 };
 export function reducer(state: any, action: any) {
   switch (action.type) {
@@ -28,6 +32,11 @@ export function reducer(state: any, action: any) {
         return {
           ...state,
           idProduct: action.payload
+        };
+      case SET_VARIANT:
+        return {
+          ...state,
+          variant: action.payload
         }
   }
 }

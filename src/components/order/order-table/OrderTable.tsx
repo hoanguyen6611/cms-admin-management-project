@@ -1,5 +1,5 @@
-import React, { useState, createContext } from "react";
-import { Modal, notification, Table, Spin, Tag } from "antd";
+import React, { useEffect, useState } from "react";
+import { notification, Table, Spin, Tag, Modal } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import {
@@ -8,21 +8,24 @@ import {
   EditOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
-import { useDispatch } from "react-redux";
 import {
-  isEditCategoryForm,
-  setCategoryId,
-  updateIsVisibleFormCategory,
-} from "@/redux/category/categorySlice";
-import { Category } from "@/models/category";
-import styles from "./CategoryTable.module.scss";
-import useSWR, { mutate } from "swr";
+  isEditProductForm,
+  updateVisibleFormProduct,
+} from "@/redux/product/productSlice";
+import { useDispatch } from "react-redux";
+import useSWR from "swr";
+import { Product } from "@/models";
+import styles from "./ProductTable.module.scss";
 import { actions, useStoreContext } from "@/store";
 
+const VND = new Intl.NumberFormat("vi-VN", {
+  style: "currency",
+  currency: "VND",
+});
 const fetcher = async () => {
   const token = localStorage.getItem("token");
   const res = await axios.get(
-    "https://tech-api.herokuapp.com/v1/product-category/list",
+    "https://tech-api.herokuapp.com/v1/product/list",
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -31,29 +34,30 @@ const fetcher = async () => {
   );
   res.data.data.data.map((data: any) => {
     data.key = data.id;
+    data.price = VND.format(data.price);
   });
   return res.data.data.data;
 };
 
-const CategoryTable = () => {
-  const { data, error } = useSWR("/product-category", fetcher);
+const OrderTable = () => {
+  const { data, error } = useSWR("/product", fetcher);
   const [state, dispatchs] = useStoreContext();
-  const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const deleteConfirmCategory = (record: any) => {
+  const dispatch = useDispatch();
+  const deleteConfirmProduct = (record: any) => {
     Modal.confirm({
-      title: "Bạn có chắc chắn muốn xoá danh mục sản phẩm này không?",
+      title: "Bạn có chắc chắn muốn xoá sản phẩm này không?",
       okText: "OK",
       okType: "danger",
       onOk: () => {
-        deleteCategory(record);
+        deleteProduct(record);
       },
     });
   };
-  const deleteCategory = async (record: any) => {
+  const deleteProduct = async (record: any) => {
     const token = localStorage.getItem("token");
     const res = await axios.delete(
-      `https://tech-api.herokuapp.com/v1/product-category/delete/${record}`,
+      `https://tech-api.herokuapp.com/v1/product/delete/${record}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -72,11 +76,17 @@ const CategoryTable = () => {
       });
     }
   };
-  const columns: ColumnsType<Category> = [
+
+  const columns: ColumnsType<Product> = [
     {
-      title: "Tên danh mục",
+      title: "Tên sản phẩm",
       dataIndex: "name",
       key: "name",
+    },
+    {
+      title: "Giá",
+      dataIndex: "price",
+      key: "price",
     },
     {
       title: "Trạng thái",
@@ -98,17 +108,17 @@ const CategoryTable = () => {
       title: "",
       dataIndex: "id",
       key: "action",
-      render: (record) => {
+      render: (record: number) => {
         return (
           <>
             <EditOutlined
               style={{ color: "green" }}
-              onClick={() => isEditCategory(record)}
+              onClick={() => isEditProduct(record)}
             />
             <DeleteOutlined
               style={{ color: "red", marginLeft: 12 }}
               onClick={() => {
-                deleteConfirmCategory(record);
+                deleteConfirmProduct(record);
               }}
             />
           </>
@@ -116,27 +126,35 @@ const CategoryTable = () => {
       },
     },
   ];
-  const isEditCategory = async (record: number) => {
-    dispatch(updateIsVisibleFormCategory(true));
-    dispatch(isEditCategoryForm(true));
-    dispatch(setCategoryId(record));
-    dispatchs(actions.setIdCategoryForm(record));
-    dispatchs(actions.changeVisibleFormCategory(true));
+  const isEditProduct = (record: number) => {
+    dispatch(updateVisibleFormProduct(true));
+    dispatch(isEditProductForm(true));
+    dispatchs(actions.setIdProductForm(record));
   };
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
+
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
   };
-  type ContextValue = boolean;
-  const Context = createContext<ContextValue>(false);
   // if (error) return <div>An error has occured</div>;
+  // if (!data)
+  //   return (
+  //     <div className={styles.example}>
+  //       <Spin />
+  //     </div>
+  //   );
   return (
-    <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
+    <Table
+      rowSelection={rowSelection}
+      columns={columns}
+      dataSource={data}
+      className="mt-4"
+    />
   );
 };
 
-export default CategoryTable;
+export default OrderTable;

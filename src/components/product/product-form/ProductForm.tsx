@@ -13,6 +13,7 @@ import {
   Upload,
   Tabs,
   Image,
+  Button,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { CheckOutlined, PlusOutlined } from "@ant-design/icons";
@@ -36,9 +37,8 @@ import type { RadioChangeEvent } from "antd";
 import useSWR from "swr";
 import { Variant } from "@/models";
 import { v4 } from "uuid";
-import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { useStoreContext } from "@/store";
+import { actions, useStoreContext } from "@/store";
 import CurrencyInput from "react-currency-input-field";
 import { isEditProductForm } from "@/redux/product/productSlice";
 
@@ -82,7 +82,15 @@ const fetchers = async (url: string) => {
   });
   return res.data.data;
 };
-const Variants = () => {
+const Variants = (props: any) => {
+  console.log(props);
+  useEffect(() => {
+    form.setFieldsValue({
+      name: props?.name,
+      description: props?.description,
+      price: props?.price,
+    });
+  }, [props]);
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [name, setName] = useState("");
@@ -151,8 +159,7 @@ const Variants = () => {
         <Row>
           <Col span={12}>
             <Form.Item label="Hình ảnh" name="image">
-              <Button variant="contained" component="label">
-                Tải ảnh lên
+              <Button className="p-4 border-none">
                 <input
                   hidden
                   accept="image/*"
@@ -180,9 +187,6 @@ const Variants = () => {
     </div>
   );
 };
-const initialItems = [
-  { label: "Thuộc tính 1", children: <Variants></Variants>, key: "1" },
-];
 type TargetKey = React.MouseEvent | React.KeyboardEvent | string;
 
 const ProductForm = () => {
@@ -193,6 +197,7 @@ const ProductForm = () => {
     `https://tech-api.herokuapp.com/v1/product/get/${state.idProduct}`,
     fetchers
   );
+  console.log(productItem);
   const {
     register,
     handleSubmit,
@@ -206,21 +211,40 @@ const ProductForm = () => {
   const [des, setDes] = useState("");
   const [price, setPrice] = useState<any>();
   const [saleOff, setSaleOff] = useState(false);
+  const [soldOut, setSoldOut] = useState(false);
   const [status, setStatus] = useState(1);
   const [image, setImage] = useState("");
   const [imageUpload, setImageUpload] = useState<File>();
   const [numberSaleOff, setNumberSaleOff] = useState(0);
-  const [soldOut, setSoldOut] = useState(false);
   const [createCategory, setCreateCategory] = useState(false);
   const [categoryId, setCategoryId] = useState("");
   const [parentId, setParentId] = useState("");
   const [categoryName, setCategoryName] = useState("");
   const [noteCategory, setNoteCategory] = useState("");
+  const [variantsShow, setVariantsShow] = useState<Variant[]>([]);
+  const initialItems = [
+    { label: "Thuộc tính 1", children: <Variants></Variants>, key: "1" },
+  ];
+  const initialItemsUpdate = [
+    { label: "Thuộc tính 1", children: <Variants></Variants>, key: "1" },
+  ];
+  // const initialItemsUpdate = productItem?.productConfigs[0].variants.map(
+  //   (data: any) => {
+  //     data.label = data.name;
+  //     data.children = <Variants></Variants>;
+  //     data.key = data.id;
+  //   }
+  // );
   const [items, setItems] = useState(initialItems);
+  const [itemsUpdate, setItemsUpdate] = useState(initialItemsUpdate);
   const [activeKey, setActiveKey] = useState(initialItems[0].key);
-  const [isRequired, setIsRequired] = useState(true);
+  const [activeKeyUpdate, setActiveKeyUpdate] = useState(
+    initialItemsUpdate[0].key
+  );
   const [nameConfig, setNameConfig] = useState("");
   const [statusConfig, setStatusConfig] = useState(1);
+  const [fileList, setFileList] = useState([]);
+
   useEffect(() => {
     setId(productItem?.id);
     form.setFieldsValue({
@@ -232,30 +256,43 @@ const ProductForm = () => {
       saleOff: productItem?.saleOff,
       status: productItem?.status,
       image: productItem?.image,
+      // statusConfig: productItem?.productConfigs[0]?.status,
+      // nameConfig: productItem?.productConfigs[0]?.name,
+      // variantsShow: productItem?.productConfigs[0]?.variants,
     });
   }, [productItem]);
 
   const newTabIndex = useRef(2);
   const dispatch = useDispatch();
   const createProduct = async () => {
-    const token = localStorage.getItem("token");
-    const res = await axios.post(
-      "https://tech-api.herokuapp.com/v1/product/create",
-      { ...form.getFieldsValue(), image: image },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    if (res.data.result) {
-      form.resetFields();
-      notification.open({
-        message: res.data.message,
-        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
-      });
-    } 
-    // else {
+    console.log(form.getFieldsValue());
+    // const token = localStorage.getItem("token");
+    // const res = await axios.post(
+    //   "https://tech-api.herokuapp.com/v1/product/create",
+    //   {
+    //     ...form.getFieldsValue(),
+    //     image: image,
+    //     productConfigs: [
+    //       {
+    //         name: form.getFieldsValue().nameConfig,
+    //         status: form.getFieldsValue().statusConfig,
+    //         variants: variants,
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   }
+    // );
+    // if (res.data.result) {
+    //   form.resetFields();
+    //   notification.open({
+    //     message: res.data.message,
+    //     icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+    //   });
+    // } else {
     //   notification.open({
     //     message: res.data.message,
     //     icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -263,6 +300,11 @@ const ProductForm = () => {
     // }
   };
   const updateProduct = async () => {
+    console.log({
+      ...form.getFieldsValue(),
+      id: id,
+      image: image,
+    });
     const token = localStorage.getItem("token");
     const res = await axios.put(
       "https://tech-api.herokuapp.com/v1/product/update",
@@ -316,6 +358,7 @@ const ProductForm = () => {
     dispatch(updateVisibleFormProduct(false));
     dispatch(isEditProductForm(false));
     form.resetFields();
+    dispatchs(actions.setIdProductForm(0));
   };
   const handleChange = (value: string) => {
     console.log(value);
@@ -409,8 +452,15 @@ const ProductForm = () => {
         title={product.isEdit ? "Cập nhập sản phẩm" : "Tạo mới sản phẩm"}
         open={product.isVisibleFormProduct}
         onOk={handleOk}
-        okType={"danger"}
         onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            Huỷ
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleOk}>
+            {product.isEdit ? "Cập nhập" : "Tạo mới"}
+          </Button>,
+        ]}
         width={1200}
       >
         <Form
@@ -476,6 +526,7 @@ const ProductForm = () => {
                     <Switch
                       style={{ width: 50 }}
                       onChange={(e: boolean) => setSoldOut(e)}
+                      defaultChecked={false}
                     />
                   </div>
                 </Form.Item>
@@ -487,6 +538,7 @@ const ProductForm = () => {
                   <Switch
                     style={{ width: 50 }}
                     onChange={(e: boolean) => setSaleOff(e)}
+                    defaultChecked={false}
                   />
                 </Form.Item>
               </Col>
@@ -522,8 +574,7 @@ const ProductForm = () => {
               </Col>
             </Row>
             <Form.Item name="image">
-              <Button variant="contained" component="label">
-                Tải ảnh lên
+              <Button className="p-4 border-none">
                 <input
                   hidden
                   accept="image/*"
@@ -544,14 +595,6 @@ const ProductForm = () => {
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="Bắt buộc hay không" name="isRequired">
-                  <Switch
-                    style={{ width: 50 }}
-                    onChange={(e: boolean) => setIsRequired(e)}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
                 <Form.Item label="Trạng thái" name="statusConfig">
                   <Radio.Group
                     onChange={(e: RadioChangeEvent) => {
@@ -567,14 +610,14 @@ const ProductForm = () => {
             <Tabs
               type="editable-card"
               onChange={onChangeTabs}
-              activeKey={activeKey}
+              activeKey={product.isEdit ? activeKeyUpdate : activeKey}
               onEdit={onEdit}
-              items={items}
+              items={product.isEdit ? initialItemsUpdate : items}
             />
           </Card>
         </Form>
       </Modal>
-      {/* <Modal
+      <Modal
         title="Tạo mới danh mục sản phẩm"
         open={createCategory}
         okType={"danger"}
@@ -601,7 +644,7 @@ const ProductForm = () => {
               defaultValue="Chọn nhóm danh mục cha"
               style={{ width: 200 }}
               onChange={handleChangeParent}
-              options={category}
+              options={data}
             />
             <button className="ml-2" onClick={() => setCreateCategory(true)}>
               <PlusOutlined />
@@ -614,7 +657,7 @@ const ProductForm = () => {
             />
           </Form.Item>
         </Form>
-      </Modal> */}
+      </Modal>
     </div>
   );
 };

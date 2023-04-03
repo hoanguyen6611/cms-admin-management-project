@@ -1,0 +1,62 @@
+import {
+  CheckOutlined,
+  UserOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
+import { Avatar, Button, Dropdown, notification } from "antd";
+import React from "react";
+import type { MenuProps } from "antd";
+import axios from "axios";
+import { useRouter } from "next/router";
+
+const Profile = () => {
+  const router = useRouter();
+  const logout = async () => {
+    const token = localStorage.getItem("token");
+    const res = await axios.get(
+      "https://tech-api.herokuapp.com/v1/account/logout",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (res.data.result) {
+      router.push("/login");
+      notification.open({
+        message: res.data.message,
+        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+      });
+      localStorage.clear();
+    } else {
+      notification.open({
+        message: res.data,
+        icon: <WarningOutlined style={{ color: "red" }} />,
+      });
+    }
+  };
+  const items: MenuProps["items"] = [
+    {
+      key: "1",
+      label: <a href="/account-profile">Quản lý tài khoản</a>,
+    },
+    {
+      key: "2",
+      label: <a onClick={logout}>Đăng xuất</a>,
+    },
+  ];
+  return (
+    <div>
+      <Dropdown menu={{ items }}>
+        <a onClick={(e) => e.preventDefault()}>
+          <div className="flex">
+            <Avatar className="mr-2" size={40} icon={<UserOutlined />} />
+            <div className="font-bold">ADMIN</div>
+          </div>
+        </a>
+      </Dropdown>
+    </div>
+  );
+};
+
+export default Profile;

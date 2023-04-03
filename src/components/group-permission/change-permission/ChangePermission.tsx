@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Modal, notification, Tree } from "antd";
+import { Button, Form, Input, Modal, notification, Tree } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
   updateIsEdit,
@@ -72,7 +72,6 @@ const getPermissionByAdmin = async () => {
 const ChangePermission = () => {
   const [form] = Form.useForm();
   const { data, error } = useSWR("/permission", getPermission);
-  console.log(data);
   const { data: groupAdmin } = useSWR(
     "https://tech-api.herokuapp.com/v1/group/list?kind=1",
     fetchers
@@ -131,7 +130,6 @@ const ChangePermission = () => {
     form.resetFields();
   };
 
-
   const onSelect: TreeProps["onSelect"] = (selectedKeys, info) => {
     console.log("selected", selectedKeys, info);
   };
@@ -149,16 +147,28 @@ const ChangePermission = () => {
       <Modal
         title={permissionGroup.isEdit ? "Cập nhập quyền" : "Tạo mới quyền"}
         open={permissionGroup.isVisibleChangePermissionGroup}
-        okType={"danger"}
         onOk={createFormPermissionGroup}
         onCancel={cancelCreatePermissionGroup}
         width={800}
+        footer={[
+          <Button key="back" onClick={cancelCreatePermissionGroup}>
+            Huỷ
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            onClick={createFormPermissionGroup}
+          >
+            {permissionGroup.isEdit ? "Cập nhập" : "Thêm mới"}
+          </Button>,
+        ]}
       >
         <Form
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 14 }}
           layout="horizontal"
           form={form}
+          name="basic"
         >
           <Form.Item label="Tên" name="name" initialValue={name}>
             <Input

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -17,14 +17,12 @@ import { useRouter } from "next/router";
 const theme = createTheme();
 
 export const Logins = () => {
+  const [buttonSignIn, setButtonSignIn] = useState(false);
   const router = useRouter();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setButtonSignIn(true);
     const data = new FormData(event.currentTarget);
-    console.log({
-      username: data.get("username"),
-      password: data.get("password"),
-    });
     const res = await axios.post(
       "https://tech-api.herokuapp.com/v1/account/login",
       {
@@ -33,13 +31,12 @@ export const Logins = () => {
         app: "cms",
       }
     );
-    console.log(res.data);
     if (res.data.result) {
+      await router.push("/");
       notification.open({
         message: "Đăng nhập thành công",
         icon: <DoneIcon style={{ color: "#52c41a" }} />,
       });
-      await router.push("/");
       localStorage.setItem(EKey.TOKEN, res.data.data.token);
       localStorage.setItem("username", res.data.data.username);
     } else if (!res.data.result) {
@@ -93,8 +90,13 @@ export const Logins = () => {
               id="password"
               autoComplete="current-password"
             />
-            <Button type="submit" fullWidth sx={{ mt: 3, mb: 2 }}>
-              Sign In
+            <Button
+              disabled={buttonSignIn}
+              type="submit"
+              fullWidth
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Đăng nhập
             </Button>
           </Box>
         </Box>

@@ -5,14 +5,13 @@ import {
   DashboardOutlined,
   SnippetsOutlined,
   UserSwitchOutlined,
-  UserOutlined,
-  SmileOutlined,
 } from "@ant-design/icons";
-import { Avatar, MenuProps } from "antd";
-import { Breadcrumb, Layout, Menu, theme, Dropdown } from "antd";
+import { MenuProps } from "antd";
+import { Layout, Menu, theme } from "antd";
 import { useRouter } from "next/router";
+import Profile from "./Profile";
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -32,17 +31,16 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem("Tổng quan", "", <DashboardOutlined />),
-  getItem("Vai trò & phân quyền", "sub1", <ApartmentOutlined />, [
-    getItem("Phân quyền", "group"),
-  ]),
-  getItem("Sản phẩm", "sub2", <SettingOutlined />, [
+  getItem("Phân quyền", "group", <ApartmentOutlined />),
+  // getItem("Quyền", "permission"),
+  getItem("Sản phẩm", "sub1", <SettingOutlined />, [
     getItem("Danh mục", "category"),
     getItem("Sản phẩm", "product"),
   ]),
-  getItem("Giao dịch", "sub3", <SnippetsOutlined />, [
+  getItem("Giao dịch", "sub2", <SnippetsOutlined />, [
     getItem("Đơn hàng", "order"),
   ]),
-  getItem("Nhân viên", "sub4", <UserSwitchOutlined />, [
+  getItem("Nhân viên", "sub3", <UserSwitchOutlined />, [
     getItem("Chấm công", "salary"),
   ]),
 ];
@@ -81,7 +79,7 @@ const LayoutPage = (props: any) => {
       <Layout className="site-layout">
         <Header style={{ padding: 0, background: colorBgContainer }}>
           <div className="flex items-end flex-col m-4">
-            <Avatar size={40} icon={<UserOutlined />} />
+            <Profile></Profile>
           </div>
         </Header>
         <Content style={{ margin: "0 16px" }}>

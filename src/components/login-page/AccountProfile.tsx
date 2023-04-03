@@ -1,8 +1,7 @@
-import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
-const Dashboard = () => {
+const AccountProfile = () => {
   const router = useRouter();
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -12,7 +11,7 @@ const Dashboard = () => {
       }
     }
   }, [router]);
-  return <div></div>;
+  return <div>Quản lý tài khoản cá nhân</div>;
 };
 
-export default Dashboard;
+export default AccountProfile;

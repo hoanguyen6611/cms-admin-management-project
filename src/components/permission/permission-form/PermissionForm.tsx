@@ -91,7 +91,6 @@ const PermissionForm = (isModalOpen: any) => {
           <Form.Item label="Show Menu" name="showMenu">
             <Switch
               style={{ width: 50 }}
-              checked={false}
               onChange={(e: boolean) => setShowMenu(e)}
             />
           </Form.Item>

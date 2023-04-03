@@ -25,13 +25,20 @@ import {
   updateIsVisibleFormCategory,
 } from "@/redux/category/categorySlice";
 import { RootState } from "@/redux/store";
-import { ref, UploadResult, uploadBytesResumable } from "firebase/storage";
+import {
+  ref,
+  UploadResult,
+  uploadBytesResumable,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
 import { storage } from "@/utils/firebase";
 import type { RadioChangeEvent } from "antd";
 import useSWR, { mutate } from "swr";
 import { Category } from "@/models";
 import Context from "@/store/Context";
 import { actions, useStoreContext } from "@/store";
+import { v4 } from "uuid";
 
 const fetcher = async () => {
   const token = localStorage.getItem("token");
@@ -75,24 +82,20 @@ const CategoryForm = () => {
   const [status, setStatus] = useState(1);
   const [orderSort, setOrderSort] = useState(0);
   const [note, setNote] = useState("");
-  const [icon, setIcon] = useState<File>();
-  const [iconUpload, setIconUpload] = useState("");
+  const [icon, setIcon] = useState("");
+  const [iconUpload, setIconUpload] = useState<File>();
   const dispatch = useDispatch();
   const [fileList, setFileList] = useState([]);
 
   useEffect(() => {
     setId(category?.id);
-    setStatus(category?.status);
-    setOrderSort(category?.orderSort);
-    setNote(category?.note);
-    setIconUpload(category?.icon);
     form.setFieldsValue({
       nameCategory: category?.name,
       parentId: category?.parentId,
       note: category?.note,
       status: category?.status,
       orderSort: category?.orderSort,
-      id: category?.id
+      id: category?.id,
     });
   }, [category]);
 
@@ -101,12 +104,8 @@ const CategoryForm = () => {
     const res = await axios.post(
       "https://tech-api.herokuapp.com/v1/product-category/create",
       {
-        name: name,
-        note: note,
-        orderSort: orderSort,
-        status: status,
-        icon: iconUpload,
-        parentId: parentId,
+        ...form.getFieldsValue(),
+        icon: icon,
       },
       {
         headers: {
@@ -129,13 +128,9 @@ const CategoryForm = () => {
     const res = await axios.put(
       "https://tech-api.herokuapp.com/v1/product-category/update",
       {
-        name: name,
-        note: note,
-        orderSort: orderSort,
-        status: status,
-        icon: iconUpload,
+        ...form.getFieldsValue(),
         id: id,
-        parentId: parentId,
+        icon: icon,
       },
       {
         headers: {
@@ -160,7 +155,7 @@ const CategoryForm = () => {
   };
 
   const handleOk = async () => {
-    console.log(form.getFieldsValue());
+    uploadImage();
     if (id) {
       updateCategory();
     } else {
@@ -171,31 +166,21 @@ const CategoryForm = () => {
     dispatch(updateIsVisibleFormCategory(false));
     dispatch(isEditCategoryForm(false));
     dispatchs(actions.changeVisibleFormCategory(false));
-    setValueForm();
   };
   const handleFileSelected = (file: any) => {
-    setIcon(file);
+    setIconUpload(file.target.files[0]);
   };
-  const setValueForm = () => {
-    setName("");
-    setId(0);
-    setStatus(1);
-    setOrderSort(0);
-    setNote("");
-    setIconUpload("");
-  };
-  const uploadImage = () => {
-    if (!icon) {
+  const uploadImage = async () => {
+    if (!iconUpload) {
       notification.open({
         message: "Upload ảnh chưa thành công",
       });
     } else {
-      const imageRef = ref(storage, `images/${icon.name}`);
-      uploadBytesResumable(imageRef, icon).then((res: UploadResult) => {
-        setIconUpload(
-          `https://firebasestorage.googleapis.com/v0/b/music-mp3-page.appspot.com/o/images%2F${icon.name}?
-          alt=media&token=16d7e53d-909a-484e-8481-f242d2e3a31f`
-        );
+      const imageRef = ref(storage, `images/${iconUpload.name + v4()}`);
+      await uploadBytes(imageRef, iconUpload).then(async (snapshot) => {
+        await getDownloadURL(snapshot.ref).then((url) => {
+          setIcon(url);
+        });
       });
     }
   };
@@ -212,6 +197,14 @@ const CategoryForm = () => {
         onOk={handleOk}
         onCancel={cancelCreateCategory}
         width={800}
+        footer={[
+          <Button key="back" onClick={cancelCreateCategory}>
+            Huỷ
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleOk}>
+            {categorySelector.isEdit ? "Cập nhập" : "Thêm mới"}
+          </Button>,
+        ]}
       >
         <Form
           labelCol={{ span: 8 }}
@@ -296,18 +289,14 @@ const CategoryForm = () => {
           <Row gutter={16}>
             <Col span={24}>
               <Form.Item>
-                <Upload
-                  listType="picture-card"
-                  onChange={(e) => handleFileSelected(e.file)}
-                >
-                  {fileList.length >= 8 ? null : (
-                    <div>
-                      <PlusOutlined />
-                      <div style={{ marginTop: 8 }}>Upload</div>
-                    </div>
-                  )}
-                </Upload>
-                <Button onClick={uploadImage}>Upload</Button>
+                <Button className="p-4 border-none">
+                  <input
+                    hidden
+                    accept="image/*"
+                    type="file"
+                    onChange={(e) => handleFileSelected(e)}
+                  />
+                </Button>
               </Form.Item>
             </Col>
           </Row>
