@@ -32,19 +32,28 @@ export const Logins = () => {
       }
     );
     if (res.data.result) {
-      await router.push("/");
       notification.open({
         message: "Đăng nhập thành công",
         icon: <DoneIcon style={{ color: "#52c41a" }} />,
       });
+      await router.push("");
       localStorage.setItem(EKey.TOKEN, res.data.data.token);
       localStorage.setItem("username", res.data.data.username);
+      setButtonSignIn(false);
     } else if (!res.data.result) {
       notification.open({
         message: "Thông tin đăng nhập chưa chính xác",
       });
     }
   };
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      if (token) {
+        router.back();
+      }
+    }
+  }, [router]);
 
   return (
     <ThemeProvider theme={theme}>

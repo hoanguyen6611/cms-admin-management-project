@@ -1,7 +1,7 @@
 import React, { SyntheticEvent, useEffect, useState } from "react";
 import { Input, Layout, Form, notification, theme, Button } from "antd";
 import { useRouter } from "next/router";
-import { CheckOutlined } from "@ant-design/icons";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { EKey } from "@/models/general";
 import styles from "./Login.module.scss";
@@ -27,6 +27,7 @@ const schema = yup.object({
 type FormData = yup.InferType<typeof schema>;
 
 const Login = () => {
+  const [form] = Form.useForm();
   const {
     register,
     handleSubmit,
@@ -49,15 +50,14 @@ const Login = () => {
     const { data } = await axios.post(
       "https://tech-api.herokuapp.com/v1/account/login",
       {
-        username: username,
-        password: password,
+        ...form.getFieldsValue(),
         app: "cms",
       }
     );
     if (data.result) {
       dispatch(setUserLogin(data.data));
       notification.open({
-        message: data.message,
+        message: "Đăng nhập thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       await router.push("/");
@@ -65,7 +65,8 @@ const Login = () => {
       localStorage.setItem("username", data.data.username);
     } else {
       notification.open({
-        message: data.message,
+        message: "Thông tin đăng nhập không đúng",
+        icon: <CloseOutlined style={{ color: "red" }} />,
       });
     }
   };
@@ -87,20 +88,17 @@ const Login = () => {
 
   return (
     <Layout className="layout">
-      <Header>
-        <div className="logo" />
-      </Header>
       <Content>
         <div
-          className="site-layout-content w-full h-[646px] flex justify-around items-center"
-          style={{ background: "#4070f4" }}
+          className="site-layout-content w-full h-[800px] flex justify-around items-center"
+          style={{ background: "#ffffff" }}
         >
           <Form
             className="px-10 pb-10 pt-[100px] w-full max-w-[500px] mx-auto border rounded-lg bg-white"
             autoComplete="off"
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 15 }}
-            // onSubmit={login}
+            form={form}
           >
             <h1 className="text-xl text-center font-bold mb-4">Đăng nhập</h1>
             <Form.Item label="Tên đăng nhập" name="username">

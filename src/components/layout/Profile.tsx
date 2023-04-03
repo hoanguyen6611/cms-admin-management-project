@@ -23,11 +23,11 @@ const Profile = () => {
       }
     );
     if (res.data.result) {
-      router.push("/login");
       notification.open({
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      router.push("/login");
       localStorage.clear();
     } else {
       notification.open({
