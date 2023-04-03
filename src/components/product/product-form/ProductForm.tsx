@@ -197,7 +197,6 @@ const ProductForm = () => {
     `https://tech-api.herokuapp.com/v1/product/get/${state.idProduct}`,
     fetchers
   );
-  console.log(productItem);
   const {
     register,
     handleSubmit,
@@ -207,11 +206,11 @@ const ProductForm = () => {
   });
   const product = useSelector((state: any) => state.product);
   const [id, setId] = useState<number>();
-  const [name, setName] = useState("");
-  const [des, setDes] = useState("");
+  const [name, setName] = useState<string>("");
+  const [des, setDes] = useState<string>("");
   const [price, setPrice] = useState<any>();
-  const [saleOff, setSaleOff] = useState(false);
-  const [soldOut, setSoldOut] = useState(false);
+  const [saleOff, setSaleOff] = useState<boolean>(false);
+  const [soldOut, setSoldOut] = useState<boolean>(false);
   const [status, setStatus] = useState(1);
   const [image, setImage] = useState("");
   const [imageUpload, setImageUpload] = useState<File>();
@@ -265,39 +264,38 @@ const ProductForm = () => {
   const newTabIndex = useRef(2);
   const dispatch = useDispatch();
   const createProduct = async () => {
-    console.log(form.getFieldsValue());
-    // const token = localStorage.getItem("token");
-    // const res = await axios.post(
-    //   "https://tech-api.herokuapp.com/v1/product/create",
-    //   {
-    //     ...form.getFieldsValue(),
-    //     image: image,
-    //     productConfigs: [
-    //       {
-    //         name: form.getFieldsValue().nameConfig,
-    //         status: form.getFieldsValue().statusConfig,
-    //         variants: variants,
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //   }
-    // );
-    // if (res.data.result) {
-    //   form.resetFields();
-    //   notification.open({
-    //     message: res.data.message,
-    //     icon: <CheckOutlined style={{ color: "#52c41a" }} />,
-    //   });
-    // } else {
-    //   notification.open({
-    //     message: res.data.message,
-    //     icon: <CheckOutlined style={{ color: "#52c41a" }} />,
-    //   });
-    // }
+    const token = localStorage.getItem("token");
+    const res = await axios.post(
+      "https://tech-api.herokuapp.com/v1/product/create",
+      {
+        ...form.getFieldsValue(),
+        image: image,
+        productConfigs: [
+          {
+            name: form.getFieldsValue().nameConfig,
+            status: form.getFieldsValue().statusConfig,
+            variants: variants,
+          },
+        ],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (res.data.result) {
+      form.resetFields();
+      notification.open({
+        message: res.data.message,
+        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+      });
+    } else {
+      notification.open({
+        message: res.data.message,
+        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+      });
+    }
   };
   const updateProduct = async () => {
     console.log({
@@ -521,12 +519,14 @@ const ProductForm = () => {
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="Sold out" name="isSoldOut">
+                <Form.Item label="Đã bán hết" name="isSoldOut">
                   <div className="ml-10">
                     <Switch
                       style={{ width: 50 }}
-                      onChange={(e: boolean) => setSoldOut(e)}
                       defaultChecked={false}
+                      onChange={(checked: boolean) => {
+                        setSoldOut(checked);
+                      }}
                     />
                   </div>
                 </Form.Item>
@@ -534,16 +534,16 @@ const ProductForm = () => {
             </Row>
             <Row>
               <Col span={8}>
-                <Form.Item label="Sale Off" name="isSaleOff">
+                <Form.Item label="Giảm giá" name="isSaleOff">
                   <Switch
                     style={{ width: 50 }}
-                    onChange={(e: boolean) => setSaleOff(e)}
+                    onChange={(checked: boolean) => setSaleOff(checked)}
                     defaultChecked={false}
                   />
                 </Form.Item>
               </Col>
               <Col span={8} hidden={!saleOff}>
-                <Form.Item label="Giảm giá" name="saleOff">
+                <Form.Item label="Phần trăm giảm" name="saleOff">
                   <InputNumber
                     style={{ width: 200 }}
                     addonAfter="%"
