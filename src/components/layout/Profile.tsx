@@ -24,7 +24,7 @@ const Profile = () => {
     );
     if (res.data.result) {
       notification.open({
-        message: res.data.message,
+        message: "Đăng xuất thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       router.push("/login");
