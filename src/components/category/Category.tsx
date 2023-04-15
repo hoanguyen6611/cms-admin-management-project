@@ -14,7 +14,6 @@ const CategoryShow = () => {
   const [state, dispatchs] = useStoreContext();
   const showModal = () => {
     dispatch(updateIsVisibleFormCategory(true));
-    dispatchs(actions.setIdCategoryForm(null));
     dispatchs(actions.changeVisibleFormCategory(true));
   };
 
