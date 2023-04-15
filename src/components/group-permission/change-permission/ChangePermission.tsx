@@ -10,7 +10,7 @@ import { CheckOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useStoreContext } from "@/store";
 const { TextArea } = Input;
-import type { TreeProps } from "antd/es/tree";
+import type { DataNode, TreeProps } from "antd/es/tree";
 
 const getPermission = async () => {
   const token = localStorage.getItem("token");
@@ -22,27 +22,30 @@ const getPermission = async () => {
       },
     }
   );
-  var items: any;
-  res.data.data.data.map((data: any) => {
-    data.key = data.key;
-    data.title = data.nameGroup;
-    data.children = [
-      {
-        title: data.name + " ( " + data.action + " )",
-        key: data.id,
-      },
-    ];
-  });
-  // for (var i = 0; i < res.data.data.data.length; i++) {
-  //   if (items.indexOf(res.data.data.data[i]) === -1) {
-  //     items.push(res.data.data.data[i])
-  //   }
-  // }
-  const ids = res.data.data.data.map((o: any) => o.nameGroup);
-  const filtered = res.data.data.data.filter(
-    (nameGroup: any, index: any) => !ids.includes(nameGroup, index + 1)
-  );
-  return filtered;
+  const groups: any = {};
+  const permissions: DataNode[] = [];
+  for (let i = 0; i < res.data.data.data.length; i++) {
+    const nameGroup = res.data.data.data[i].nameGroup;
+    if (groups[nameGroup]) {
+      groups[nameGroup].push(res.data.data.data[i]);
+    } else {
+      groups[nameGroup] = [res.data.data.data[i]];
+    }
+  }
+  for (const group in groups) {
+    permissions.push({
+      title: group,
+      key: group,
+      children: groups[group].map((item: any) => {
+        return {
+          ...item,
+          title: item.name + " ( " + item.action + " )",
+          key: item.id,
+        };
+      }),
+    });
+  }
+  return permissions;
 };
 const fetchers = async (url: string) => {
   const token = localStorage.getItem("token");
@@ -53,46 +56,27 @@ const fetchers = async (url: string) => {
   });
   return res.data.data;
 };
-const getPermissionByAdmin = async () => {
-  const token = localStorage.getItem("token");
-  const res = await axios.get(
-    "https://tech-api.herokuapp.com/v1/group/list?kind=1",
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  res.data.data.data.map((data: any) => {
-    data.key = data.id;
-  });
-  return res.data.data[0].permissions;
-};
-
 const ChangePermission = () => {
   const [form] = Form.useForm();
-  const { data, error } = useSWR("/permission", getPermission);
-  const { data: groupAdmin } = useSWR(
-    "https://tech-api.herokuapp.com/v1/group/list?kind=1",
-    fetchers
-  );
-  const [state, dispatchs] = useStoreContext();
-  const { data: group } = useSWR(
-    `https://tech-api.herokuapp.com/v1/group/get/${state.idGroupPermission}`,
-    fetchers
-  );
+  const { data: permissions, error } = useSWR("/permission", getPermission);
   const [name, setName] = useState<string>("");
   const [des, setDes] = useState<string>("");
   const [id, setId] = useState<number>();
   const dispatch = useDispatch();
   const permissionGroup = useSelector((state: any) => state.permissionGroup);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [checkedKeys, setCheckedKeys] = useState<any>();
+  const [checkedKeys, setCheckedKeys] = useState<any>([]);
+  const [state, dispatchs] = useStoreContext();
+
+  const { data: group } = useSWR(
+    `https://tech-api.herokuapp.com/v1/group/get/${state.idGroupPermission}`,
+    fetchers
+  );
   useEffect(() => {
     setName(group?.name);
     setDes(group?.description);
     setId(group?.id);
-    setSelectedRowKeys(group?.permissions.map((item: any) => item.id));
+    setCheckedKeys(group?.permissions.map((item: any) => item.id));
     form.setFieldsValue({
       name: group?.name,
       description: group?.description,
@@ -100,7 +84,43 @@ const ChangePermission = () => {
     });
   }, [group]);
 
-  const createFormPermissionGroup = async () => {
+  const checkNumber = (a: any) => {
+    return typeof a === "number";
+  };
+
+  const handleOk = () => {
+    if (id) {
+      updatePermissionGroup();
+    } else {
+      createPermissionGroup();
+    }
+  };
+
+  const createPermissionGroup = async () => {
+    const token = localStorage.getItem("token");
+    const res = await axios.post(
+      "https://tech-api.herokuapp.com/v1/group/create",
+      {
+        ...form.getFieldsValue(),
+        permissions: checkedKeys.filter(checkNumber),
+        kind: 0,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (res.data.result) {
+      dispatch(updateIsVisibleFormPermissionGroup(false));
+      notification.open({
+        message: res.data.message,
+        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+      });
+    }
+  };
+
+  const updatePermissionGroup = async () => {
     const token = localStorage.getItem("token");
     const res = await axios.put(
       "https://tech-api.herokuapp.com/v1/group/update",
@@ -108,7 +128,7 @@ const ChangePermission = () => {
         description: des,
         id: id,
         name: name,
-        permissions: selectedRowKeys,
+        permissions: checkedKeys.filter(checkNumber),
       },
       {
         headers: {
@@ -135,30 +155,22 @@ const ChangePermission = () => {
   };
 
   const onCheck: TreeProps["onCheck"] = (checkedKeys, info) => {
-    console.log("onCheck", checkedKeys, info);
-    setCheckedKeys(checkedKeys);
+    console.log("onCheck", checkedKeys);
+    setCheckedKeys(checkedKeys); //set những permission đã chọn
   };
-  // const onCheck = (checkedKeysValue: React.Key[]) => {
-  //   console.log('onCheck', checkedKeysValue);
-  //   setCheckedKeys(checkedKeysValue);
-  // };
   return (
     <div>
       <Modal
         title={permissionGroup.isEdit ? "Cập nhập quyền" : "Tạo mới quyền"}
         open={permissionGroup.isVisibleChangePermissionGroup}
-        onOk={createFormPermissionGroup}
+        onOk={handleOk}
         onCancel={cancelCreatePermissionGroup}
         width={800}
         footer={[
           <Button key="back" onClick={cancelCreatePermissionGroup}>
             Huỷ
           </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            onClick={createFormPermissionGroup}
-          >
+          <Button key="submit" type="primary" onClick={handleOk}>
             {permissionGroup.isEdit ? "Cập nhập" : "Thêm mới"}
           </Button>,
         ]}
@@ -180,12 +192,14 @@ const ChangePermission = () => {
           <Form.Item label="Chi tiết" name="description">
             <TextArea rows={4} onChange={(e) => setDes(e.target.value)} />
           </Form.Item>
-          <Tree
-            checkable
-            onSelect={onSelect}
-            onCheck={onCheck}
-            treeData={data}
-          />
+          <Form.Item name="permissions">
+            <Tree
+              checkable
+              onSelect={onSelect}
+              onCheck={onCheck}
+              treeData={permissions}
+            />
+          </Form.Item>
         </Form>
       </Modal>
     </div>

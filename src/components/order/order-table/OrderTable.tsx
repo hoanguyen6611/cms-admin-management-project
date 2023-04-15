@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { notification, Table, Spin, Tag, Modal } from "antd";
+import { notification, Table, Spin, Tag, Modal, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import {
@@ -17,30 +17,39 @@ import useSWR from "swr";
 import { Product } from "@/models";
 import styles from "./ProductTable.module.scss";
 import { actions, useStoreContext } from "@/store";
+import { VND } from "@/utils/formatVNĐ";
 
-const VND = new Intl.NumberFormat("vi-VN", {
-  style: "currency",
-  currency: "VND",
-});
 const fetcher = async () => {
   const token = localStorage.getItem("token");
-  const res = await axios.get(
-    "https://tech-api.herokuapp.com/v1/product/list",
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const res = await axios.get("https://tech-api.herokuapp.com/v1/orders/list", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   res.data.data.data.map((data: any) => {
     data.key = data.id;
-    data.price = VND.format(data.price);
+    data.totalMoney = VND.format(data.totalMoney);
+    data.saleOff = VND.format(data.saleOff);
+  });
+  return res.data.data.data;
+};
+const fetchers = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get("https://tech-api.herokuapp.com/v1/store/list", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  res.data.data.data.map((data: any) => {
+    data.value = data.id;
+    data.label = data.name;
   });
   return res.data.data.data;
 };
 
 const OrderTable = () => {
   const { data, error } = useSWR("/product", fetcher);
+  const { data: store, error: errorStore } = useSWR("/store/list", fetchers);
   const [state, dispatchs] = useStoreContext();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const dispatch = useDispatch();
@@ -79,19 +88,19 @@ const OrderTable = () => {
 
   const columns: ColumnsType<Product> = [
     {
-      title: "Tên sản phẩm",
-      dataIndex: "name",
-      key: "name",
+      title: "Mã đơn hàng",
+      dataIndex: "code",
+      key: "code",
     },
     {
-      title: "Giá",
-      dataIndex: "price",
-      key: "price",
+      title: "Ngày đặt hàng",
+      dataIndex: "createdDate",
+      key: "createdDate",
     },
     {
-      title: "Trạng thái",
-      dataIndex: "status",
-      key: "status",
+      title: "Trạng thái đơn hàng",
+      dataIndex: "state",
+      key: "state",
       render: (text) => (
         <Tag
           style={
@@ -105,16 +114,40 @@ const OrderTable = () => {
       ),
     },
     {
+      title: "Khách hàng",
+      dataIndex: "customerAddressDto",
+      key: "customerName",
+      render: (text) => text?.receiverFullName,
+    },
+    {
+      title: "Tổng tiền thanh toán",
+      dataIndex: "totalMoney",
+      key: "totalMoney",
+    },
+    {
+      title: "Giảm giá",
+      dataIndex: "saleOff",
+      key: "saleOff",
+    },
+    {
+      title: "Cửa hàng bán",
+      dataIndex: "storeId",
+      key: "storeId",
+      render: (text) => store?.find((item: any) => item.id === text)?.name,
+    },
+    {
       title: "",
       dataIndex: "id",
       key: "action",
       render: (record: number) => {
         return (
           <>
-            <EditOutlined
-              style={{ color: "green" }}
-              onClick={() => isEditProduct(record)}
-            />
+            <Tooltip title="Xem chi tiết">
+              <EditOutlined
+                style={{ color: "green" }}
+                onClick={() => isEditProduct(record)}
+              />
+            </Tooltip>
             <DeleteOutlined
               style={{ color: "red", marginLeft: 12 }}
               onClick={() => {
@@ -127,34 +160,16 @@ const OrderTable = () => {
     },
   ];
   const isEditProduct = (record: number) => {
-    dispatch(updateVisibleFormProduct(true));
-    dispatch(isEditProductForm(true));
-    dispatchs(actions.setIdProductForm(record));
+    dispatchs(actions.changeVisibleFormOrder(true));
+    dispatchs(actions.setIdOrderForm(record));
   };
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-  // if (error) return <div>An error has occured</div>;
-  // if (!data)
-  //   return (
-  //     <div className={styles.example}>
-  //       <Spin />
-  //     </div>
-  //   );
-  return (
-    <Table
-      rowSelection={rowSelection}
-      columns={columns}
-      dataSource={data}
-      className="mt-4"
-    />
-  );
+  if (!data)
+    return (
+      <Spin tip="Loading" size="small">
+        <div className="content" />
+      </Spin>
+    );
+  return <Table columns={columns} dataSource={data} className="mt-4" />;
 };
 
 export default OrderTable;

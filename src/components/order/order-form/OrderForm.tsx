@@ -1,0 +1,304 @@
+import {
+  Button,
+  Col,
+  DatePicker,
+  DatePickerProps,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  notification,
+  Radio,
+  Row,
+  Select,
+  Table,
+  Upload,
+} from "antd";
+import React, { useContext, useEffect, useState } from "react";
+const { TextArea } = Input;
+import {
+  CheckOutlined,
+  PlusOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  isEditCategoryForm,
+  updateIsVisibleFormCategory,
+} from "@/redux/category/categorySlice";
+import { RootState } from "@/redux/store";
+import {
+  ref,
+  UploadResult,
+  uploadBytesResumable,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
+import { storage } from "@/utils/firebase";
+import type { RadioChangeEvent } from "antd";
+import useSWR, { mutate } from "swr";
+import { Category, Product } from "@/models";
+import Context from "@/store/Context";
+import { actions, useStoreContext } from "@/store";
+import { v4 } from "uuid";
+import { RangePickerProps } from "antd/es/date-picker";
+import { ColumnsType } from "antd/es/table";
+import { OrdersDetailDtoList, ProductDto } from "@/models/order";
+import { VND } from "@/utils/formatVNĐ";
+import { Typography } from "antd";
+const { Title } = Typography;
+
+const fetcher = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get("https://tech-api.herokuapp.com/v1/store/list", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  res.data.data.data.map((data: any) => {
+    data.value = data.id;
+    data.label = data.name;
+  });
+  return res.data.data.data;
+};
+const fetchers = async (url: string) => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data.data;
+};
+const stores = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get("https://tech-api.herokuapp.com/v1/store/list", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  res.data.data.data.map((data: any) => {
+    data.value = data.id;
+    data.label = data.name;
+  });
+  return res.data.data.data;
+};
+
+const OrderForm = () => {
+  const [form] = Form.useForm();
+  const [state, dispatchs] = useStoreContext();
+  const { data: order } = useSWR(
+    `https://tech-api.herokuapp.com/v1/orders/get/${state.idOrder}`,
+    fetchers
+  );
+  const { data: storeList, error: errorStore } = useSWR("/store/list", stores);
+  const { data: store, error } = useSWR("/store/list", fetcher);
+  const data = order?.ordersDetailDtoList;
+  console.log(data);
+  useEffect(() => {
+    // setId(order?.id);
+    form.setFieldsValue({
+      code: order?.code,
+      createdDate: order?.createdDate,
+      storeId: store?.find((item: any) => item.id === order?.storeId)?.name,
+      receiverFullName: order?.customerAddressDto?.receiverFullName,
+      ordersDetailDtoList: order?.ordersDetailDtoList,
+      totalMoney: VND.format(order?.totalMoney),
+      deliveryFee: VND.format(order?.deliveryFee),
+      amount: order?.amount,
+      saleOff: VND.format(
+        (Number(order?.totalMoney) * Number(order?.saleOff)) / 100
+      ),
+      paymentMoney: VND.format(
+        Number(order?.totalMoney) + Number(order?.deliveryFee)
+      ),
+    });
+  }, [order]);
+
+  const cancelOrderForm = () => {
+    dispatchs(actions.changeVisibleFormOrder(false));
+  };
+
+  const onChange = (
+    value: DatePickerProps["value"] | RangePickerProps["value"],
+    dateString: [string, string] | string
+  ) => {
+    console.log("Selected Time: ", value);
+    console.log("Formatted Selected Time: ", dateString);
+  };
+
+  const onOk = (
+    value: DatePickerProps["value"] | RangePickerProps["value"]
+  ) => {
+    console.log("onOk: ", value);
+  };
+  const columns: ColumnsType<OrdersDetailDtoList> = [
+    {
+      title: "Mã sản phẩm",
+      dataIndex: "productDto",
+      key: "idProduct",
+      render: (text) => text?.id,
+    },
+    {
+      title: "Tên sản phẩm",
+      dataIndex: "productDto",
+      key: "nameProduct",
+      render: (text) => text?.name,
+    },
+    {
+      title: "Số lượng",
+      dataIndex: "amount",
+      key: "samount",
+    },
+    {
+      title: "Đơn giá",
+      dataIndex: "productDto",
+      key: "price",
+      render: (text) => VND.format(text?.price),
+    },
+    {
+      title: "Giảm giá",
+      dataIndex: "productDto",
+      key: "saleOff",
+      render: (text) => text?.saleOff + "%",
+    },
+    {
+      title: "Giá bán",
+      dataIndex: "productDto",
+      key: "saleOff",
+      render: (text) =>
+        VND.format((Number(text?.price) * (100 - Number(text?.saleOff))) / 100),
+    },
+  ];
+  return (
+    <div>
+      <Modal
+        title="Xem thông tin đơn hàng"
+        open={state.isVisibleFormOrder}
+        okType={"danger"}
+        onCancel={cancelOrderForm}
+        width={1000}
+        footer={[
+          <Button key="back" onClick={cancelOrderForm}>
+            Huỷ
+          </Button>,
+        ]}
+      >
+        <Form
+          labelCol={{ span: 10 }}
+          wrapperCol={{ span: 14 }}
+          layout="horizontal"
+          form={form}
+        >
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label="Mã đơn hàng" name="code">
+                <Input disabled />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Trạng thái đơn hàng" name="status">
+                <Select
+                  disabled
+                  defaultValue="Chọn trạng thái đơn hàng"
+                  options={[
+                    { value: "success", label: "Hoàn tất" },
+                    { value: "delivery", label: "Đang giao hàng" },
+                    { value: "cancel", label: "Đã huỷ" },
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label="Thời gian" name="createdDate">
+                {/* <DatePicker showTime onChange={onChange} onOk={onOk} /> */}
+                <Input disabled />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Hình thức thanh toán" name="status">
+                <Select
+                  disabled
+                  defaultValue="Chọn hình thức"
+                  options={[
+                    { value: "cod", label: "Giao hàng thu tiền" },
+                    { value: "bank", label: "Chuyển khoản" },
+                    { value: "momo", label: "Momo" },
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row></Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label="Cửa hàng giao dịch" name="storeId">
+                <Input disabled />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Khách hàng" name="receiverFullName">
+                <Input disabled />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+              <Table
+                pagination={false}
+                columns={columns}
+                dataSource={data}
+                className="mt-4"
+              />
+            </Col>
+          </Row>
+          <Row className="mt-5">
+            <Col span={12}></Col>
+            <Col span={12}>
+              <Form.Item label="Tổng số lượng" name="amount">
+                <Input style={{ width: 200 }} disabled />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12}></Col>
+            <Col span={12}>
+              <Form.Item label="Tổng tiền" name="totalMoney">
+                <Input style={{ width: 200 }} disabled />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12}></Col>
+            <Col span={12}>
+              <Form.Item label="Phí giao hàng" name="deliveryFee">
+                <Input style={{ width: 200 }} disabled />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12}></Col>
+            <Col span={12}>
+              <Form.Item label="Giảm giá" name="saleOff">
+                <Input style={{ width: 200 }} disabled />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12}></Col>
+            <Col span={12}>
+              <Form.Item label="Thanh toán" name="paymentMoney">
+                <Input style={{ width: 200 }} disabled />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
+    </div>
+  );
+};
+
+export default OrderForm;

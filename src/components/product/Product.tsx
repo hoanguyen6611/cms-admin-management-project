@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Button } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import { updateVisibleFormProduct } from "@/redux/product/productSlice";
 import ProductTable from "./product-table/ProductTable";
@@ -26,10 +26,8 @@ const ProductShow = () => {
     <div>
       <div className="flex justify-end ml-4">
         <Button className="mb-2" onClick={showModal}>
+          <PlusOutlined />
           Tạo mới
-        </Button>
-        <Button className="ml-2">
-          <UploadOutlined />
         </Button>
       </div>
       <ProductTable></ProductTable>

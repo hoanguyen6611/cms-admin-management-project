@@ -2,6 +2,7 @@ import {
   Button,
   Col,
   Form,
+  Image,
   Input,
   InputNumber,
   Modal,
@@ -114,8 +115,8 @@ const CategoryForm = () => {
       }
     );
     if (res.data.result) {
-      dispatch(updateIsVisibleFormCategory(false));
       dispatchs(actions.changeVisibleFormCategory(false));
+      dispatch(actions.changeEditFormCategory(false));
       form.resetFields();
       notification.open({
         message: res.data.message,
@@ -139,8 +140,8 @@ const CategoryForm = () => {
       }
     );
     if (res.data.result) {
-      dispatch(updateIsVisibleFormCategory(false));
       dispatchs(actions.changeVisibleFormCategory(false));
+      dispatch(actions.changeEditFormCategory(false));
       form.resetFields();
       notification.open({
         message: res.data.message,
@@ -188,7 +189,7 @@ const CategoryForm = () => {
     <div>
       <Modal
         title={
-          categorySelector.isEdit
+          !state.isEditFormCategory
             ? "Cập nhập danh mục sản phẩm"
             : "Tạo mới danh mục sản phẩm"
         }
@@ -202,7 +203,7 @@ const CategoryForm = () => {
             Huỷ
           </Button>,
           <Button key="submit" type="primary" onClick={handleOk}>
-            {categorySelector.isEdit ? "Cập nhập" : "Thêm mới"}
+            {!state.isEditFormCategory ? "Cập nhập" : "Thêm mới"}
           </Button>,
         ]}
       >
@@ -289,14 +290,18 @@ const CategoryForm = () => {
           <Row gutter={16}>
             <Col span={24}>
               <Form.Item>
-                <Button className="p-4 border-none">
-                  <input
-                    hidden
-                    accept="image/*"
-                    type="file"
-                    onChange={(e) => handleFileSelected(e)}
-                  />
-                </Button>
+                {!state.isEditFormCategory ? (
+                  <Image width={150} src={category?.icon} alt="image"></Image>
+                ) : (
+                  <Button className="p-4 border-none">
+                    <input
+                      hidden
+                      accept="image/*"
+                      type="file"
+                      onChange={(e) => handleFileSelected(e)}
+                    />
+                  </Button>
+                )}
               </Form.Item>
             </Col>
           </Row>

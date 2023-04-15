@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Table, Tag } from "antd";
+import { Spin, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Permission } from "@/models/permission";
@@ -102,20 +102,13 @@ const GroupPermissionTable = () => {
     dispatch(setIdSelected(record));
     dispatchs(actions.setIdGroupPermissionForm(record));
   };
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-  if (error) return <div>An error has occured</div>;
-  if (!data) return <div>Loading</div>;
-  return (
-    <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
-  );
+  if (!data)
+    return (
+      <Spin tip="Loading" size="small">
+        <div className="content" />
+      </Spin>
+    );
+  return <Table columns={columns} dataSource={data} />;
 };
 
 export default GroupPermissionTable;

@@ -20,7 +20,7 @@ body {
   border: 1px solid #1fdf64;
 }
 .ant-btn-primary:not(:disabled):hover {
-  color: #111;
+  color: #fff;
   background: #1fdf64;
   border: 1px solid #1fdf64;
 }

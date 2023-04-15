@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { notification, Table, Spin, Tag, Modal } from "antd";
+import { notification, Table, Spin, Tag, Modal, Image } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import {
@@ -17,11 +17,8 @@ import useSWR from "swr";
 import { Product } from "@/models";
 import styles from "./ProductTable.module.scss";
 import { actions, useStoreContext } from "@/store";
+import { VND } from "@/utils/formatVNĐ";
 
-const VND = new Intl.NumberFormat("vi-VN", {
-  style: "currency",
-  currency: "VND",
-});
 const fetcher = async () => {
   const token = localStorage.getItem("token");
   const res = await axios.get(
@@ -79,6 +76,12 @@ const ProductTable = () => {
 
   const columns: ColumnsType<Product> = [
     {
+      title: "",
+      dataIndex: "image",
+      key: "image",
+      render: (text) => <Image width={50} src={text} alt="image"></Image>,
+    },
+    {
       title: "Tên sản phẩm",
       dataIndex: "name",
       key: "name",
@@ -103,6 +106,11 @@ const ProductTable = () => {
           {text === 1 ? "KÍCH HOẠT" : "KHOÁ"}
         </Tag>
       ),
+    },
+    {
+      title: "Số lượng",
+      dataIndex: "quanlity",
+      key: "quanlity",
     },
     {
       title: "",
@@ -131,30 +139,14 @@ const ProductTable = () => {
     dispatch(isEditProductForm(true));
     dispatchs(actions.setIdProductForm(record));
   };
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
 
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-  // if (error) return <div>An error has occured</div>;
-  // if (!data)
-  //   return (
-  //     <div className={styles.example}>
-  //       <Spin />
-  //     </div>
-  //   );
-  return (
-    <Table
-      rowSelection={rowSelection}
-      columns={columns}
-      dataSource={data}
-      className="mt-4"
-    />
-  );
+  if (!data)
+    return (
+      <Spin tip="Loading" size="small">
+        <div className="content" />
+      </Spin>
+    );
+  return <Table columns={columns} dataSource={data} className="mt-4" />;
 };
 
 export default ProductTable;

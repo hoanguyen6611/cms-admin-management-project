@@ -1,74 +1,80 @@
-import React, { SyntheticEvent, useEffect, useState } from "react";
-import { Input, Layout, Form, notification, theme, Button } from "antd";
+import React, { useEffect, useState } from "react";
+import { Input, Layout, Form, notification, Button } from "antd";
 import { useRouter } from "next/router";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { EKey } from "@/models/general";
 import styles from "./Login.module.scss";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { useDispatch } from "react-redux";
 import { setUserLogin } from "@/redux/permission/permissionSlice";
 import * as yup from "yup";
 import { useForm, useController } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Link from "next/link";
+import { authApi } from "@/api-client/auth-api";
 
 const { Header, Content } = Layout;
 const schema = yup.object({
   username: yup.string().required("Vui lòng nhập tên đăng nhập"),
-  password: yup
-    .string()
-    .required("Vui lòng nhập mật khẩu")
-    .matches(
-      /^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$/,
-      "Mật khẩu chưa đúng định dạng, mật khẩu bao gồm cả chữ hoa, chữ thường, số và ký tự đặc biệt"
-    ),
+  password: yup.string().required("Vui lòng nhập mật khẩu"),
+  // .matches(
+  //   /^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$/,
+  //   "Mật khẩu chưa đúng định dạng, mật khẩu bao gồm cả chữ hoa, chữ thường, số và ký tự đặc biệt"
+  // ),
 });
 type FormData = yup.InferType<typeof schema>;
 
 const Login = () => {
   const [form] = Form.useForm();
+  const [buttonSignIn, setButtonSignIn] = useState(false);
   const {
     register,
     handleSubmit,
     control,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm<FormData>({
     resolver: yupResolver(schema),
   });
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
+  const yupSync = {
+    async validator(field: any, value: any) {
+      await schema.validateSyncAt(field, { [field]: value });
+    },
+  };
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.permission);
-  const login = async () => {
-    console.log(errors);
+  const login = async (e: any) => {
     // e.preventDefault();
-    const { data } = await axios.post(
-      "https://tech-api.herokuapp.com/v1/account/login",
-      {
-        ...form.getFieldsValue(),
+    setButtonSignIn(true);
+    // if(!errors) {
+
+    // }
+    authApi
+      .login({
+        // ...form.getFieldsValue(),
         app: "cms",
-      }
-    );
-    if (data.result) {
-      dispatch(setUserLogin(data.data));
-      notification.open({
-        message: "Đăng nhập thành công",
-        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+        username: getValues("username"),
+        password: getValues("password"),
+      })
+      .then((res) => {
+        console.log(res);
+        if (res.result) {
+          // dispatch(setUserLogin(data.data));
+          notification.open({
+            message: "Đăng nhập thành công",
+            icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+          });
+          router.push("/");
+        } else {
+          setButtonSignIn(false);
+          notification.open({
+            message: "Thông tin đăng nhập không đúng",
+            icon: <CloseOutlined style={{ color: "red" }} />,
+          });
+        }
       });
-      await router.push("/");
-      localStorage.setItem(EKey.TOKEN, data.data.token);
-      localStorage.setItem("username", data.data.username);
-    } else {
-      notification.open({
-        message: "Thông tin đăng nhập không đúng",
-        icon: <CloseOutlined style={{ color: "red" }} />,
-      });
-    }
   };
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -78,23 +84,25 @@ const Login = () => {
       }
     }
   }, [router]);
-  const onSubmit = (data: FormData) => {
-    console.log(JSON.stringify(data));
+  const handleUsername = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value);
+    setValue("username", e.target.value);
   };
-  const redirectKey = "sign_in_redirect";
-  function getRedirect(): string | null {
-    return window.sessionStorage.getItem(redirectKey);
-  }
-
+  const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    setValue("password", e.target.value);
+  };
   return (
     <Layout className="layout">
       <Content>
         <div
-          className="site-layout-content w-full h-[800px] flex justify-around items-center"
-          style={{ background: "#ffffff" }}
+          className="site-layout-content w-full h-[840px] flex justify-around items-center background-image"
+          style={{
+            backgroundImage: `url("https://images.pexels.com/photos/1229861/pexels-photo-1229861.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1")`,
+          }}
         >
           <Form
-            className="px-10 pb-10 pt-[100px] w-full max-w-[500px] mx-auto border rounded-lg bg-white"
+            className="px-10 pb-10 pt-[50px] w-full max-w-[500px] mx-auto border rounded-lg bg-white"
             autoComplete="off"
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 15 }}
@@ -103,23 +111,24 @@ const Login = () => {
             <h1 className="text-xl text-center font-bold mb-4">Đăng nhập</h1>
             <Form.Item label="Tên đăng nhập" name="username">
               <Input
-                // {...register("username")}
+                {...register("username", { value: username })}
                 placeholder="Vui lòng nhập tên đăng nhập"
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={handleUsername}
               />
-              {/* <p className={styles.warning}>{errors.username?.message}</p> */}
+              <p className={styles.warning}>{errors.username?.message}</p>
             </Form.Item>
             <Form.Item label="Mật khẩu" name="password">
               <Input.Password
-                // {...register("password")}
+                {...register("password", { value: password })}
                 placeholder="Vui lòng nhập mật khẩu"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handlePassword}
               />
-              {/* <p className={styles.warning}>{errors.password?.message}</p> */}
+              <p className={styles.warning}>{errors.password?.message}</p>
             </Form.Item>
             <div className="flex">
               <Button
-                onClick={login}
+                disabled={buttonSignIn}
+                onClick={handleSubmit(login)}
                 className="mx-auto bg-blue-600 text-white font-semibold"
               >
                 Đăng nhập

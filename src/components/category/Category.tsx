@@ -33,9 +33,6 @@ const CategoryShow = () => {
           <PlusOutlined />
           Tạo mới
         </Button>
-        <Button className="ml-2">
-          <UploadOutlined />
-        </Button>
       </div>
       <CategoryTable></CategoryTable>
       <CategoryForm></CategoryForm>

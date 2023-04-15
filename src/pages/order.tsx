@@ -1,3 +1,4 @@
+import OrderShow from "@/components/order/Order";
 import Head from "next/head";
 import React from "react";
 
@@ -7,6 +8,7 @@ const Order = () => {
       <Head>
         <title>Đơn hàng </title>
       </Head>
+      <OrderShow></OrderShow>
     </div>
   );
 };

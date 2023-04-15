@@ -158,7 +158,7 @@ const Variants = (props: any) => {
         </Row>
         <Row>
           <Col span={12}>
-            <Form.Item label="Hình ảnh" name="image">
+            <Form.Item name="image">
               <Button className="p-4 border-none">
                 <input
                   hidden
@@ -574,14 +574,18 @@ const ProductForm = () => {
               </Col>
             </Row>
             <Form.Item name="image">
-              <Button className="p-4 border-none">
-                <input
-                  hidden
-                  accept="image/*"
-                  type="file"
-                  onChange={(e) => handleFileSelected(e)}
-                />
-              </Button>
+              {product.isEdit ? (
+                <Image width={250} src={productItem?.image} alt="image"></Image>
+              ) : (
+                <Button className="p-4 border-none">
+                  <input
+                    hidden
+                    accept="image/*"
+                    type="file"
+                    onChange={(e) => handleFileSelected(e)}
+                  />
+                </Button>
+              )}
             </Form.Item>
           </Card>
           <Card className="mb-4" title="Thông tin khác">

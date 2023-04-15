@@ -5,6 +5,7 @@ import {
   DashboardOutlined,
   SnippetsOutlined,
   UserSwitchOutlined,
+  BranchesOutlined,
 } from "@ant-design/icons";
 import { MenuProps } from "antd";
 import { Layout, Menu, theme } from "antd";
@@ -39,10 +40,11 @@ const items: MenuItem[] = [
   ]),
   getItem("Giao dịch", "sub2", <SnippetsOutlined />, [
     getItem("Đơn hàng", "order"),
+    getItem("Mã giảm giá", "voucher"),
   ]),
-  getItem("Nhân viên", "sub3", <UserSwitchOutlined />, [
-    getItem("Chấm công", "salary"),
-  ]),
+  getItem("Quản lý cửa hàng", "sub3",<BranchesOutlined />, [
+    getItem("Thông tin cửa hàng","store")
+  ])
 ];
 
 const LayoutPage = (props: any) => {

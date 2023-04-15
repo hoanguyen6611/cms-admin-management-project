@@ -1,5 +1,5 @@
 import React, { useState, createContext } from "react";
-import { Modal, notification, Table, Spin, Tag } from "antd";
+import { Modal, notification, Table, Spin, Tag, Image } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import {
@@ -74,6 +74,12 @@ const CategoryTable = () => {
   };
   const columns: ColumnsType<Category> = [
     {
+      title: "",
+      dataIndex: "icon",
+      key: "icon",
+      render: (text) => <Image width={50} src={text} alt="icon"></Image>,
+    },
+    {
       title: "Tên danh mục",
       dataIndex: "name",
       key: "name",
@@ -117,26 +123,17 @@ const CategoryTable = () => {
     },
   ];
   const isEditCategory = async (record: number) => {
-    dispatch(updateIsVisibleFormCategory(true));
-    dispatch(isEditCategoryForm(true));
-    dispatch(setCategoryId(record));
     dispatchs(actions.setIdCategoryForm(record));
     dispatchs(actions.changeVisibleFormCategory(true));
+    dispatch(actions.changeEditFormCategory(true));
   };
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-  type ContextValue = boolean;
-  const Context = createContext<ContextValue>(false);
-  // if (error) return <div>An error has occured</div>;
-  return (
-    <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
-  );
+  if (!data)
+    return (
+      <Spin tip="Loading" size="small">
+        <div className="content" />
+      </Spin>
+    );
+  return <Table columns={columns} dataSource={data} />;
 };
 
 export default CategoryTable;
