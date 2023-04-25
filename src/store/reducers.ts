@@ -43,7 +43,7 @@ export const initialState: StateGlobal = {
   variant: {},
   category: {},
 };
-export function reducer(state:StateGlobal, action: any) {
+export function reducer(state:any, action: any) {
   switch (action.type) {
     case IS_VISIBLE_CATEGORY_FORM:
       return {
