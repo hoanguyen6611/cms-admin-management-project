@@ -1,8 +1,13 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Spin, Table, Tag } from "antd";
+import { Modal, Spin, Table, Tag, notification } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  CheckOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
 import { Permission } from "@/models/permission";
 import styles from "./GroupPermissionTable.module.scss";
 import { useDispatch } from "react-redux";
@@ -32,19 +37,37 @@ const GroupPermissionTable = () => {
   const [state, dispatchs] = useStoreContext();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const dispatch = useDispatch();
-  const deletePermission = async (record: any) => {
-    //   const token = localStorage.getItem("token");
-    //   console.log(record);
-    //   await axios.delete(
-    //     `https://tech-api.herokuapp.com/v1/permission/delete/${record}`,
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${token}`,
-    //       },
-    //     }
-    //   );
-    // if(res.data.result) {
-    // }
+  const deleteConfirmGroup = (record: number) => {
+    Modal.confirm({
+      title: "Bạn có chắc chắn muốn xoá group này không?",
+      okText: "OK",
+      okType: "danger",
+      onOk: () => {
+        deleteGroup(record);
+      },
+    });
+  };
+  const deleteGroup = async (record: number) => {
+    const token = localStorage.getItem("token");
+    const res = await axios.delete(
+      `https://tech-api.herokuapp.com/v1/group/delete/${record}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (res.data.result) {
+      notification.open({
+        message: res.data.message,
+        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+      });
+    } else if (!res.data.result) {
+      notification.open({
+        message: res.data.message,
+        icon: <CloseOutlined style={{ color: "red" }} />,
+      });
+    }
   };
 
   const columns: ColumnsType<Permission> = [
@@ -88,7 +111,7 @@ const GroupPermissionTable = () => {
             <DeleteOutlined
               style={{ color: "red", marginLeft: 12 }}
               onClick={() => {
-                deletePermission(record);
+                deleteConfirmGroup(record);
               }}
             />
           </>

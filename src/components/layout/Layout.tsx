@@ -6,6 +6,8 @@ import {
   SnippetsOutlined,
   UserSwitchOutlined,
   BranchesOutlined,
+  CustomerServiceOutlined,
+  AccountBookOutlined,
 } from "@ant-design/icons";
 import { MenuProps } from "antd";
 import { Layout, Menu, theme } from "antd";
@@ -44,7 +46,9 @@ const items: MenuItem[] = [
   ]),
   getItem("Quản lý cửa hàng", "sub3",<BranchesOutlined />, [
     getItem("Thông tin cửa hàng","store")
-  ])
+  ]),
+  getItem("Tài khoản", "account", <AccountBookOutlined />),
+  getItem("Khách hàng", "customer", <CustomerServiceOutlined />),
 ];
 
 const LayoutPage = (props: any) => {

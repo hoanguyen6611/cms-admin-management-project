@@ -72,17 +72,17 @@ const ChangePermission = () => {
     `https://tech-api.herokuapp.com/v1/group/get/${state.idGroupPermission}`,
     fetchers
   );
+  console.log(group?.permissions.map((item: any) => item.id));
   useEffect(() => {
-    setName(group?.name);
-    setDes(group?.description);
     setId(group?.id);
-    setCheckedKeys(group?.permissions.map((item: any) => item.id));
+    setCheckedKeys(group?.permissions);
     form.setFieldsValue({
       name: group?.name,
       description: group?.description,
       status: group?.status,
     });
   }, [group]);
+  console.log(checkedKeys);
 
   const checkNumber = (a: any) => {
     return typeof a === "number";

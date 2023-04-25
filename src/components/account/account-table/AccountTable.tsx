@@ -1,5 +1,5 @@
 import React, { useState, createContext } from "react";
-import { Modal, notification, Table, Spin, Tag, Image } from "antd";
+import { Modal, notification, Table, Spin, Tag, Image, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import {
@@ -7,6 +7,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   CloseOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import {
@@ -22,7 +23,7 @@ import { actions, useStoreContext } from "@/store";
 const fetcher = async () => {
   const token = localStorage.getItem("token");
   const res = await axios.get(
-    "https://tech-api.herokuapp.com/v1/product-category/list",
+    "https://tech-api.herokuapp.com/v1/account/list?kind=1",
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -35,25 +36,25 @@ const fetcher = async () => {
   return res.data.data.data;
 };
 
-const CategoryTable = () => {
+const AccountTable = () => {
   const { data, error } = useSWR("/product-category", fetcher);
   const [state, dispatchs] = useStoreContext();
   const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const deleteConfirmCategory = (record: any) => {
+  const deleteConfirmAccount = (record: any) => {
     Modal.confirm({
-      title: "Bạn có chắc chắn muốn xoá danh mục sản phẩm này không?",
+      title: "Bạn có chắc chắn muốn xoá tài khoản này không?",
       okText: "OK",
       okType: "danger",
       onOk: () => {
-        deleteCategory(record);
+        deleteAccount(record);
       },
     });
   };
-  const deleteCategory = async (record: any) => {
+  const deleteAccount = async (record: any) => {
     const token = localStorage.getItem("token");
     const res = await axios.delete(
-      `https://tech-api.herokuapp.com/v1/product-category/delete/${record}`,
+      `https://tech-api.herokuapp.com/v1/account/delete/${record}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -73,17 +74,22 @@ const CategoryTable = () => {
     }
   };
   const columns: ColumnsType<Category> = [
+    // {
+    //   title: "",
+    //   dataIndex: "icon",
+    //   key: "icon",
+    //   width: 50,
+    //   render: (text) => <Image width={50} src={text} alt="icon"></Image>,
+    // },
     {
-      title: "",
-      dataIndex: "icon",
-      key: "icon",
-      width: 50,
-      render: (text) => <Image width={50} src={text} alt="icon"></Image>,
+      title: "Họ và tên",
+      dataIndex: "fullName",
+      key: "fullName",
     },
     {
-      title: "Tên danh mục",
-      dataIndex: "name",
-      key: "name",
+      title: "Tên đăng nhập",
+      dataIndex: "username",
+      key: "username",
     },
     {
       title: "Trạng thái",
@@ -111,12 +117,12 @@ const CategoryTable = () => {
           <>
             <EditOutlined
               style={{ color: "green" }}
-              onClick={() => isEditCategory(record)}
+              onClick={() => isEditAccount(record)}
             />
             <DeleteOutlined
               style={{ color: "red", marginLeft: 12 }}
               onClick={() => {
-                deleteConfirmCategory(record);
+                deleteConfirmAccount(record);
               }}
             />
           </>
@@ -124,10 +130,9 @@ const CategoryTable = () => {
       },
     },
   ];
-  const isEditCategory = async (record: number) => {
-    dispatchs(actions.setIdCategoryForm(record));
-    dispatchs(actions.changeVisibleFormCategory(true));
-    dispatch(actions.changeEditFormCategory(true));
+  const isEditAccount = async (record: number) => {
+    dispatchs(actions.setIdAccountForm(record));
+    dispatchs(actions.changeVisibleFormAccount(true));
   };
   if (!data)
     return (
@@ -138,4 +143,4 @@ const CategoryTable = () => {
   return <Table columns={columns} dataSource={data} />;
 };
 
-export default CategoryTable;
+export default AccountTable;

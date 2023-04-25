@@ -10,7 +10,6 @@ import {
   Row,
   Select,
   Switch,
-  Upload,
   Tabs,
   Image,
   Button,
@@ -25,22 +24,15 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import styles from "./ProductForm.module.scss";
-import {
-  ref,
-  UploadResult,
-  uploadBytesResumable,
-  getDownloadURL,
-  uploadBytes,
-} from "firebase/storage";
+import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { storage } from "@/utils/firebase";
 import type { RadioChangeEvent } from "antd";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { Variant } from "@/models";
 import { v4 } from "uuid";
-import TextField from "@mui/material/TextField";
 import { actions, useStoreContext } from "@/store";
-import CurrencyInput from "react-currency-input-field";
 import { isEditProductForm } from "@/redux/product/productSlice";
+import { VND } from "@/utils/formatVNĐ";
 
 const schema = yup
   .object({
@@ -57,6 +49,23 @@ const schema = yup
   .required();
 type FormData = yup.InferType<typeof schema>;
 const variants: Variant[] = [];
+var variant: any = {};
+const list = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(
+    "https://tech-api.herokuapp.com/v1/product/list",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  res.data.data.data.map((data: any) => {
+    data.key = data.id;
+    data.price = VND.format(data.price);
+  });
+  return res.data.data.data;
+};
 const fetcher = async () => {
   const token = localStorage.getItem("token");
   const res = await axios.get(
@@ -86,9 +95,10 @@ const Variants = (props: any) => {
   console.log(props);
   useEffect(() => {
     form.setFieldsValue({
-      name: props?.name,
-      description: props?.description,
-      price: props?.price,
+      name: props?.list?.name,
+      description: props?.list?.description,
+      price: props?.list?.price,
+      status: props?.list?.status,
     });
   }, [props]);
   const [form] = Form.useForm();
@@ -129,6 +139,9 @@ const Variants = (props: any) => {
         wrapperCol={{ span: 14 }}
         layout="horizontal"
         form={form}
+        onChange={() => {
+          variant = form.getFieldsValue();
+        }}
       >
         <Row>
           <Col span={8}>
@@ -183,7 +196,7 @@ const Variants = (props: any) => {
           </Col>
         </Row>
       </Form>
-      <Button onClick={addVariant}>Thêm</Button>
+      {/* <Button onClick={addVariant}>Thêm</Button> */}
     </div>
   );
 };
@@ -225,15 +238,20 @@ const ProductForm = () => {
     { label: "Thuộc tính 1", children: <Variants></Variants>, key: "1" },
   ];
   const initialItemsUpdate = [
-    { label: "Thuộc tính 1", children: <Variants></Variants>, key: "1" },
+    {
+      label: "Thuộc tính 1",
+      children: (
+        <Variants
+          list={
+            productItem?.productConfigs
+              ? productItem?.productConfigs[0]?.variants[0]
+              : []
+          }
+        ></Variants>
+      ),
+      key: "1",
+    },
   ];
-  // const initialItemsUpdate = productItem?.productConfigs[0].variants.map(
-  //   (data: any) => {
-  //     data.label = data.name;
-  //     data.children = <Variants></Variants>;
-  //     data.key = data.id;
-  //   }
-  // );
   const [items, setItems] = useState(initialItems);
   const [itemsUpdate, setItemsUpdate] = useState(initialItemsUpdate);
   const [activeKey, setActiveKey] = useState(initialItems[0].key);
@@ -255,8 +273,13 @@ const ProductForm = () => {
       saleOff: productItem?.saleOff,
       status: productItem?.status,
       image: productItem?.image,
-      // statusConfig: productItem?.productConfigs[0]?.status,
-      // nameConfig: productItem?.productConfigs[0]?.name,
+      categoryId: productItem?.productCategoryName,
+      statusConfig: productItem?.productConfigs
+        ? productItem?.productConfigs[0]?.status
+        : "",
+      nameConfig: productItem?.productConfigs
+        ? productItem?.productConfigs[0]?.name
+        : "",
       // variantsShow: productItem?.productConfigs[0]?.variants,
     });
   }, [productItem]);
@@ -264,6 +287,17 @@ const ProductForm = () => {
   const newTabIndex = useRef(2);
   const dispatch = useDispatch();
   const createProduct = async () => {
+    // console.log({
+    //   ...form.getFieldsValue(),
+    //   image: image,
+    //   productConfigs: [
+    //     {
+    //       name: form.getFieldsValue().nameConfig,
+    //       status: form.getFieldsValue().statusConfig,
+    //       variants: variants,
+    //     },
+    //   ],
+    // });
     const token = localStorage.getItem("token");
     const res = await axios.post(
       "https://tech-api.herokuapp.com/v1/product/create",
@@ -290,6 +324,7 @@ const ProductForm = () => {
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      mutate("/product-category", list, true);
     } else {
       notification.open({
         message: res.data.message,
@@ -334,18 +369,20 @@ const ProductForm = () => {
       const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
       await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
         await getDownloadURL(snapshot.ref).then((url) => {
+          console.log(url);
           setImage(url);
+          console.log(image);
         });
       });
     }
   };
   const handleOk = async () => {
-    uploadImageProduct();
     if (id) {
       updateProduct();
       dispatch(updateVisibleFormProduct(false));
       dispatch(isEditProductForm(false));
     } else {
+      uploadImageProduct();
       createProduct();
       dispatch(updateVisibleFormProduct(false));
       dispatch(isEditProductForm(false));
@@ -411,6 +448,8 @@ const ProductForm = () => {
     });
     setItems(newPanes);
     setActiveKey(newActiveKey);
+    variants.push(variant);
+    console.log(variants);
   };
 
   const remove = (targetKey: TargetKey) => {
@@ -567,7 +606,7 @@ const ProductForm = () => {
             </Row>
             <Row>
               <Col span={24}>
-                <Form.Item label="Thông tin sản phẩm" name="description">
+                <Form.Item label="Chi tiết" name="description">
                   <TextArea rows={4} onChange={(e) => setDes(e.target.value)} />
                   {/* <p className={styles.warning}>{errors.description?.message}</p> */}
                 </Form.Item>
@@ -588,7 +627,7 @@ const ProductForm = () => {
               )}
             </Form.Item>
           </Card>
-          <Card className="mb-4" title="Thông tin khác">
+          <Card className="mb-4" title="Thông tin thuộc tính">
             <Row>
               <Col span={8}>
                 <Form.Item label="Tên thuộc tính" name="nameConfig">

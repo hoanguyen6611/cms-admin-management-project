@@ -92,12 +92,9 @@ const OrderForm = () => {
     `https://tech-api.herokuapp.com/v1/orders/get/${state.idOrder}`,
     fetchers
   );
-  const { data: storeList, error: errorStore } = useSWR("/store/list", stores);
   const { data: store, error } = useSWR("/store/list", fetcher);
   const data = order?.ordersDetailDtoList;
-  console.log(data);
   useEffect(() => {
-    // setId(order?.id);
     form.setFieldsValue({
       code: order?.code,
       createdDate: order?.createdDate,
@@ -149,13 +146,19 @@ const OrderForm = () => {
     {
       title: "Số lượng",
       dataIndex: "amount",
-      key: "samount",
+      key: "amount",
     },
     {
       title: "Đơn giá",
-      dataIndex: "productDto",
+      dataIndex: "price",
       key: "price",
-      render: (text) => VND.format(text?.price),
+      render: (text) => VND.format(text),
+    },
+    {
+      title: "Cấu hình",
+      dataIndex: "productVariantDto",
+      key: "color",
+      render: (text) => text?.name,
     },
     {
       title: "Giảm giá",
@@ -167,8 +170,7 @@ const OrderForm = () => {
       title: "Giá bán",
       dataIndex: "productDto",
       key: "saleOff",
-      render: (text) =>
-        VND.format((Number(text?.price) * (100 - Number(text?.saleOff))) / 100),
+      render: (text) => VND.format(text?.price),
     },
   ];
   return (
@@ -256,14 +258,6 @@ const OrderForm = () => {
             </Col>
           </Row>
           <Row className="mt-5">
-            <Col span={12}></Col>
-            <Col span={12}>
-              <Form.Item label="Tổng số lượng" name="amount">
-                <Input style={{ width: 200 }} disabled />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
             <Col span={12}></Col>
             <Col span={12}>
               <Form.Item label="Tổng tiền" name="totalMoney">

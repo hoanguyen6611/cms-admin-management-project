@@ -122,6 +122,7 @@ const CategoryForm = () => {
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      mutate("/product-category", fetcher, false);
     }
   };
   const updateCategory = async () => {
@@ -188,11 +189,7 @@ const CategoryForm = () => {
   return (
     <div>
       <Modal
-        title={
-          !state.isEditFormCategory
-            ? "Cập nhập danh mục sản phẩm"
-            : "Tạo mới danh mục sản phẩm"
-        }
+        title={id ? "Cập nhập danh mục sản phẩm" : "Tạo mới danh mục sản phẩm"}
         open={state.isVisibleFormCategory}
         okType={"danger"}
         onOk={handleOk}
@@ -203,7 +200,7 @@ const CategoryForm = () => {
             Huỷ
           </Button>,
           <Button key="submit" type="primary" onClick={handleOk}>
-            {!state.isEditFormCategory ? "Cập nhập" : "Thêm mới"}
+            {id ? "Cập nhập" : "Thêm mới"}
           </Button>,
         ]}
       >
@@ -290,7 +287,7 @@ const CategoryForm = () => {
           <Row gutter={16}>
             <Col span={24}>
               <Form.Item>
-                {!state.isEditFormCategory ? (
+                {id ? (
                   <Image width={150} src={category?.icon} alt="image"></Image>
                 ) : (
                   <Button className="p-4 border-none">

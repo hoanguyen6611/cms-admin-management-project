@@ -1,5 +1,14 @@
 import React, { useState, createContext } from "react";
-import { Modal, notification, Table, Spin, Tag, Image } from "antd";
+import {
+  Modal,
+  notification,
+  Table,
+  Spin,
+  Tag,
+  Image,
+  Avatar,
+  Tooltip,
+} from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import {
@@ -7,6 +16,8 @@ import {
   DeleteOutlined,
   EditOutlined,
   CloseOutlined,
+  UserOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import {
@@ -22,7 +33,7 @@ import { actions, useStoreContext } from "@/store";
 const fetcher = async () => {
   const token = localStorage.getItem("token");
   const res = await axios.get(
-    "https://tech-api.herokuapp.com/v1/product-category/list",
+    "https://tech-api.herokuapp.com/v1/customer/list",
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -35,22 +46,22 @@ const fetcher = async () => {
   return res.data.data.data;
 };
 
-const CategoryTable = () => {
-  const { data, error } = useSWR("/product-category", fetcher);
+const CustomerTable = () => {
+  const { data, error } = useSWR("/customer", fetcher);
   const [state, dispatchs] = useStoreContext();
   const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const deleteConfirmCategory = (record: any) => {
+  const deleteConfirmCustomer = (record: any) => {
     Modal.confirm({
-      title: "Bạn có chắc chắn muốn xoá danh mục sản phẩm này không?",
+      title: "Bạn có chắc chắn muốn xoá khách hàng này không?",
       okText: "OK",
       okType: "danger",
       onOk: () => {
-        deleteCategory(record);
+        deleteCustomer(record);
       },
     });
   };
-  const deleteCategory = async (record: any) => {
+  const deleteCustomer = async (record: any) => {
     const token = localStorage.getItem("token");
     const res = await axios.delete(
       `https://tech-api.herokuapp.com/v1/product-category/delete/${record}`,
@@ -78,29 +89,59 @@ const CategoryTable = () => {
       dataIndex: "icon",
       key: "icon",
       width: 50,
-      render: (text) => <Image width={50} src={text} alt="icon"></Image>,
+      render: (text) =>
+        text ? (
+          <Image width={50} src={text} alt="icon"></Image>
+        ) : (
+          <Avatar className="mr-2" size={40} icon={<UserOutlined />} />
+        ),
     },
     {
-      title: "Tên danh mục",
-      dataIndex: "name",
-      key: "name",
+      title: "Họ và tên",
+      dataIndex: "account",
+      key: "account",
+      render: (text) => text?.fullName,
+    },
+    {
+      title: "Email",
+      dataIndex: "account",
+      key: "account",
+      render: (text) => text?.email,
     },
     {
       title: "Trạng thái",
-      dataIndex: "status",
+      dataIndex: "account",
       key: "status",
       // width:70,
       render: (text) => (
         <Tag
           style={
-            text === 1 ? { width: 80, height: 25 } : { width: 50, height: 25 }
+            text?.status === 1
+              ? { width: 80, height: 25 }
+              : { width: 50, height: 25 }
           }
-          color={text === 1 ? "green" : "red"}
-          key={text}
+          color={text?.status === 1 ? "green" : "red"}
+          key={text?.status}
         >
-          {text === 1 ? "KÍCH HOẠT" : "KHOÁ"}
+          {text?.status === 1 ? "KÍCH HOẠT" : "KHOÁ"}
         </Tag>
       ),
+    },
+    {
+      title: "Giới tính",
+      dataIndex: "gender",
+      key: "gender",
+      render: (text) => (text === 0 ? "Nam" : "" && text === 1 ? "Nữ" : ""),
+      filters: [
+        {
+          text: "Nam",
+          value: "male",
+        },
+        {
+          text: "Nữ",
+          value: "female",
+        },
+      ],
     },
     {
       title: "",
@@ -111,12 +152,12 @@ const CategoryTable = () => {
           <>
             <EditOutlined
               style={{ color: "green" }}
-              onClick={() => isEditCategory(record)}
+              onClick={() => isEditCustomer(record)}
             />
             <DeleteOutlined
               style={{ color: "red", marginLeft: 12 }}
               onClick={() => {
-                deleteConfirmCategory(record);
+                deleteConfirmCustomer(record);
               }}
             />
           </>
@@ -124,10 +165,9 @@ const CategoryTable = () => {
       },
     },
   ];
-  const isEditCategory = async (record: number) => {
-    dispatchs(actions.setIdCategoryForm(record));
-    dispatchs(actions.changeVisibleFormCategory(true));
-    dispatch(actions.changeEditFormCategory(true));
+  const isEditCustomer = async (record: number) => {
+    dispatchs(actions.setIdCustomerForm(record));
+    dispatchs(actions.changeVisibleFormCustomer(true));
   };
   if (!data)
     return (
@@ -138,4 +178,4 @@ const CategoryTable = () => {
   return <Table columns={columns} dataSource={data} />;
 };
 
-export default CategoryTable;
+export default CustomerTable;

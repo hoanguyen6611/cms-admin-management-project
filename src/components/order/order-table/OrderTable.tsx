@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { notification, Table, Spin, Tag, Modal, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
@@ -7,11 +7,8 @@ import {
   DeleteOutlined,
   EditOutlined,
   CloseOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
-import {
-  isEditProductForm,
-  updateVisibleFormProduct,
-} from "@/redux/product/productSlice";
 import { useDispatch } from "react-redux";
 import useSWR from "swr";
 import { Product } from "@/models";
@@ -51,11 +48,9 @@ const OrderTable = () => {
   const { data, error } = useSWR("/product", fetcher);
   const { data: store, error: errorStore } = useSWR("/store/list", fetchers);
   const [state, dispatchs] = useStoreContext();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const dispatch = useDispatch();
   const deleteConfirmProduct = (record: any) => {
     Modal.confirm({
-      title: "Bạn có chắc chắn muốn xoá sản phẩm này không?",
+      title: "Bạn có chắc chắn muốn xoá đơn hàng này không?",
       okText: "OK",
       okType: "danger",
       onOk: () => {
@@ -97,22 +92,7 @@ const OrderTable = () => {
       dataIndex: "createdDate",
       key: "createdDate",
     },
-    {
-      title: "Trạng thái đơn hàng",
-      dataIndex: "state",
-      key: "state",
-      render: (text) => (
-        <Tag
-          style={
-            text === 1 ? { width: 80, height: 25 } : { width: 50, height: 25 }
-          }
-          color={text === 1 ? "green" : "red"}
-          key={text}
-        >
-          {text === 1 ? "KÍCH HOẠT" : "KHOÁ"}
-        </Tag>
-      ),
-    },
+
     {
       title: "Khách hàng",
       dataIndex: "customerAddressDto",
@@ -130,10 +110,26 @@ const OrderTable = () => {
       key: "saleOff",
     },
     {
-      title: "Cửa hàng bán",
+      title: "Cửa hàng",
       dataIndex: "storeId",
       key: "storeId",
       render: (text) => store?.find((item: any) => item.id === text)?.name,
+    },
+    {
+      title: "Trạng thái đơn hàng",
+      dataIndex: "state",
+      key: "state",
+      render: (text) => (
+        <Tag
+          style={
+            text === 1 ? { width: 80, height: 25 } : { width: 50, height: 25 }
+          }
+          color={text === 1 ? "green" : "red"}
+          key={text}
+        >
+          {text === 1 ? "KÍCH HOẠT" : "KHOÁ"}
+        </Tag>
+      ),
     },
     {
       title: "",
@@ -143,7 +139,7 @@ const OrderTable = () => {
         return (
           <>
             <Tooltip title="Xem chi tiết">
-              <EditOutlined
+              <EyeOutlined
                 style={{ color: "green" }}
                 onClick={() => isEditProduct(record)}
               />
