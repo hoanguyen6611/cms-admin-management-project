@@ -1,10 +1,15 @@
 import { boolean, number } from "yup";
 import {
+  IS_EDIT_ACCOUNT_FORM,
   IS_EDIT_CATEGORY_FORM,
+  IS_EDIT_CUSTOMER_FORM,
+  IS_EDIT_PRODDUCT_FORM,
   IS_VISIBLE_ACCOUNT_FORM,
   IS_VISIBLE_CATEGORY_FORM,
   IS_VISIBLE_CUSTOMER_FORM,
   IS_VISIBLE_ORDER_FORM,
+  IS_VISIBLE_PRODUCT_FORM,
+  IS_VISIBLE_PROMOTION_FORM,
   SET_ID_ACCOUNT,
   SET_ID_CATEGORY_FORM,
   SET_ID_CUSTOMER,
@@ -16,14 +21,20 @@ import {
 export interface StateGlobal {
   isVisibleFormCategory: boolean;
   isVisibleFormOrder: boolean;
+  isVisibleFormProduct: boolean;
   isVisibleFormCustomer: boolean;
   isVisibleFormAccount: boolean;
   isEditFormCategory: boolean;
+  isEditFormProduct: boolean;
+  isEditFormPromotion: boolean;
+  isEditFormAccount: boolean;
+  isEditFormCustomer: boolean;
   idCategory: number;
   idProduct: number;
   idOrder: number;
   idCustomer: number;
   idAccount: number;
+  idPromotion: number;
   idGroupPermission: number;
   variant: {};
   category: {};
@@ -31,19 +42,25 @@ export interface StateGlobal {
 export const initialState: StateGlobal = {
   isVisibleFormCategory: false,
   isVisibleFormOrder: false,
+  isVisibleFormProduct: false,
   isVisibleFormCustomer: false,
   isVisibleFormAccount: false,
   isEditFormCategory: false,
+  isEditFormProduct: false,
+  isEditFormPromotion: false,
+  isEditFormAccount: false,
+  isEditFormCustomer: false,
   idCategory: 0,
   idProduct: 0,
   idOrder: 0,
   idCustomer: 0,
   idAccount: 0,
+  idPromotion: 0,
   idGroupPermission: 0,
   variant: {},
   category: {},
 };
-export function reducer(state:any, action: any) {
+export function reducer(state: any, action: any) {
   switch (action.type) {
     case IS_VISIBLE_CATEGORY_FORM:
       return {
@@ -55,6 +72,21 @@ export function reducer(state:any, action: any) {
         ...state,
         isEditFormCategory: action.payload,
       };
+    case IS_EDIT_PRODDUCT_FORM:
+      return {
+        ...state,
+        isEditFormProduct: action.payload,
+      };
+    case IS_EDIT_ACCOUNT_FORM:
+      return {
+        ...state,
+        isEditFormAccount: action.payload,
+      };
+    case IS_EDIT_CUSTOMER_FORM:
+      return {
+        ...state,
+        isEditFormCustomer: action.payload,
+      };
     case SET_ID_CATEGORY_FORM:
       return {
         ...state,
@@ -64,6 +96,16 @@ export function reducer(state:any, action: any) {
       return {
         ...state,
         isVisibleFormOrder: action.payload,
+      };
+    case IS_VISIBLE_PRODUCT_FORM:
+      return {
+        ...state,
+        isVisibleFormProduct: action.payload,
+      };
+    case IS_VISIBLE_PROMOTION_FORM:
+      return {
+        ...state,
+        isVisibleFormPromotion: action.payload,
       };
     case IS_VISIBLE_CUSTOMER_FORM:
       return {

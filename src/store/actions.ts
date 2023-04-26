@@ -1,9 +1,14 @@
 import {
+  IS_EDIT_ACCOUNT_FORM,
   IS_EDIT_CATEGORY_FORM,
+  IS_EDIT_CUSTOMER_FORM,
+  IS_EDIT_PRODDUCT_FORM,
   IS_VISIBLE_ACCOUNT_FORM,
   IS_VISIBLE_CATEGORY_FORM,
   IS_VISIBLE_CUSTOMER_FORM,
   IS_VISIBLE_ORDER_FORM,
+  IS_VISIBLE_PRODUCT_FORM,
+  IS_VISIBLE_PROMOTION_FORM,
   SET_ID_ACCOUNT,
   SET_ID_CATEGORY_FORM,
   SET_ID_CUSTOMER,
@@ -25,8 +30,16 @@ export const changeVisibleFormOrder = (payload: boolean) => ({
   type: IS_VISIBLE_ORDER_FORM,
   payload,
 });
+export const changeVisibleFormProduct = (payload: boolean) => ({
+  type: IS_VISIBLE_PRODUCT_FORM,
+  payload,
+});
 export const changeVisibleFormCustomer = (payload: boolean) => ({
   type: IS_VISIBLE_CUSTOMER_FORM,
+  payload,
+});
+export const changeVisibleFormPromotion = (payload: boolean) => ({
+  type: IS_VISIBLE_PROMOTION_FORM,
   payload,
 });
 export const changeVisibleFormAccount = (payload: boolean) => ({
@@ -35,6 +48,18 @@ export const changeVisibleFormAccount = (payload: boolean) => ({
 });
 export const changeEditFormCategory = (payload: boolean) => ({
   type: IS_EDIT_CATEGORY_FORM,
+  payload,
+});
+export const changeEditFormProduct = (payload: boolean) => ({
+  type: IS_EDIT_PRODDUCT_FORM,
+  payload,
+});
+export const changeEditFormAccount = (payload: boolean) => ({
+  type: IS_EDIT_ACCOUNT_FORM,
+  payload,
+});
+export const changeEditFormCustomer = (payload: boolean) => ({
+  type: IS_EDIT_CUSTOMER_FORM,
   payload,
 });
 export const setIdGroupPermissionForm = (payload: number) => ({

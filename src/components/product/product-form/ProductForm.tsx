@@ -207,7 +207,7 @@ const ProductForm = () => {
   const { data, error } = useSWR("/product-category", fetcher);
   const [state, dispatchs] = useStoreContext();
   const { data: productItem } = useSWR(
-    `https://tech-api.herokuapp.com/v1/product/get/${state.idProduct}`,
+    `https://tech-api.herokuapp.com/v1/product/get/${state?.idProduct}`,
     fetchers
   );
   const {
@@ -369,9 +369,7 @@ const ProductForm = () => {
       const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
       await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
         await getDownloadURL(snapshot.ref).then((url) => {
-          console.log(url);
           setImage(url);
-          console.log(image);
         });
       });
     }
@@ -379,20 +377,21 @@ const ProductForm = () => {
   const handleOk = async () => {
     if (id) {
       updateProduct();
-      dispatch(updateVisibleFormProduct(false));
-      dispatch(isEditProductForm(false));
+      dispatchs(actions.changeVisibleFormProduct(false));
+      dispatchs(actions.changeEditFormProduct(false));
     } else {
       uploadImageProduct();
       createProduct();
-      dispatch(updateVisibleFormProduct(false));
-      dispatch(isEditProductForm(false));
+      dispatchs(actions.changeVisibleFormProduct(false));
+      dispatchs(actions.changeEditFormProduct(false));
     }
   };
 
   const handleCancel = () => {
-    dispatch(updateVisibleFormProduct(false));
-    dispatch(isEditProductForm(false));
     form.resetFields();
+    dispatchs(actions.changeVisibleFormProduct(false));
+    dispatch(actions.changeVisibleFormProduct(true));
+    dispatchs(actions.changeEditFormProduct(false));
     dispatchs(actions.setIdProductForm(0));
   };
   const handleChange = (value: string) => {
@@ -486,8 +485,10 @@ const ProductForm = () => {
   return (
     <div>
       <Modal
-        title={product.isEdit ? "Cập nhập sản phẩm" : "Tạo mới sản phẩm"}
-        open={product.isVisibleFormProduct}
+        title={
+          state.isEditFormProduct ? "Cập nhập sản phẩm" : "Tạo mới sản phẩm"
+        }
+        open={state.isVisibleFormProduct}
         onOk={handleOk}
         onCancel={handleCancel}
         footer={[

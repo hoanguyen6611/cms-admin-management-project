@@ -131,7 +131,7 @@ const CustomerTable = () => {
       title: "Giới tính",
       dataIndex: "gender",
       key: "gender",
-      render: (text) => (text === 0 ? "Nam" : "" && text === 1 ? "Nữ" : ""),
+      render: (text) => (text === 1 ? "Nam" : "" && text === 2 ? "Nữ" : ""),
       filters: [
         {
           text: "Nam",
@@ -168,6 +168,7 @@ const CustomerTable = () => {
   const isEditCustomer = async (record: number) => {
     dispatchs(actions.setIdCustomerForm(record));
     dispatchs(actions.changeVisibleFormCustomer(true));
+    dispatchs(actions.changeEditFormCustomer(true));
   };
   if (!data)
     return (

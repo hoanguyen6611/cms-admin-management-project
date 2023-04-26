@@ -14,7 +14,7 @@ const CategoryShow = () => {
   const [state, dispatchs] = useStoreContext();
   const showModal = () => {
     dispatchs(actions.changeVisibleFormCategory(true));
-    dispatch(actions.changeEditFormCategory(true));
+    // dispatch(actions.changeEditFormCategory(false));
   };
 
   useEffect(() => {

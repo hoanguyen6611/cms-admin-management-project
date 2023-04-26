@@ -65,6 +65,7 @@ const CustomerForm = () => {
     fetchers
   );
   const { data: store, error } = useSWR("/store/list", fetcher);
+  const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY', 'DD-MM-YYYY', 'DD-MM-YY'];
   useEffect(() => {
     setId(customer?.id);
     form.setFieldsValue({
@@ -72,10 +73,13 @@ const CustomerForm = () => {
       fullName: customer?.account ? customer?.account.fullName : "",
       email: customer?.account ? customer?.account.email : "",
       createdDate: customer?.account ? customer?.account.createdDate : "",
+      phone: customer?.account ? customer?.account.phone : "",
+      status: customer?.account ? customer?.account.status : "",
+      birthday: customer?.account ? customer?.account.birthday : "",
       gender:
-        customer?.gender === 0
+        customer?.gender === 1
           ? "Nam"
-          : "" && customer?.gender === 1
+          : "" && customer?.gender === 2
           ? "Nữ"
           : "",
     });
@@ -102,7 +106,6 @@ const CustomerForm = () => {
     // console.log({ ...form.getFieldsValue(), password: "123456897" });
     const customer = {
       ...form.getFieldsValue(),
-      password: "123456897",
       avatar:
         "https://img6.thuthuatphanmem.vn/uploads/2022/11/18/anh-avatar-don-gian-ma-dep_081757969.jpg",
       birthday,
@@ -119,7 +122,7 @@ const CustomerForm = () => {
       }
     );
     if (res.data.result) {
-      dispatchs(actions.changeVisibleFormCustomer(true));
+      dispatchs(actions.changeVisibleFormCustomer(false));
       form.resetFields();
       notification.open({
         message: res.data.message,
@@ -143,29 +146,29 @@ const CustomerForm = () => {
     };
     delete customer.createdDate;
     console.log(customer);
-    const token = localStorage.getItem("token");
-    const res = await axios.put(
-      "https://tech-api.herokuapp.com/v1/customer/update",
-      customer,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    if (res.data.result) {
-      dispatchs(actions.changeVisibleFormCustomer(true));
-      form.resetFields();
-      notification.open({
-        message: res.data.message,
-        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
-      });
-    } else {
-      notification.open({
-        message: res.data,
-        icon: <WarningOutlined style={{ color: "red" }} />,
-      });
-    }
+    // const token = localStorage.getItem("token");
+    // const res = await axios.put(
+    //   "https://tech-api.herokuapp.com/v1/customer/update",
+    //   customer,
+    //   {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   }
+    // );
+    // if (res.data.result) {
+    //   dispatchs(actions.changeVisibleFormCustomer(true));
+    //   form.resetFields();
+    //   notification.open({
+    //     message: res.data.message,
+    //     icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+    //   });
+    // } else {
+    //   notification.open({
+    //     message: res.data,
+    //     icon: <WarningOutlined style={{ color: "red" }} />,
+    //   });
+    // }
   };
   const handleOk = async () => {
     if (id) {
@@ -175,13 +178,12 @@ const CustomerForm = () => {
     }
   };
   const onChangeBirthday: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
     setBirthday(dateString);
   };
   return (
     <div>
       <Modal
-        title={id ? "Cập nhập thông tin khách hàng" : "Thêm mới khách hàng"}
+        title={state.isEditFormCustomer ? "Cập nhập thông tin khách hàng" : "Thêm mới khách hàng"}
         open={state.isVisibleFormCustomer}
         okType={"danger"}
         onCancel={cancelOrderForm}
@@ -208,26 +210,20 @@ const CustomerForm = () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Họ và tên" name="fullName">
-                <Input />
+              <Form.Item label="Mật khẩu" name="password">
+                <Input.Password placeholder="Vui lòng nhập mật khẩu" />
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item label="Email" name="email">
+          <Col span={12}>
+              <Form.Item label="Họ và tên" name="fullName">
                 <Input />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Giới tính" name="gender">
-                <Select
-                  defaultValue="Chọn giới tính"
-                  options={[
-                    { value: "0", label: "Nam" },
-                    { value: "1", label: "Nữ" },
-                  ]}
-                />
+              <Form.Item label="Email" name="email">
+                <Input />
               </Form.Item>
             </Col>
           </Row>
@@ -254,9 +250,21 @@ const CustomerForm = () => {
             </Col>
           </Row>
           <Row gutter={16}>
+          <Col span={12}>
+              <Form.Item label="Giới tính" name="gender">
+                <Select
+                  defaultValue="Chọn giới tính"
+                  options={[
+                    { value: "1", label: "Nam" },
+                    { value: "2", label: "Nữ" },
+                  ]}
+                />
+              </Form.Item>
+            </Col>
             <Col span={12}>
               <Form.Item label="Ngày sinh" name="birthday">
-                <DatePicker onChange={onChangeBirthday} />
+                {/* <DatePicker onChange={onChangeBirthday} /> */}
+                <DatePicker format={dateFormatList} onChange={onChangeBirthday} />
               </Form.Item>
             </Col>
           </Row>

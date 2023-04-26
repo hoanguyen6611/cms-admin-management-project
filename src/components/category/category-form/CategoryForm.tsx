@@ -189,7 +189,11 @@ const CategoryForm = () => {
   return (
     <div>
       <Modal
-        title={id ? "Cập nhập danh mục sản phẩm" : "Tạo mới danh mục sản phẩm"}
+        title={
+          state.isEditFormCategory
+            ? "Cập nhập danh mục sản phẩm"
+            : "Tạo mới danh mục sản phẩm"
+        }
         open={state.isVisibleFormCategory}
         okType={"danger"}
         onOk={handleOk}
@@ -200,7 +204,7 @@ const CategoryForm = () => {
             Huỷ
           </Button>,
           <Button key="submit" type="primary" onClick={handleOk}>
-            {id ? "Cập nhập" : "Thêm mới"}
+            {state.isEditFormCategory ? "Cập nhập" : "Thêm mới"}
           </Button>,
         ]}
       >
@@ -287,7 +291,7 @@ const CategoryForm = () => {
           <Row gutter={16}>
             <Col span={24}>
               <Form.Item>
-                {id ? (
+                {state.isEditFormCategory ? (
                   <Image width={150} src={category?.icon} alt="image"></Image>
                 ) : (
                   <Button className="p-4 border-none">

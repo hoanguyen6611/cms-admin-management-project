@@ -6,12 +6,13 @@ import { updateVisibleFormProduct } from "@/redux/product/productSlice";
 import ProductTable from "./product-table/ProductTable";
 import ProductForm from "./product-form/ProductForm";
 import { useRouter } from "next/router";
+import { actions, useStoreContext } from "@/store";
 
 const ProductShow = () => {
-  const dispatch = useDispatch();
+  const [state, dispatch] = useStoreContext();
   const router = useRouter();
   const showModal = () => {
-    dispatch(updateVisibleFormProduct(true));
+    dispatch(actions.changeVisibleFormProduct(true));
   };
   useEffect(() => {
     if (typeof window !== "undefined") {

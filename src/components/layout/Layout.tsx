@@ -42,10 +42,10 @@ const items: MenuItem[] = [
   ]),
   getItem("Giao dịch", "sub2", <SnippetsOutlined />, [
     getItem("Đơn hàng", "order"),
-    getItem("Mã giảm giá", "voucher"),
+    getItem("Mã giảm giá", "promotion"),
   ]),
-  getItem("Quản lý cửa hàng", "sub3",<BranchesOutlined />, [
-    getItem("Thông tin cửa hàng","store")
+  getItem("Quản lý cửa hàng", "sub3", <BranchesOutlined />, [
+    getItem("Thông tin cửa hàng", "store"),
   ]),
   getItem("Tài khoản", "account", <AccountBookOutlined />),
   getItem("Khách hàng", "customer", <CustomerServiceOutlined />),

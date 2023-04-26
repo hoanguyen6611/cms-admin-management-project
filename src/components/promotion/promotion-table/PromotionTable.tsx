@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { notification, Table, Spin, Tag, Modal, Image } from "antd";
+import React, { useState, createContext } from "react";
+import { Modal, notification, Table, Spin, Tag, Image } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import {
@@ -8,20 +8,17 @@ import {
   EditOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
-import {
-  isEditProductForm,
-  updateVisibleFormProduct,
-} from "@/redux/product/productSlice";
 import { useDispatch } from "react-redux";
-import useSWR from "swr";
-import styles from "./ProductTable.module.scss";
+import { Category } from "@/models/category";
+import styles from "./CategoryTable.module.scss";
+import useSWR, { mutate } from "swr";
 import { actions, useStoreContext } from "@/store";
 import { VND } from "@/utils/formatVNĐ";
 
 const fetcher = async () => {
   const token = localStorage.getItem("token");
   const res = await axios.get(
-    "https://tech-api.herokuapp.com/v1/product/list",
+    "https://tech-api.herokuapp.com/v1/promotion/list",
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -30,30 +27,30 @@ const fetcher = async () => {
   );
   res.data.data.data.map((data: any) => {
     data.key = data.id;
-    data.price = VND.format(data.price);
+    data.value = VND.format(data.value);
   });
   return res.data.data.data;
 };
 
-const ProductTable = () => {
-  const { data, error } = useSWR("/product", fetcher);
+const PromotionTable = () => {
+  const { data: promotion, error } = useSWR("/v1/promotion/list", fetcher);
   const [state, dispatchs] = useStoreContext();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const dispatch = useDispatch();
-  const deleteConfirmProduct = (record: any) => {
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const deleteConfirmPromotion = (record: any) => {
     Modal.confirm({
-      title: "Bạn có chắc chắn muốn xoá sản phẩm này không?",
+      title: "Bạn có chắc chắn muốn xoá danh mục sản phẩm này không?",
       okText: "OK",
       okType: "danger",
       onOk: () => {
-        deleteProduct(record);
+        deletePromotion(record);
       },
     });
   };
-  const deleteProduct = async (record: any) => {
+  const deletePromotion = async (record: any) => {
     const token = localStorage.getItem("token");
     const res = await axios.delete(
-      `https://tech-api.herokuapp.com/v1/product/delete/${record}`,
+      `https://tech-api.herokuapp.com/v1/product-category/delete/${record}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -72,28 +69,34 @@ const ProductTable = () => {
       });
     }
   };
-
-  const columns: ColumnsType<any> = [
+  const columns: ColumnsType<Category> = [
+    // {
+    //   title: "",
+    //   dataIndex: "icon",
+    //   key: "icon",
+    //   width: 50,
+    //   render: (text) => <Image width={50} src={text} alt="icon"></Image>,
+    // },
     {
-      title: "",
-      dataIndex: "image",
-      key: "image",
-      render: (text) => <Image width={50} src={text} alt="image"></Image>,
+      title: "Tên ưu đãi",
+      dataIndex: "title",
+      key: "title",
     },
     {
-      title: "Tên sản phẩm",
-      dataIndex: "name",
-      key: "name",
+      title: "Chi tiết ưu đãi",
+      dataIndex: "description",
+      key: "description",
     },
     {
-      title: "Giá",
-      dataIndex: "price",
-      key: "price",
+      title: "Giá trị",
+      dataIndex: "value",
+      key: "value",
     },
     {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      // width:70,
       render: (text) => (
         <Tag
           style={
@@ -107,25 +110,20 @@ const ProductTable = () => {
       ),
     },
     {
-      title: "Số lượng",
-      dataIndex: "quanlity",
-      key: "quanlity",
-    },
-    {
       title: "",
       dataIndex: "id",
       key: "action",
-      render: (record: number) => {
+      render: (record) => {
         return (
           <>
             <EditOutlined
               style={{ color: "green" }}
-              onClick={() => isEditProduct(record)}
+              onClick={() => isEditPromotion(record)}
             />
             <DeleteOutlined
               style={{ color: "red", marginLeft: 12 }}
               onClick={() => {
-                deleteConfirmProduct(record);
+                deleteConfirmPromotion(record);
               }}
             />
           </>
@@ -133,19 +131,18 @@ const ProductTable = () => {
       },
     },
   ];
-  const isEditProduct = (record: number) => {
-    dispatchs(actions.setIdProductForm(record));
-    dispatchs(actions.changeVisibleFormProduct(true));
-    dispatchs(actions.changeEditFormProduct(true));
+  const isEditPromotion = async (record: number) => {
+    dispatchs(actions.setIdCategoryForm(record));
+    dispatchs(actions.changeVisibleFormCategory(true));
+    dispatch(actions.changeEditFormCategory(true));
   };
-
-  if (!data)
+  if (!promotion)
     return (
       <Spin tip="Loading" size="small">
         <div className="content" />
       </Spin>
     );
-  return <Table columns={columns} dataSource={data} className="mt-4" />;
+  return <Table columns={columns} dataSource={promotion} />;
 };
 
-export default ProductTable;
+export default PromotionTable;
