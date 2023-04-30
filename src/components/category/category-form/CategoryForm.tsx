@@ -174,6 +174,7 @@ const CategoryForm = () => {
   };
 
   const handleOk = async () => {
+    uploadImage();
     if (id) {
       updateCategory();
     } else {
@@ -212,9 +213,7 @@ const CategoryForm = () => {
         }
         open={state.isVisibleFormCategory}
         okType={"danger"}
-        onOk={
-          id ? handleSubmit(updateCategory) : handleSubmit(createCategoryForm)
-        }
+        onOk={handleOk}
         onCancel={cancelCreateCategory}
         width={800}
         footer={[
@@ -245,11 +244,11 @@ const CategoryForm = () => {
                 ]}
               >
                 <Input
-                  {...register("name")}
+                  // {...register("name")}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
-                <p className={styles.warning}>{errors.name?.message}</p>
+                {/* <p className={styles.warning}>{errors.name?.message}</p> */}
               </Form.Item>
             </Col>
             <Col span={12}>
