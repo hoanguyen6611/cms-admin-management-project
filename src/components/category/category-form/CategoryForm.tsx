@@ -40,6 +40,10 @@ import { Category } from "@/models";
 import Context from "@/store/Context";
 import { actions, useStoreContext } from "@/store";
 import { v4 } from "uuid";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import styles from "./CategoryForm.module.scss";
 
 const fetcher = async () => {
   const token = localStorage.getItem("token");
@@ -66,6 +70,10 @@ const fetchers = async (url: string) => {
   });
   return res.data.data;
 };
+const schema = yup.object({
+  name: yup.string().required("Trường tên là trường bắt buộc"),
+});
+type FormData = yup.InferType<typeof schema>;
 
 const CategoryForm = () => {
   const [form] = Form.useForm();
@@ -78,7 +86,7 @@ const CategoryForm = () => {
   );
   const [createCategory, setCreateCategory] = useState(false);
   const [id, setId] = useState<number>();
-  const [name, setName] = useState("hello");
+  const [name, setName] = useState("");
   const [parentId, setParentId] = useState("");
   const [status, setStatus] = useState(1);
   const [orderSort, setOrderSort] = useState(0);
@@ -87,11 +95,20 @@ const CategoryForm = () => {
   const [iconUpload, setIconUpload] = useState<File>();
   const dispatch = useDispatch();
   const [fileList, setFileList] = useState([]);
-
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: yupResolver(schema),
+  });
   useEffect(() => {
     setId(category?.id);
     form.setFieldsValue({
-      nameCategory: category?.name,
+      name: category?.name,
       parentId: category?.parentId,
       note: category?.note,
       status: category?.status,
@@ -157,7 +174,6 @@ const CategoryForm = () => {
   };
 
   const handleOk = async () => {
-    uploadImage();
     if (id) {
       updateCategory();
     } else {
@@ -196,7 +212,9 @@ const CategoryForm = () => {
         }
         open={state.isVisibleFormCategory}
         okType={"danger"}
-        onOk={handleOk}
+        onOk={
+          id ? handleSubmit(updateCategory) : handleSubmit(createCategoryForm)
+        }
         onCancel={cancelCreateCategory}
         width={800}
         footer={[
@@ -218,7 +236,7 @@ const CategoryForm = () => {
             <Col span={12}>
               <Form.Item
                 label="Tên danh mục"
-                name="nameCategory"
+                name="name"
                 rules={[
                   {
                     required: true,
@@ -226,7 +244,12 @@ const CategoryForm = () => {
                   },
                 ]}
               >
-                <Input value={name} onChange={(e) => setName(e.target.value)} />
+                <Input
+                  {...register("name")}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+                <p className={styles.warning}>{errors.name?.message}</p>
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -263,46 +286,31 @@ const CategoryForm = () => {
                 </Radio.Group>
               </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Order Sort"
-                name="orderSort"
-                initialValue={orderSort}
-              >
-                <InputNumber
-                  style={{ width: 200 }}
-                  onChange={(e: any) => setOrderSort(e)}
-                  value={orderSort}
-                />
-              </Form.Item>
-            </Col>
           </Row>
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item label="Ghi chú" name="note" initialValue={note}>
-                <TextArea
-                  value={note}
-                  rows={4}
-                  onChange={(e) => setNote(e.target.value)}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
+          <Form.Item label="Ghi chú" name="note" initialValue={note}>
+            <TextArea
+              value={note}
+              rows={4}
+              onChange={(e) => setNote(e.target.value)}
+            />
+          </Form.Item>
           <Row gutter={16}>
             <Col span={24}>
               <Form.Item>
-                {state.isEditFormCategory ? (
-                  <Image width={150} src={category?.icon} alt="image"></Image>
-                ) : (
-                  <Button className="p-4 border-none">
-                    <input
-                      hidden
-                      accept="image/*"
-                      type="file"
-                      onChange={(e) => handleFileSelected(e)}
-                    />
-                  </Button>
-                )}
+                <Image
+                  hidden={!state.isEditFormCategory}
+                  width={150}
+                  src={category?.icon}
+                  alt="image"
+                ></Image>
+                <Button className="p-4 border-none">
+                  <input
+                    hidden
+                    accept="image/*"
+                    type="file"
+                    onChange={(e) => handleFileSelected(e)}
+                  />
+                </Button>
               </Form.Item>
             </Col>
           </Row>

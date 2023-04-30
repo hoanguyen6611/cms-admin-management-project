@@ -4,6 +4,7 @@ import {
   IS_EDIT_CATEGORY_FORM,
   IS_EDIT_CUSTOMER_FORM,
   IS_EDIT_PRODDUCT_FORM,
+  IS_EDIT_PROMOTION_FORM,
   IS_VISIBLE_ACCOUNT_FORM,
   IS_VISIBLE_CATEGORY_FORM,
   IS_VISIBLE_CUSTOMER_FORM,
@@ -16,6 +17,7 @@ import {
   SET_ID_GROUP_PERMISSION_FORM,
   SET_ID_ORDER,
   SET_ID_PRODUCT_FORM,
+  SET_ID_PROMOTION,
   SET_VARIANT,
 } from "./constants";
 export interface StateGlobal {
@@ -24,6 +26,7 @@ export interface StateGlobal {
   isVisibleFormProduct: boolean;
   isVisibleFormCustomer: boolean;
   isVisibleFormAccount: boolean;
+  isVisibleFormPromotion: boolean;
   isEditFormCategory: boolean;
   isEditFormProduct: boolean;
   isEditFormPromotion: boolean;
@@ -45,6 +48,7 @@ export const initialState: StateGlobal = {
   isVisibleFormProduct: false,
   isVisibleFormCustomer: false,
   isVisibleFormAccount: false,
+  isVisibleFormPromotion: false,
   isEditFormCategory: false,
   isEditFormProduct: false,
   isEditFormPromotion: false,
@@ -86,6 +90,11 @@ export function reducer(state: any, action: any) {
       return {
         ...state,
         isEditFormCustomer: action.payload,
+      };
+    case IS_EDIT_PROMOTION_FORM:
+      return {
+        ...state,
+        isEditFormPromotion: action.payload,
       };
     case SET_ID_CATEGORY_FORM:
       return {
@@ -141,6 +150,11 @@ export function reducer(state: any, action: any) {
       return {
         ...state,
         idProduct: action.payload,
+      };
+    case SET_ID_PROMOTION:
+      return {
+        ...state,
+        idPromotion: action.payload,
       };
     case SET_VARIANT:
       return {

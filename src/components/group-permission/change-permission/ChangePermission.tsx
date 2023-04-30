@@ -72,10 +72,10 @@ const ChangePermission = () => {
     `https://tech-api.herokuapp.com/v1/group/get/${state.idGroupPermission}`,
     fetchers
   );
-  console.log(group?.permissions.map((item: any) => item.id));
   useEffect(() => {
     setId(group?.id);
-    setCheckedKeys(group?.permissions);
+    setCheckedKeys(group?.permissions.map((item: any) => item.id));
+    console.log(checkedKeys);
     form.setFieldsValue({
       name: group?.name,
       description: group?.description,
@@ -89,11 +89,7 @@ const ChangePermission = () => {
   };
 
   const handleOk = () => {
-    if (id) {
-      updatePermissionGroup();
-    } else {
-      createPermissionGroup();
-    }
+    updatePermissionGroup();
   };
 
   const createPermissionGroup = async () => {
@@ -156,7 +152,7 @@ const ChangePermission = () => {
 
   const onCheck: TreeProps["onCheck"] = (checkedKeys, info) => {
     console.log("onCheck", checkedKeys);
-    setCheckedKeys(checkedKeys); //set những permission đã chọn
+    setCheckedKeys(checkedKeys);
   };
   return (
     <div>

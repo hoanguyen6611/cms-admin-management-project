@@ -614,18 +614,20 @@ const ProductForm = () => {
               </Col>
             </Row>
             <Form.Item name="image">
-              {product.isEdit ? (
-                <Image width={250} src={productItem?.image} alt="image"></Image>
-              ) : (
-                <Button className="p-4 border-none">
-                  <input
-                    hidden
-                    accept="image/*"
-                    type="file"
-                    onChange={(e) => handleFileSelected(e)}
-                  />
-                </Button>
-              )}
+              <Image
+                hidden={!state.isEditFormProduct}
+                width={250}
+                src={productItem?.image}
+                alt="image"
+              ></Image>
+              <Button className="p-4 border-none">
+                <input
+                  hidden
+                  accept="image/*"
+                  type="file"
+                  onChange={(e) => handleFileSelected(e)}
+                />
+              </Button>
             </Form.Item>
           </Card>
           <Card className="mb-4" title="Thông tin thuộc tính">

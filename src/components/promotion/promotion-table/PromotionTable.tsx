@@ -132,9 +132,9 @@ const PromotionTable = () => {
     },
   ];
   const isEditPromotion = async (record: number) => {
-    dispatchs(actions.setIdCategoryForm(record));
-    dispatchs(actions.changeVisibleFormCategory(true));
-    dispatch(actions.changeEditFormCategory(true));
+    dispatchs(actions.setIdPromotionForm(record));
+    dispatchs(actions.changeVisibleFormPromotion(true));
+    dispatch(actions.changeEditFormPromotion(true));
   };
   if (!promotion)
     return (

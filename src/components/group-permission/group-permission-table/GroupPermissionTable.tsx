@@ -108,12 +108,6 @@ const GroupPermissionTable = () => {
               style={{ color: "green" }}
               onClick={() => isChangePermissionGroup(record)}
             />
-            <DeleteOutlined
-              style={{ color: "red", marginLeft: 12 }}
-              onClick={() => {
-                deleteConfirmGroup(record);
-              }}
-            />
           </>
         );
       },

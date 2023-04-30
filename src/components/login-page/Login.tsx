@@ -15,11 +15,13 @@ import { authApi } from "@/api-client/auth-api";
 const { Header, Content } = Layout;
 const schema = yup.object({
   username: yup.string().required("Vui lòng nhập tên đăng nhập"),
-  password: yup.string().required("Vui lòng nhập mật khẩu"),
-  // .matches(
-  //   /^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$/,
-  //   "Mật khẩu chưa đúng định dạng, mật khẩu bao gồm cả chữ hoa, chữ thường, số và ký tự đặc biệt"
-  // ),
+  password: yup
+    .string()
+    .required("Vui lòng nhập mật khẩu")
+    // .matches(/[0-9]/, "Mật khẩu phải bao gồm số")
+    // .matches(/[a-z]/, "Mật khẩu phải có chữ thường")
+    // .matches(/[A-Z]/, "Mật khẩu phải bao gồm chữ hoa")
+    // .matches(/[^\w]/, "Mật khẩu phải bao gồm ký tự đặc biệt"),
 });
 type FormData = yup.InferType<typeof schema>;
 

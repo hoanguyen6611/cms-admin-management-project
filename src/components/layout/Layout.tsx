@@ -47,7 +47,7 @@ const items: MenuItem[] = [
   getItem("Quản lý cửa hàng", "sub3", <BranchesOutlined />, [
     getItem("Thông tin cửa hàng", "store"),
   ]),
-  getItem("Tài khoản", "account", <AccountBookOutlined />),
+  getItem("Quản trị viên", "account", <AccountBookOutlined />),
   getItem("Khách hàng", "customer", <CustomerServiceOutlined />),
 ];
 

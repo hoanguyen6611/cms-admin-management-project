@@ -3,9 +3,13 @@ import { Button } from "antd";
 import React from "react";
 import PromotionTable from "./promotion-table/PromotionTable";
 import PromotionForm from "./promotion-form/PromotionForm";
+import { actions, useStoreContext } from "@/store";
 
 const PromotionShow = () => {
-  const showModal = () => {};
+  const [state, dispatchs] = useStoreContext();
+  const showModal = () => {
+    dispatchs(actions.changeVisibleFormPromotion(true));
+  };
   return (
     <div>
       <div className="flex justify-end ml-4">

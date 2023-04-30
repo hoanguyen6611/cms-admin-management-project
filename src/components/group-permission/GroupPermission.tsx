@@ -13,12 +13,6 @@ const GroupPermissionShow = () => {
   };
   return (
     <div>
-      <div className="flex justify-end ml-4">
-        <Button className="mb-2" onClick={showModal}>
-          <PlusOutlined />
-          Tạo mới
-        </Button>
-      </div>
       <ChangePermission></ChangePermission>
       <GroupPermissionTable></GroupPermissionTable>
     </div>

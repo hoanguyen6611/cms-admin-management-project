@@ -3,6 +3,7 @@ import {
   IS_EDIT_CATEGORY_FORM,
   IS_EDIT_CUSTOMER_FORM,
   IS_EDIT_PRODDUCT_FORM,
+  IS_EDIT_PROMOTION_FORM,
   IS_VISIBLE_ACCOUNT_FORM,
   IS_VISIBLE_CATEGORY_FORM,
   IS_VISIBLE_CUSTOMER_FORM,
@@ -15,6 +16,7 @@ import {
   SET_ID_GROUP_PERMISSION_FORM,
   SET_ID_ORDER,
   SET_ID_PRODUCT_FORM,
+  SET_ID_PROMOTION,
   SET_VARIANT,
 } from "./constants";
 
@@ -50,6 +52,10 @@ export const changeEditFormCategory = (payload: boolean) => ({
   type: IS_EDIT_CATEGORY_FORM,
   payload,
 });
+export const changeEditFormPromotion = (payload: boolean) => ({
+  type: IS_EDIT_PROMOTION_FORM,
+  payload,
+});
 export const changeEditFormProduct = (payload: boolean) => ({
   type: IS_EDIT_PRODDUCT_FORM,
   payload,
@@ -80,5 +86,9 @@ export const setIdCustomerForm = (payload: number) => ({
 });
 export const setIdAccountForm = (payload: number) => ({
   type: SET_ID_ACCOUNT,
+  payload,
+});
+export const setIdPromotionForm = (payload: number) => ({
+  type: SET_ID_PROMOTION,
   payload,
 });
