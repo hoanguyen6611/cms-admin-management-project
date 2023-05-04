@@ -14,11 +14,11 @@ import {
   IS_VISIBLE_PROMOTION_FORM,
   IS_VISIBLE_STORE_FORM,
   SET_ID_ACCOUNT,
-  SET_ID_CATEGORY_FORM,
+  SET_ID_CATEGORY,
   SET_ID_CUSTOMER,
-  SET_ID_GROUP_PERMISSION_FORM,
+  SET_ID_GROUP_PERMISSION,
   SET_ID_ORDER,
-  SET_ID_PRODUCT_FORM,
+  SET_ID_PRODUCT,
   SET_ID_PROMOTION,
   SET_ID_STORE,
   SET_VARIANT,
@@ -80,42 +80,7 @@ export function reducer(state: any, action: any) {
         ...state,
         isVisibleFormCategory: action.payload,
       };
-    case IS_EDIT_CATEGORY_FORM:
-      return {
-        ...state,
-        isEditFormCategory: action.payload,
-      };
-    case IS_EDIT_PRODDUCT_FORM:
-      return {
-        ...state,
-        isEditFormProduct: action.payload,
-      };
-    case IS_EDIT_ACCOUNT_FORM:
-      return {
-        ...state,
-        isEditFormAccount: action.payload,
-      };
-    case IS_EDIT_CUSTOMER_FORM:
-      return {
-        ...state,
-        isEditFormCustomer: action.payload,
-      };
-    case IS_EDIT_PROMOTION_FORM:
-      return {
-        ...state,
-        isEditFormPromotion: action.payload,
-      };
-    case IS_EDIT_STORE_FORM:
-      return {
-        ...state,
-        isEditStorePromotion: action.payload,
-      };
-    case SET_ID_CATEGORY_FORM:
-      return {
-        ...state,
-        idCategory: action.payload,
-      };
-    case IS_VISIBLE_ORDER_FORM:
+      case IS_VISIBLE_ORDER_FORM:
       return {
         ...state,
         isVisibleFormOrder: action.payload,
@@ -145,6 +110,11 @@ export function reducer(state: any, action: any) {
         ...state,
         isVisibleFormAccount: action.payload,
       };
+    case SET_ID_CATEGORY:
+      return {
+        ...state,
+        idCategory: action.payload,
+      };
     case SET_ID_ORDER:
       return {
         ...state,
@@ -160,12 +130,12 @@ export function reducer(state: any, action: any) {
         ...state,
         idAccount: action.payload,
       };
-    case SET_ID_GROUP_PERMISSION_FORM:
+    case SET_ID_GROUP_PERMISSION:
       return {
         ...state,
         idGroupPermission: action.payload,
       };
-    case SET_ID_PRODUCT_FORM:
+    case SET_ID_PRODUCT:
       return {
         ...state,
         idProduct: action.payload,
@@ -184,6 +154,36 @@ export function reducer(state: any, action: any) {
       return {
         ...state,
         variant: action.payload,
+      };
+    case IS_EDIT_CATEGORY_FORM:
+      return {
+        ...state,
+        isEditFormCategory: action.payload,
+      };
+    case IS_EDIT_PRODDUCT_FORM:
+      return {
+        ...state,
+        isEditFormProduct: action.payload,
+      };
+    case IS_EDIT_ACCOUNT_FORM:
+      return {
+        ...state,
+        isEditFormAccount: action.payload,
+      };
+    case IS_EDIT_CUSTOMER_FORM:
+      return {
+        ...state,
+        isEditFormCustomer: action.payload,
+      };
+    case IS_EDIT_PROMOTION_FORM:
+      return {
+        ...state,
+        isEditFormPromotion: action.payload,
+      };
+    case IS_EDIT_STORE_FORM:
+      return {
+        ...state,
+        isEditFormStore: action.payload,
       };
   }
 }

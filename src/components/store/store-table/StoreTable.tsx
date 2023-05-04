@@ -127,12 +127,12 @@ const StoreTable = () => {
     dispatchs(actions.changeVisibleFormStore(true));
     dispatch(actions.changeEditFormStore(true));
   };
-//   if (!store)
-//     return (
-//       <Spin tip="Loading" size="small">
-//         <div className="content" />
-//       </Spin>
-//     );
+  if (!store)
+    return (
+      <Spin tip="Loading" size="small">
+        <div className="content" />
+      </Spin>
+    );
   return <Table columns={columns} dataSource={store} />;
 };
 

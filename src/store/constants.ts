@@ -1,4 +1,3 @@
-export const SET_ID_CATEGORY_FORM = "set_id_category_form";
 export const IS_VISIBLE_CATEGORY_FORM = "is_visible_category_form";
 export const IS_VISIBLE_ORDER_FORM = "is_visible_order_form";
 export const IS_VISIBLE_PRODUCT_FORM = "is_visible_product_form";
@@ -12,8 +11,9 @@ export const IS_EDIT_ACCOUNT_FORM = "is_edit_account_form";
 export const IS_EDIT_CUSTOMER_FORM = "is_edit_customer_form";
 export const IS_EDIT_PROMOTION_FORM = "is_edit_promotion_form";
 export const IS_EDIT_STORE_FORM = "is_edit_store_form";
-export const SET_ID_GROUP_PERMISSION_FORM = "set_id_group_permission_form";
-export const SET_ID_PRODUCT_FORM = "set_id_product_form";
+export const SET_ID_CATEGORY = "set_id_category_form";
+export const SET_ID_GROUP_PERMISSION = "set_id_group_permission_form";
+export const SET_ID_PRODUCT = "set_id_product_form";
 export const SET_ID_ORDER = "set_id_order";
 export const SET_ID_CUSTOMER = "set_id_customer";
 export const SET_ID_ACCOUNT = "set_id_account";

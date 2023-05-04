@@ -77,24 +77,17 @@ type FormData = yup.InferType<typeof schema>;
 
 const StoreForm = () => {
   const [form] = Form.useForm();
-  const categorySelector = useSelector((state: RootState) => state.category);
   const [state, dispatchs] = useStoreContext();
-  const { data, error } = useSWR("product-category/list", fetcher);
   const { data: store } = useSWR(
     `https://tech-api.herokuapp.com/v1/store/get/${state.idStore}`,
     fetchers
   );
-  const [createCategory, setCreateCategory] = useState(false);
+  console.log(state.isEditFormStore);
   const [id, setId] = useState<number>();
   const [name, setName] = useState("");
-  const [parentId, setParentId] = useState("");
-  const [status, setStatus] = useState(1);
-  const [orderSort, setOrderSort] = useState(0);
-  const [note, setNote] = useState("");
   const [icon, setIcon] = useState("");
   const [iconUpload, setIconUpload] = useState<File>();
   const dispatch = useDispatch();
-  const [fileList, setFileList] = useState([]);
   const {
     register,
     handleSubmit,

@@ -65,7 +65,7 @@ const CustomerForm = () => {
     fetchers
   );
   const { data: store, error } = useSWR("/store/list", fetcher);
-  const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY', 'DD-MM-YYYY', 'DD-MM-YY'];
+  const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY", "DD-MM-YYYY", "DD-MM-YY"];
   useEffect(() => {
     setId(customer?.id);
     form.setFieldsValue({
@@ -183,7 +183,11 @@ const CustomerForm = () => {
   return (
     <div>
       <Modal
-        title={state.isEditFormCustomer ? "Cập nhập thông tin khách hàng" : "Thêm mới khách hàng"}
+        title={
+          state.isEditFormCustomer
+            ? "Cập nhập thông tin khách hàng"
+            : "Thêm mới khách hàng"
+        }
         open={state.isVisibleFormCustomer}
         okType={"danger"}
         onCancel={cancelOrderForm}
@@ -205,18 +209,6 @@ const CustomerForm = () => {
         >
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label="Tên đăng nhập" name="username">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="Mật khẩu" name="password">
-                <Input.Password placeholder="Vui lòng nhập mật khẩu" />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-          <Col span={12}>
               <Form.Item label="Họ và tên" name="fullName">
                 <Input />
               </Form.Item>
@@ -250,7 +242,7 @@ const CustomerForm = () => {
             </Col>
           </Row>
           <Row gutter={16}>
-          <Col span={12}>
+            <Col span={12}>
               <Form.Item label="Giới tính" name="gender">
                 <Select
                   defaultValue="Chọn giới tính"
@@ -263,8 +255,10 @@ const CustomerForm = () => {
             </Col>
             <Col span={12}>
               <Form.Item label="Ngày sinh" name="birthday">
-                {/* <DatePicker onChange={onChangeBirthday} /> */}
-                <DatePicker format={dateFormatList} onChange={onChangeBirthday} />
+                <DatePicker
+                  format={dateFormatList}
+                  onChange={onChangeBirthday}
+                />
               </Form.Item>
             </Col>
           </Row>
