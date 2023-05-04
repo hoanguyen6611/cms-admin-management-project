@@ -1,3 +1,4 @@
+import StoreShow from "@/components/store/Store";
 import Head from "next/head";
 import React from "react";
 
@@ -7,6 +8,7 @@ const Store = () => {
       <Head>
         <title>Cửa hàng</title>
       </Head>
+      <StoreShow/>
     </div>
   );
 };

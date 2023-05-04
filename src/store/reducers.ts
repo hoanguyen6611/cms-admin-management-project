@@ -5,12 +5,14 @@ import {
   IS_EDIT_CUSTOMER_FORM,
   IS_EDIT_PRODDUCT_FORM,
   IS_EDIT_PROMOTION_FORM,
+  IS_EDIT_STORE_FORM,
   IS_VISIBLE_ACCOUNT_FORM,
   IS_VISIBLE_CATEGORY_FORM,
   IS_VISIBLE_CUSTOMER_FORM,
   IS_VISIBLE_ORDER_FORM,
   IS_VISIBLE_PRODUCT_FORM,
   IS_VISIBLE_PROMOTION_FORM,
+  IS_VISIBLE_STORE_FORM,
   SET_ID_ACCOUNT,
   SET_ID_CATEGORY_FORM,
   SET_ID_CUSTOMER,
@@ -18,6 +20,7 @@ import {
   SET_ID_ORDER,
   SET_ID_PRODUCT_FORM,
   SET_ID_PROMOTION,
+  SET_ID_STORE,
   SET_VARIANT,
 } from "./constants";
 export interface StateGlobal {
@@ -27,17 +30,20 @@ export interface StateGlobal {
   isVisibleFormCustomer: boolean;
   isVisibleFormAccount: boolean;
   isVisibleFormPromotion: boolean;
+  isVisibleFormStore: boolean;
   isEditFormCategory: boolean;
   isEditFormProduct: boolean;
   isEditFormPromotion: boolean;
   isEditFormAccount: boolean;
   isEditFormCustomer: boolean;
+  isEditFormStore: boolean;
   idCategory: number;
   idProduct: number;
   idOrder: number;
   idCustomer: number;
   idAccount: number;
   idPromotion: number;
+  idStore: number;
   idGroupPermission: number;
   variant: {};
   category: {};
@@ -49,17 +55,20 @@ export const initialState: StateGlobal = {
   isVisibleFormCustomer: false,
   isVisibleFormAccount: false,
   isVisibleFormPromotion: false,
+  isVisibleFormStore: false,
   isEditFormCategory: false,
   isEditFormProduct: false,
   isEditFormPromotion: false,
   isEditFormAccount: false,
   isEditFormCustomer: false,
+  isEditFormStore: false,
   idCategory: 0,
   idProduct: 0,
   idOrder: 0,
   idCustomer: 0,
   idAccount: 0,
   idPromotion: 0,
+  idStore: 0,
   idGroupPermission: 0,
   variant: {},
   category: {},
@@ -96,6 +105,11 @@ export function reducer(state: any, action: any) {
         ...state,
         isEditFormPromotion: action.payload,
       };
+    case IS_EDIT_STORE_FORM:
+      return {
+        ...state,
+        isEditStorePromotion: action.payload,
+      };
     case SET_ID_CATEGORY_FORM:
       return {
         ...state,
@@ -105,6 +119,11 @@ export function reducer(state: any, action: any) {
       return {
         ...state,
         isVisibleFormOrder: action.payload,
+      };
+    case IS_VISIBLE_STORE_FORM:
+      return {
+        ...state,
+        isVisibleFormStore: action.payload,
       };
     case IS_VISIBLE_PRODUCT_FORM:
       return {
@@ -155,6 +174,11 @@ export function reducer(state: any, action: any) {
       return {
         ...state,
         idPromotion: action.payload,
+      };
+    case SET_ID_STORE:
+      return {
+        ...state,
+        idStore: action.payload,
       };
     case SET_VARIANT:
       return {
