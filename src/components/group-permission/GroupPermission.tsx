@@ -8,9 +8,6 @@ import { PlusOutlined } from "@ant-design/icons";
 
 const GroupPermissionShow = () => {
   const dispatch = useDispatch();
-  const showModal = () => {
-    dispatch(updateIsVisibleFormPermissionGroup(true));
-  };
   return (
     <div>
       <ChangePermission></ChangePermission>

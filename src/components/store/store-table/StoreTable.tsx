@@ -37,8 +37,8 @@ const fetcher = async () => {
 
 const StoreTable = () => {
   const { data: store, error } = useSWR("/store", fetcher);
-  const [state, dispatchs] = useStoreContext();
-  const dispatch = useDispatch();
+  const {state, dispatch} = useStoreContext();
+  // const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const deleteConfirmCategory = (record: any) => {
     Modal.confirm({
@@ -123,8 +123,8 @@ const StoreTable = () => {
     },
   ];
   const isEditStore = async (record: number) => {
-    dispatchs(actions.setIdStoreForm(record));
-    dispatchs(actions.changeVisibleFormStore(true));
+    dispatch(actions.setIdStoreForm(record));
+    dispatch(actions.changeVisibleFormStore(true));
     dispatch(actions.changeEditFormStore(true));
   };
   if (!store)

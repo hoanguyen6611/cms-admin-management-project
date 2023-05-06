@@ -37,8 +37,8 @@ const fetcher = async () => {
 
 const CategoryTable = () => {
   const { data, error } = useSWR("/product-category", fetcher);
-  const [state, dispatchs] = useStoreContext();
-  const dispatch = useDispatch();
+  const {state, dispatch} = useStoreContext();
+  // const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const deleteConfirmCategory = (record: any) => {
     Modal.confirm({
@@ -125,8 +125,8 @@ const CategoryTable = () => {
     },
   ];
   const isEditCategory = async (record: number) => {
-    dispatchs(actions.setIdCategoryForm(record));
-    dispatchs(actions.changeVisibleFormCategory(true));
+    dispatch(actions.setIdCategoryForm(record));
+    dispatch(actions.changeVisibleFormCategory(true));
     dispatch(actions.changeEditFormCategory(true));
   };
   if (!data)

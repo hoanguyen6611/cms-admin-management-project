@@ -1,5 +1,6 @@
 import { boolean, number } from "yup";
 import {
+  ActionType,
   IS_EDIT_ACCOUNT_FORM,
   IS_EDIT_CATEGORY_FORM,
   IS_EDIT_CUSTOMER_FORM,
@@ -48,31 +49,8 @@ export interface StateGlobal {
   variant: {};
   category: {};
 }
-export const initialState: StateGlobal = {
-  isVisibleFormCategory: false,
-  isVisibleFormOrder: false,
-  isVisibleFormProduct: false,
-  isVisibleFormCustomer: false,
-  isVisibleFormAccount: false,
-  isVisibleFormPromotion: false,
-  isVisibleFormStore: false,
-  isEditFormCategory: false,
-  isEditFormProduct: false,
-  isEditFormPromotion: false,
-  isEditFormAccount: false,
-  isEditFormCustomer: false,
-  isEditFormStore: false,
-  idCategory: 0,
-  idProduct: 0,
-  idOrder: 0,
-  idCustomer: 0,
-  idAccount: 0,
-  idPromotion: 0,
-  idStore: 0,
-  idGroupPermission: 0,
-  variant: {},
-  category: {},
-};
+// export type Action = { type: ActionType.IS_VISIBLE_CATEGORY_FORM } | { type: ActionType.SIGN_OUT };
+
 export function reducer(state: any, action: any) {
   switch (action.type) {
     case IS_VISIBLE_CATEGORY_FORM:

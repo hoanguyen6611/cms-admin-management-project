@@ -38,8 +38,8 @@ const fetcher = async () => {
 
 const AccountTable = () => {
   const { data, error } = useSWR("/product-category", fetcher);
-  const [state, dispatchs] = useStoreContext();
-  const dispatch = useDispatch();
+  const {state, dispatch} = useStoreContext();
+  // const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const deleteConfirmAccount = (record: any) => {
     Modal.confirm({
@@ -131,8 +131,8 @@ const AccountTable = () => {
     },
   ];
   const isEditAccount = async (record: number) => {
-    dispatchs(actions.setIdAccountForm(record));
-    dispatchs(actions.changeVisibleFormAccount(true));
+    dispatch(actions.setIdAccountForm(record));
+    dispatch(actions.changeVisibleFormAccount(true));
   };
   if (!data)
     return (

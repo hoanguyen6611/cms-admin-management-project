@@ -47,7 +47,7 @@ const fetchers = async () => {
 const OrderTable = () => {
   const { data, error } = useSWR("/product", fetcher);
   const { data: store, error: errorStore } = useSWR("/store/list", fetchers);
-  const [state, dispatchs] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
   const deleteConfirmProduct = (record: any) => {
     Modal.confirm({
       title: "Bạn có chắc chắn muốn xoá đơn hàng này không?",
@@ -156,8 +156,8 @@ const OrderTable = () => {
     },
   ];
   const isEditProduct = (record: number) => {
-    dispatchs(actions.changeVisibleFormOrder(true));
-    dispatchs(actions.setIdOrderForm(record));
+    dispatch(actions.changeVisibleFormOrder(true));
+    dispatch(actions.setIdOrderForm(record));
   };
   if (!data)
     return (

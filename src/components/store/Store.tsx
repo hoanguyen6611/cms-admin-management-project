@@ -6,9 +6,9 @@ import StoreForm from "./store-form/StoreForm";
 import { actions, useStoreContext } from "@/store";
 
 const StoreShow = () => {
-  const [state, dispatchs] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
   const showModal = () => {
-    dispatchs(actions.changeVisibleFormStore(true));
+    dispatch(actions.changeVisibleFormStore(true));
   };
   return (
     <div>

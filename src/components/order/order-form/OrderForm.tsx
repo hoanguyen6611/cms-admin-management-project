@@ -87,7 +87,7 @@ const stores = async () => {
 
 const OrderForm = () => {
   const [form] = Form.useForm();
-  const [state, dispatchs] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
   const { data: order } = useSWR(
     `https://tech-api.herokuapp.com/v1/orders/get/${state.idOrder}`,
     fetchers
@@ -114,7 +114,7 @@ const OrderForm = () => {
   }, [order]);
 
   const cancelOrderForm = () => {
-    dispatchs(actions.changeVisibleFormOrder(false));
+    dispatch(actions.changeVisibleFormOrder(false));
   };
 
   const onChange = (

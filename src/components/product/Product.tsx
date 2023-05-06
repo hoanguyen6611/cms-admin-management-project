@@ -9,7 +9,8 @@ import { useRouter } from "next/router";
 import { actions, useStoreContext } from "@/store";
 
 const ProductShow = () => {
-  const [state, dispatch] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
+  console.log( typeof dispatch);
   const router = useRouter();
   const showModal = () => {
     dispatch(actions.changeVisibleFormProduct(true));

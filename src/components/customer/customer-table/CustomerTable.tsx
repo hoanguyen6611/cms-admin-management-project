@@ -48,8 +48,8 @@ const fetcher = async () => {
 
 const CustomerTable = () => {
   const { data, error } = useSWR("/customer", fetcher);
-  const [state, dispatchs] = useStoreContext();
-  const dispatch = useDispatch();
+  const {state, dispatch} = useStoreContext();
+  // const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const deleteConfirmCustomer = (record: any) => {
     Modal.confirm({
@@ -166,9 +166,9 @@ const CustomerTable = () => {
     },
   ];
   const isEditCustomer = async (record: number) => {
-    dispatchs(actions.setIdCustomerForm(record));
-    dispatchs(actions.changeVisibleFormCustomer(true));
-    dispatchs(actions.changeEditFormCustomer(true));
+    dispatch(actions.setIdCustomerForm(record));
+    dispatch(actions.changeVisibleFormCustomer(true));
+    dispatch(actions.changeEditFormCustomer(true));
   };
   if (!data)
     return (

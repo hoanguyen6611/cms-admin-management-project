@@ -6,9 +6,9 @@ import CustomerForm from "./customer-form/CustomerForm";
 import { actions, useStoreContext } from "@/store";
 
 const CustomerShow = () => {
-  const [state, dispatchs] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
   const showModal = () => {
-    dispatchs(actions.changeVisibleFormCustomer(true));
+    dispatch(actions.changeVisibleFormCustomer(true));
   };
   return (
     <div>

@@ -9,12 +9,13 @@ import CategoryTable from "./category-table/CategoryTable";
 import { actions, useStoreContext } from "@/store";
 
 const CategoryShow = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const router = useRouter();
-  const [state, dispatchs] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
+  console.log(state);
   const showModal = () => {
-    dispatchs(actions.changeVisibleFormCategory(true));
-    // dispatch(actions.changeEditFormCategory(false));
+    dispatch(actions.changeVisibleFormCategory(true));
+    dispatch(actions.changeEditFormCategory(false));
   };
 
   useEffect(() => {

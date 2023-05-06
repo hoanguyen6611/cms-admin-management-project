@@ -72,7 +72,7 @@ const fetchers = async (url: string) => {
 const PromotionForm = () => {
   const [form] = Form.useForm();
   const categorySelector = useSelector((state: RootState) => state.category);
-  const [state, dispatchs] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
   const { data, error } = useSWR("product-category/list", fetcher);
   const { data: promotion } = useSWR(
     `https://tech-api.herokuapp.com/v1/promotion/get/${state.idPromotion}`,
@@ -89,7 +89,7 @@ const PromotionForm = () => {
   const [iconUpload, setIconUpload] = useState<File>();
   const [exchangeable, setExchangeable] = useState<boolean>(false);
   const [kind, setKind] = useState(0);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const [fileList, setFileList] = useState([]);
   console.log(state.isEditFormPromotion);
 
@@ -122,7 +122,7 @@ const PromotionForm = () => {
       }
     );
     if (res.data.result) {
-      dispatchs(actions.changeVisibleFormPromotion(false));
+      dispatch(actions.changeVisibleFormPromotion(false));
       dispatch(actions.changeEditFormPromotion(false));
       form.resetFields();
       notification.open({
@@ -153,7 +153,7 @@ const PromotionForm = () => {
       }
     );
     if (res.data.result) {
-      dispatchs(actions.changeVisibleFormPromotion(false));
+      dispatch(actions.changeVisibleFormPromotion(false));
       dispatch(actions.changeEditFormPromotion(false));
       form.resetFields();
       notification.open({
@@ -179,7 +179,7 @@ const PromotionForm = () => {
   const cancelCreatePromotion = () => {
     dispatch(updateIsVisibleFormCategory(false));
     dispatch(isEditCategoryForm(false));
-    dispatchs(actions.changeVisibleFormPromotion(false));
+    dispatch(actions.changeVisibleFormPromotion(false));
     form.resetFields();
   };
   const handleFileSelected = (file: any) => {

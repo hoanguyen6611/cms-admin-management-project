@@ -37,9 +37,9 @@ const fetcher = async () => {
 
 const ProductTable = () => {
   const { data, error } = useSWR("/product", fetcher);
-  const [state, dispatchs] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const deleteConfirmProduct = (record: any) => {
     Modal.confirm({
       title: "Bạn có chắc chắn muốn xoá sản phẩm này không?",
@@ -134,9 +134,9 @@ const ProductTable = () => {
     },
   ];
   const isEditProduct = (record: number) => {
-    dispatchs(actions.setIdProductForm(record));
-    dispatchs(actions.changeVisibleFormProduct(true));
-    dispatchs(actions.changeEditFormProduct(true));
+    dispatch(actions.setIdProductForm(record));
+    dispatch(actions.changeVisibleFormProduct(true));
+    dispatch(actions.changeEditFormProduct(true));
   };
 
   if (!data)

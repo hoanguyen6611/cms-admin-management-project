@@ -6,9 +6,9 @@ import AccountForm from "./account-form/AccountForm";
 import { actions, useStoreContext } from "@/store";
 
 const AccountShow = () => {
-  const [state, dispatchs] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
   const showModal = () => {
-    dispatchs(actions.changeVisibleFormAccount(true));
+    dispatch(actions.changeVisibleFormAccount(true));
   }
   return (
     <div>

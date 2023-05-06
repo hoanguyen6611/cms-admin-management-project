@@ -34,8 +34,8 @@ const fetcher = async () => {
 
 const PromotionTable = () => {
   const { data: promotion, error } = useSWR("/v1/promotion/list", fetcher);
-  const [state, dispatchs] = useStoreContext();
-  const dispatch = useDispatch();
+  const {state, dispatch} = useStoreContext();
+  // const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const deleteConfirmPromotion = (record: any) => {
     Modal.confirm({
@@ -132,8 +132,8 @@ const PromotionTable = () => {
     },
   ];
   const isEditPromotion = async (record: number) => {
-    dispatchs(actions.setIdPromotionForm(record));
-    dispatchs(actions.changeVisibleFormPromotion(true));
+    dispatch(actions.setIdPromotionForm(record));
+    dispatch(actions.changeVisibleFormPromotion(true));
     dispatch(actions.changeEditFormPromotion(true));
   };
   if (!promotion)

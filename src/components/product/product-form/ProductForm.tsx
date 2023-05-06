@@ -205,7 +205,7 @@ type TargetKey = React.MouseEvent | React.KeyboardEvent | string;
 const ProductForm = () => {
   const [form] = Form.useForm();
   const { data, error } = useSWR("/product-category", fetcher);
-  const [state, dispatchs] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
   const { data: productItem } = useSWR(
     `https://tech-api.herokuapp.com/v1/product/get/${state?.idProduct}`,
     fetchers
@@ -285,7 +285,7 @@ const ProductForm = () => {
   }, [productItem]);
 
   const newTabIndex = useRef(2);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const createProduct = async () => {
     // console.log({
     //   ...form.getFieldsValue(),
@@ -377,22 +377,21 @@ const ProductForm = () => {
   const handleOk = async () => {
     if (id) {
       updateProduct();
-      dispatchs(actions.changeVisibleFormProduct(false));
-      dispatchs(actions.changeEditFormProduct(false));
+      dispatch(actions.changeVisibleFormProduct(false));
+      dispatch(actions.changeEditFormProduct(false));
     } else {
       uploadImageProduct();
       createProduct();
-      dispatchs(actions.changeVisibleFormProduct(false));
-      dispatchs(actions.changeEditFormProduct(false));
+      dispatch(actions.changeVisibleFormProduct(false));
+      dispatch(actions.changeEditFormProduct(false));
     }
   };
 
   const handleCancel = () => {
     form.resetFields();
-    dispatchs(actions.changeVisibleFormProduct(false));
-    dispatch(actions.changeVisibleFormProduct(true));
-    dispatchs(actions.changeEditFormProduct(false));
-    dispatchs(actions.setIdProductForm(0));
+    dispatch(actions.changeVisibleFormProduct(false));
+    dispatch(actions.changeEditFormProduct(false));
+    dispatch(actions.setIdProductForm(0));
   };
   const handleChange = (value: string) => {
     console.log(value);
@@ -491,6 +490,7 @@ const ProductForm = () => {
         open={state.isVisibleFormProduct}
         onOk={handleOk}
         onCancel={handleCancel}
+        width={1200}
         footer={[
           <Button key="back" onClick={handleCancel}>
             Huỷ
@@ -499,7 +499,6 @@ const ProductForm = () => {
             {product.isEdit ? "Cập nhập" : "Tạo mới"}
           </Button>,
         ]}
-        width={1200}
       >
         <Form
           labelCol={{ span: 9 }}

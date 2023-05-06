@@ -69,7 +69,7 @@ const group = async () => {
 const AccountForm = () => {
   const [id, setId] = useState();
   const [form] = Form.useForm();
-  const [state, dispatchs] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
   const { data: account } = useSWR(
     `https://tech-api.herokuapp.com/v1/account/get/${state.idAccount}`,
     fetchers
@@ -93,7 +93,7 @@ const AccountForm = () => {
   }, [account]);
 
   const cancelOrderForm = () => {
-    dispatchs(actions.changeVisibleFormAccount(false));
+    dispatch(actions.changeVisibleFormAccount(false));
   };
 
   const onChange = (
@@ -133,7 +133,7 @@ const AccountForm = () => {
       }
     );
     if (res.data.result) {
-      dispatchs(actions.changeVisibleFormAccount(false));
+      dispatch(actions.changeVisibleFormAccount(false));
       form.resetFields();
       notification.open({
         message: res.data.message,
@@ -166,7 +166,7 @@ const AccountForm = () => {
       }
     );
     if (res.data.result) {
-      dispatchs(actions.changeVisibleFormAccount(false));
+      dispatch(actions.changeVisibleFormAccount(false));
       form.resetFields();
       notification.open({
         message: res.data.message,

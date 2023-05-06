@@ -78,7 +78,7 @@ type FormData = yup.InferType<typeof schema>;
 const CategoryForm = () => {
   const [form] = Form.useForm();
   const categorySelector = useSelector((state: RootState) => state.category);
-  const [state, dispatchs] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
   const { data, error } = useSWR("product-category/list", fetcher);
   const { data: category } = useSWR(
     `https://tech-api.herokuapp.com/v1/product-category/get/${state.idCategory}`,
@@ -93,7 +93,7 @@ const CategoryForm = () => {
   const [note, setNote] = useState("");
   const [icon, setIcon] = useState("");
   const [iconUpload, setIconUpload] = useState<File>();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const [fileList, setFileList] = useState([]);
   const {
     register,
@@ -105,6 +105,7 @@ const CategoryForm = () => {
   } = useForm<FormData>({
     resolver: yupResolver(schema),
   });
+  console.log(state);
   useEffect(() => {
     setId(category?.id);
     form.setFieldsValue({
@@ -132,8 +133,6 @@ const CategoryForm = () => {
       }
     );
     if (res.data.result) {
-      dispatchs(actions.changeVisibleFormCategory(false));
-      dispatch(actions.changeEditFormCategory(false));
       form.resetFields();
       notification.open({
         message: res.data.message,
@@ -158,8 +157,6 @@ const CategoryForm = () => {
       }
     );
     if (res.data.result) {
-      dispatchs(actions.changeVisibleFormCategory(false));
-      dispatch(actions.changeEditFormCategory(false));
       form.resetFields();
       notification.open({
         message: res.data.message,
@@ -177,14 +174,21 @@ const CategoryForm = () => {
     uploadImage();
     if (id) {
       updateCategory();
+      dispatch(actions.changeVisibleFormCategory(false));
+      dispatch(actions.changeEditFormCategory(false));
     } else {
       createCategoryForm();
+      dispatch(actions.changeVisibleFormCategory(false));
+      dispatch(actions.changeEditFormCategory(false));
     }
   };
   const cancelCreateCategory = () => {
-    dispatch(updateIsVisibleFormCategory(false));
-    dispatch(isEditCategoryForm(false));
-    dispatchs(actions.changeVisibleFormCategory(false));
+    // dispatch(updateIsVisibleFormCategory(false));
+    // dispatch(isEditCategoryForm(false));
+    form.resetFields();
+    dispatch(actions.changeVisibleFormCategory(false));
+    dispatch(actions.changeEditFormCategory(false));
+    dispatch(actions.setIdCategoryForm(0));
   };
   const handleFileSelected = (file: any) => {
     setIconUpload(file.target.files[0]);
@@ -212,7 +216,6 @@ const CategoryForm = () => {
             : "Tạo mới danh mục sản phẩm"
         }
         open={state.isVisibleFormCategory}
-        okType={"danger"}
         onOk={handleOk}
         onCancel={cancelCreateCategory}
         width={800}

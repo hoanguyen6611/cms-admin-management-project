@@ -77,7 +77,7 @@ type FormData = yup.InferType<typeof schema>;
 
 const StoreForm = () => {
   const [form] = Form.useForm();
-  const [state, dispatchs] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
   const { data: store } = useSWR(
     `https://tech-api.herokuapp.com/v1/store/get/${state.idStore}`,
     fetchers
@@ -87,7 +87,7 @@ const StoreForm = () => {
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("");
   const [iconUpload, setIconUpload] = useState<File>();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
@@ -124,7 +124,7 @@ const StoreForm = () => {
       }
     );
     if (res.data.result) {
-      dispatchs(actions.changeVisibleFormStore(false));
+      dispatch(actions.changeVisibleFormStore(false));
       //   dispatch(actions.changeEditFormCategory(false));
       form.resetFields();
       notification.open({
@@ -151,7 +151,7 @@ const StoreForm = () => {
       }
     );
     if (res.data.result) {
-      dispatchs(actions.changeVisibleFormStore(false));
+      dispatch(actions.changeVisibleFormStore(false));
       dispatch(actions.changeEditFormStore(false));
       form.resetFields();
       notification.open({
@@ -176,7 +176,7 @@ const StoreForm = () => {
   const cancelFormStore = () => {
     //   dispatch(updateIsVisibleFormCategory(false));
     //   dispatch(isEditCategoryForm(false));
-    dispatchs(actions.changeVisibleFormStore(false));
+    dispatch(actions.changeVisibleFormStore(false));
   };
   const handleFileSelected = (file: any) => {
     setIconUpload(file.target.files[0]);

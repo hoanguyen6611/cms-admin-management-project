@@ -57,7 +57,7 @@ const stores = async () => {
 
 const CustomerForm = () => {
   const [form] = Form.useForm();
-  const [state, dispatchs] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
   const [id, setId] = useState();
   const [birthday, setBirthday] = useState<string>("");
   const { data: customer } = useSWR(
@@ -86,7 +86,7 @@ const CustomerForm = () => {
   }, [customer]);
 
   const cancelOrderForm = () => {
-    dispatchs(actions.changeVisibleFormCustomer(false));
+    dispatch(actions.changeVisibleFormCustomer(false));
   };
 
   const onChange = (
@@ -122,7 +122,7 @@ const CustomerForm = () => {
       }
     );
     if (res.data.result) {
-      dispatchs(actions.changeVisibleFormCustomer(false));
+      dispatch(actions.changeVisibleFormCustomer(false));
       form.resetFields();
       notification.open({
         message: res.data.message,

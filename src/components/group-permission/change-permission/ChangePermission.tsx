@@ -62,11 +62,11 @@ const ChangePermission = () => {
   const [name, setName] = useState<string>("");
   const [des, setDes] = useState<string>("");
   const [id, setId] = useState<number>();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const permissionGroup = useSelector((state: any) => state.permissionGroup);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<any>([]);
-  const [state, dispatchs] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
 
   const { data: group } = useSWR(
     `https://tech-api.herokuapp.com/v1/group/get/${state.idGroupPermission}`,

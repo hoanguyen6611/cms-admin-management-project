@@ -1,10 +1,11 @@
 import { useState, useReducer } from "react";
 import Context from "./Context";
-import { initialState, reducer } from "./reducers";
+import { reducer } from "./reducers";
+import { initialState } from "./initialState";
 export const Providers = (props: any) => {
-  const [state, dispatch]= useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialState);
   return (
-    <Context.Provider value={[state, dispatch]}>
+    <Context.Provider value={{ state, dispatch }}>
       {props.children}
     </Context.Provider>
   );

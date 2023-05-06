@@ -34,9 +34,9 @@ const fetcher = async () => {
 
 const GroupPermissionTable = () => {
   const { data, error } = useSWR("/group-permission", fetcher);
-  const [state, dispatchs] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const deleteConfirmGroup = (record: number) => {
     Modal.confirm({
       title: "Bạn có chắc chắn muốn xoá group này không?",
@@ -117,7 +117,7 @@ const GroupPermissionTable = () => {
     dispatch(updateIsVisibleFormPermissionGroup(true));
     dispatch(updateIsEdit(true));
     dispatch(setIdSelected(record));
-    dispatchs(actions.setIdGroupPermissionForm(record));
+    dispatch(actions.setIdGroupPermissionForm(record));
   };
   if (!data)
     return (

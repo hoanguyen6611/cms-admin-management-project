@@ -6,9 +6,9 @@ import PromotionForm from "./promotion-form/PromotionForm";
 import { actions, useStoreContext } from "@/store";
 
 const PromotionShow = () => {
-  const [state, dispatchs] = useStoreContext();
+  const {state, dispatch} = useStoreContext();
   const showModal = () => {
-    dispatchs(actions.changeVisibleFormPromotion(true));
+    dispatch(actions.changeVisibleFormPromotion(true));
   };
   return (
     <div>
