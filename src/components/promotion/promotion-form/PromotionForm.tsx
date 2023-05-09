@@ -72,7 +72,7 @@ const fetchers = async (url: string) => {
 const PromotionForm = () => {
   const [form] = Form.useForm();
   const categorySelector = useSelector((state: RootState) => state.category);
-  const {state, dispatch} = useStoreContext();
+  const { state, dispatch } = useStoreContext();
   const { data, error } = useSWR("product-category/list", fetcher);
   const { data: promotion } = useSWR(
     `https://tech-api.herokuapp.com/v1/promotion/get/${state.idPromotion}`,
@@ -211,7 +211,7 @@ const PromotionForm = () => {
         okType={"danger"}
         onOk={handleOk}
         onCancel={cancelCreatePromotion}
-        width={800}
+        width={1000}
         footer={[
           <Button key="back" onClick={cancelCreatePromotion}>
             Huỷ
@@ -228,29 +228,44 @@ const PromotionForm = () => {
           form={form}
         >
           <Row gutter={16}>
-            <Col span={12}>
+            <Col span={10}>
               <Form.Item label="Tên ưu đãi" name="title">
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={14}>
               <Form.Item label="Chi tiết ưu đãi" name="description">
                 <Input />
               </Form.Item>
             </Col>
           </Row>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item label="Giảm giá" name="value">
-                <InputNumber
-                  addonAfter={kind === 1 ? "VNĐ" : "" && kind === 2 ? "%" : ""}
-                  style={{ width: 180 }}
+          <Row gutter={8}>
+            <Col span={8}>
+              <Form.Item label="Hình thức giảm giá" name="kind">
+                <Select
+                  defaultValue="Hình thức giảm giá"
+                  onChange={(e) => {
+                    console.log(e);
+                    setKind(Number(e));
+                  }}
+                  options={[
+                    { value: "1", label: "Tiền" },
+                    { value: "2", label: "Phần trăm" },
+                  ]}
                 />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={8}>
+              <Form.Item label="Giảm giá" name="value">
+                <InputNumber
+                  addonAfter={kind === 1 ? "VNĐ" : "" && kind === 2 ? "%" : ""}
+                  style={{ width: 150 }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8} hidden={kind === 1}>
               <Form.Item label="Giá trị giảm tối đa" name="maxValueForPercent">
-                <InputNumber style={{ width: 180 }} />
+                <InputNumber style={{ width: 150 }} />
               </Form.Item>
             </Col>
           </Row>
@@ -281,23 +296,6 @@ const PromotionForm = () => {
             <Col hidden={!exchangeable} span={12}>
               <Form.Item label="Số xu quy đổi" name="point">
                 <InputNumber />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={12}>
-              <Form.Item label="Hình thức giảm giá" name="kind">
-                <Select
-                  defaultValue="Hình thức giảm giá"
-                  onChange={(e) => {
-                    console.log(e);
-                    setKind(Number(e));
-                  }}
-                  options={[
-                    { value: "1", label: "Tiền" },
-                    { value: "2", label: "Phần trăm" },
-                  ]}
-                />
               </Form.Item>
             </Col>
           </Row>
