@@ -2,13 +2,10 @@ import { Modal, notification, Switch,  Form, Input } from "antd";
 import axios from "axios";
 import React, { useState } from "react";
 import { CheckOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
 import styles from "./PermissionForm.module.scss";
 
 const PermissionForm = (isModalOpen: any) => {
-  const dispatch = useDispatch();
   const [name, setName] = useState("");
-  const permission = useSelector((state: any) => state.permission);
   const [des, setDes] = useState("");
   const [action, setAction] = useState("");
   const [group, setGroup] = useState("");
@@ -50,7 +47,7 @@ const PermissionForm = (isModalOpen: any) => {
     <div>
       <Modal
         title="Tạo mới"
-        open={permission.isVisibleFormPermission}
+        open={true}
         onOk={handleOk}
         onCancel={handleCancel}
         width={1000}

@@ -7,7 +7,6 @@ import PermissionTable from "./permission-table/PermissionTable";
 const PermissionShow = () => {
   const router = useRouter();
   const showModal = () => {
-    // dispatch(updateIsVisibleFormPermission(true));
   };
   useEffect(() => {
     if (typeof window !== "undefined") {
