@@ -2,20 +2,9 @@ import axios from "axios";
 import React, { useState } from "react";
 import { Modal, Spin, Table, Tag, notification } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import {
-  EditOutlined,
-  DeleteOutlined,
-  CheckOutlined,
-  CloseOutlined,
-} from "@ant-design/icons";
+import { EditOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { Permission } from "@/models/permission";
 import styles from "./GroupPermissionTable.module.scss";
-import { useDispatch } from "react-redux";
-import {
-  setIdSelected,
-  updateIsEdit,
-  updateIsVisibleFormPermissionGroup,
-} from "@/redux/group-permission/groupPermissionSlice";
 import useSWR from "swr";
 import { actions, useStoreContext } from "@/store";
 
@@ -34,9 +23,8 @@ const fetcher = async () => {
 
 const GroupPermissionTable = () => {
   const { data, error } = useSWR("/group-permission", fetcher);
-  const {state, dispatch} = useStoreContext();
+  const { state, dispatch } = useStoreContext();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  // const dispatch = useDispatch();
   const deleteConfirmGroup = (record: number) => {
     Modal.confirm({
       title: "Bạn có chắc chắn muốn xoá group này không?",
@@ -114,10 +102,8 @@ const GroupPermissionTable = () => {
     },
   ];
   const isChangePermissionGroup = (record: number) => {
-    dispatch(updateIsVisibleFormPermissionGroup(true));
-    dispatch(updateIsEdit(true));
-    dispatch(setIdSelected(record));
     dispatch(actions.setIdGroupPermissionForm(record));
+    dispatch(actions.changeVisibleFormGroupPermission(true));
   };
   if (!data)
     return (

@@ -22,32 +22,12 @@ import {
   WarningOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  isEditCategoryForm,
-  updateIsVisibleFormCategory,
-} from "@/redux/category/categorySlice";
-import { RootState } from "@/redux/store";
-import {
-  ref,
-  UploadResult,
-  uploadBytesResumable,
-  uploadBytes,
-  getDownloadURL,
-} from "firebase/storage";
-import { storage } from "@/utils/firebase";
-import type { RadioChangeEvent } from "antd";
 import useSWR, { mutate } from "swr";
-import { Category, Product } from "@/models";
-import Context from "@/store/Context";
 import { actions, useStoreContext } from "@/store";
-import { v4 } from "uuid";
 import { RangePickerProps } from "antd/es/date-picker";
 import { ColumnsType } from "antd/es/table";
-import { OrdersDetailDtoList, ProductDto } from "@/models/order";
+import { OrdersDetailDtoList } from "@/models/order";
 import { VND } from "@/utils/formatVNĐ";
-import { Typography } from "antd";
-const { Title } = Typography;
 
 const fetcher = async () => {
   const token = localStorage.getItem("token");

@@ -1,9 +1,8 @@
-import { Modal, notification, Switch, Button, Form, Input } from "antd";
+import { Modal, notification, Switch,  Form, Input } from "antd";
 import axios from "axios";
 import React, { useState } from "react";
 import { CheckOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { updateIsVisibleFormPermission } from "@/redux/permission/permissionSlice";
 import styles from "./PermissionForm.module.scss";
 
 const PermissionForm = (isModalOpen: any) => {
@@ -32,7 +31,6 @@ const PermissionForm = (isModalOpen: any) => {
       }
     );
     if (res.data.result) {
-      dispatch(updateIsVisibleFormPermission(false));
       // getPermission();
       setName("");
       setDes("");
@@ -47,7 +45,6 @@ const PermissionForm = (isModalOpen: any) => {
   };
 
   const handleCancel = () => {
-    dispatch(updateIsVisibleFormPermission(false));
   };
   return (
     <div>

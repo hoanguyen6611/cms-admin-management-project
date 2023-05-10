@@ -8,12 +8,6 @@ import {
   EditOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
-import { useDispatch } from "react-redux";
-import {
-  isEditCategoryForm,
-  setCategoryId,
-  updateIsVisibleFormCategory,
-} from "@/redux/category/categorySlice";
 import { Category } from "@/models/category";
 import styles from "./CategoryTable.module.scss";
 import useSWR, { mutate } from "swr";

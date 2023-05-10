@@ -1,6 +1,4 @@
-import { boolean, number } from "yup";
 import {
-  ActionType,
   IS_EDIT_ACCOUNT_FORM,
   IS_EDIT_CATEGORY_FORM,
   IS_EDIT_CUSTOMER_FORM,
@@ -10,6 +8,7 @@ import {
   IS_VISIBLE_ACCOUNT_FORM,
   IS_VISIBLE_CATEGORY_FORM,
   IS_VISIBLE_CUSTOMER_FORM,
+  IS_VISIBLE_GROUP_PERMISSION_FORM,
   IS_VISIBLE_ORDER_FORM,
   IS_VISIBLE_PRODUCT_FORM,
   IS_VISIBLE_PROMOTION_FORM,
@@ -32,6 +31,7 @@ export interface StateGlobal {
   isVisibleFormAccount: boolean;
   isVisibleFormPromotion: boolean;
   isVisibleFormStore: boolean;
+  isVisibleFormGroupPermission: boolean;
   isEditFormCategory: boolean;
   isEditFormProduct: boolean;
   isEditFormPromotion: boolean;
@@ -49,7 +49,6 @@ export interface StateGlobal {
   variant: {};
   category: {};
 }
-// export type Action = { type: ActionType.IS_VISIBLE_CATEGORY_FORM } | { type: ActionType.SIGN_OUT };
 
 export function reducer(state: any, action: any) {
   switch (action.type) {
@@ -87,6 +86,11 @@ export function reducer(state: any, action: any) {
       return {
         ...state,
         isVisibleFormAccount: action.payload,
+      };
+    case IS_VISIBLE_GROUP_PERMISSION_FORM:
+      return {
+        ...state,
+        isVisibleFormGroupPermission: action.payload,
       };
     case SET_ID_CATEGORY:
       return {

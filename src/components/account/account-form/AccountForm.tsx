@@ -69,7 +69,7 @@ const group = async () => {
 const AccountForm = () => {
   const [id, setId] = useState();
   const [form] = Form.useForm();
-  const {state, dispatch} = useStoreContext();
+  const { state, dispatch } = useStoreContext();
   const { data: account } = useSWR(
     `https://tech-api.herokuapp.com/v1/account/get/${state.idAccount}`,
     fetchers

@@ -1,4 +1,4 @@
-import React, { useState, createContext } from "react";
+import React from "react";
 import { Modal, notification, Table, Spin, Tag, Image } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
@@ -8,7 +8,6 @@ import {
   EditOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
-import { useDispatch } from "react-redux";
 import { Category } from "@/models/category";
 import styles from "./CategoryTable.module.scss";
 import useSWR, { mutate } from "swr";
@@ -35,8 +34,6 @@ const fetcher = async () => {
 const PromotionTable = () => {
   const { data: promotion, error } = useSWR("/v1/promotion/list", fetcher);
   const {state, dispatch} = useStoreContext();
-  // const dispatch = useDispatch();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const deleteConfirmPromotion = (record: any) => {
     Modal.confirm({
       title: "Bạn có chắc chắn muốn xoá danh mục sản phẩm này không?",

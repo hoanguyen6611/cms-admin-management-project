@@ -1,5 +1,5 @@
-import React, { useState, createContext } from "react";
-import { Modal, notification, Table, Spin, Tag, Image } from "antd";
+import React, { useState } from "react";
+import { Modal, notification, Table, Spin } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import {
@@ -8,12 +8,6 @@ import {
   EditOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
-import { useDispatch } from "react-redux";
-import {
-  isEditCategoryForm,
-  setCategoryId,
-  updateIsVisibleFormCategory,
-} from "@/redux/category/categorySlice";
 import { Category } from "@/models/category";
 import styles from "./CategoryTable.module.scss";
 import useSWR, { mutate } from "swr";
@@ -38,7 +32,6 @@ const fetcher = async () => {
 const StoreTable = () => {
   const { data: store, error } = useSWR("/store", fetcher);
   const {state, dispatch} = useStoreContext();
-  // const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const deleteConfirmCategory = (record: any) => {
     Modal.confirm({

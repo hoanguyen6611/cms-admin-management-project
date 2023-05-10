@@ -12,32 +12,19 @@ import {
   Select,
   Upload,
 } from "antd";
-import React, { useContext, useEffect, useState } from "react";
-const { TextArea } = Input;
+import React, { useEffect, useState } from "react";
 import {
   CheckOutlined,
-  PlusOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  isEditCategoryForm,
-  updateIsVisibleFormCategory,
-} from "@/redux/category/categorySlice";
-import { RootState } from "@/redux/store";
 import {
   ref,
-  UploadResult,
-  uploadBytesResumable,
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
 import { storage } from "@/utils/firebase";
-import type { RadioChangeEvent } from "antd";
 import useSWR, { mutate } from "swr";
-import { Category } from "@/models";
-import Context from "@/store/Context";
 import { actions, useStoreContext } from "@/store";
 import { v4 } from "uuid";
 import * as yup from "yup";
@@ -82,7 +69,6 @@ const StoreForm = () => {
     `https://tech-api.herokuapp.com/v1/store/get/${state.idStore}`,
     fetchers
   );
-  console.log(state.isEditFormStore);
   const [id, setId] = useState<number>();
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("");
@@ -174,8 +160,6 @@ const StoreForm = () => {
     }
   };
   const cancelFormStore = () => {
-    //   dispatch(updateIsVisibleFormCategory(false));
-    //   dispatch(isEditCategoryForm(false));
     dispatch(actions.changeVisibleFormStore(false));
   };
   const handleFileSelected = (file: any) => {

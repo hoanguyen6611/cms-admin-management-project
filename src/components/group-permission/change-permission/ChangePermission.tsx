@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Input, Modal, notification, Tree } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  updateIsEdit,
-  updateIsVisibleFormPermissionGroup,
-} from "@/redux/group-permission/groupPermissionSlice";
 import useSWR from "swr";
 import { CheckOutlined } from "@ant-design/icons";
 import axios from "axios";
-import { useStoreContext } from "@/store";
+import { actions, useStoreContext } from "@/store";
 const { TextArea } = Input;
 import type { DataNode, TreeProps } from "antd/es/tree";
 
@@ -62,11 +57,9 @@ const ChangePermission = () => {
   const [name, setName] = useState<string>("");
   const [des, setDes] = useState<string>("");
   const [id, setId] = useState<number>();
-  // const dispatch = useDispatch();
-  const permissionGroup = useSelector((state: any) => state.permissionGroup);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<any>([]);
-  const {state, dispatch} = useStoreContext();
+  const { state, dispatch } = useStoreContext();
 
   const { data: group } = useSWR(
     `https://tech-api.herokuapp.com/v1/group/get/${state.idGroupPermission}`,
@@ -108,7 +101,6 @@ const ChangePermission = () => {
       }
     );
     if (res.data.result) {
-      dispatch(updateIsVisibleFormPermissionGroup(false));
       notification.open({
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -133,7 +125,6 @@ const ChangePermission = () => {
       }
     );
     if (res.data.result) {
-      dispatch(updateIsVisibleFormPermissionGroup(false));
       notification.open({
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -141,8 +132,7 @@ const ChangePermission = () => {
     }
   };
   const cancelCreatePermissionGroup = () => {
-    dispatch(updateIsVisibleFormPermissionGroup(false));
-    dispatch(updateIsEdit(false));
+    dispatch(actions.changeVisibleFormGroupPermission(false));
     form.resetFields();
   };
 
@@ -157,8 +147,8 @@ const ChangePermission = () => {
   return (
     <div>
       <Modal
-        title={permissionGroup.isEdit ? "Cập nhập quyền" : "Tạo mới quyền"}
-        open={permissionGroup.isVisibleChangePermissionGroup}
+        title={"Cập nhập phân quyền"}
+        open={state.isVisibleFormGroupPermission}
         onOk={handleOk}
         onCancel={cancelCreatePermissionGroup}
         width={800}
@@ -167,7 +157,7 @@ const ChangePermission = () => {
             Huỷ
           </Button>,
           <Button key="submit" type="primary" onClick={handleOk}>
-            {permissionGroup.isEdit ? "Cập nhập" : "Thêm mới"}
+            {"Cập nhập"}
           </Button>,
         ]}
       >

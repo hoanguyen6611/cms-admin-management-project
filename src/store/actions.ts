@@ -11,6 +11,7 @@ import {
   IS_VISIBLE_ORDER_FORM,
   IS_VISIBLE_PRODUCT_FORM,
   IS_VISIBLE_PROMOTION_FORM,
+  IS_VISIBLE_GROUP_PERMISSION_FORM,
   IS_VISIBLE_STORE_FORM,
   SET_ID_ACCOUNT,
   SET_ID_CATEGORY,
@@ -49,6 +50,10 @@ export const changeVisibleFormAccount = (payload: boolean) => ({
 });
 export const changeVisibleFormStore = (payload: boolean) => ({
   type: IS_VISIBLE_STORE_FORM,
+  payload,
+});
+export const changeVisibleFormGroupPermission = (payload: boolean) => ({
+  type: IS_VISIBLE_GROUP_PERMISSION_FORM,
   payload,
 });
 export const changeEditFormCategory = (payload: boolean) => ({

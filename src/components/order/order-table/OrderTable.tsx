@@ -9,7 +9,6 @@ import {
   CloseOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
-import { useDispatch } from "react-redux";
 import useSWR from "swr";
 import { Product } from "@/models";
 import styles from "./ProductTable.module.scss";

@@ -20,16 +20,8 @@ import {
   WarningOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  isEditCategoryForm,
-  updateIsVisibleFormCategory,
-} from "@/redux/category/categorySlice";
-import { RootState } from "@/redux/store";
 import {
   ref,
-  UploadResult,
-  uploadBytesResumable,
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
@@ -77,7 +69,6 @@ type FormData = yup.InferType<typeof schema>;
 
 const CategoryForm = () => {
   const [form] = Form.useForm();
-  const categorySelector = useSelector((state: RootState) => state.category);
   const {state, dispatch} = useStoreContext();
   const { data, error } = useSWR("product-category/list", fetcher);
   const { data: category } = useSWR(

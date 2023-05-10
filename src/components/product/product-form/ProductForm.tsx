@@ -17,8 +17,6 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { CheckOutlined, PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import { updateVisibleFormProduct } from "@/redux/product/productSlice";
 const { TextArea } = Input;
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
@@ -31,7 +29,6 @@ import useSWR, { mutate } from "swr";
 import { Variant } from "@/models";
 import { v4 } from "uuid";
 import { actions, useStoreContext } from "@/store";
-import { isEditProductForm } from "@/redux/product/productSlice";
 import { VND } from "@/utils/formatVNĐ";
 
 const schema = yup
@@ -92,7 +89,6 @@ const fetchers = async (url: string) => {
   return res.data.data;
 };
 const Variants = (props: any) => {
-  console.log(props);
   useEffect(() => {
     form.setFieldsValue({
       name: props?.list?.name,
@@ -217,7 +213,6 @@ const ProductForm = () => {
   } = useForm<FormData>({
     resolver: yupResolver(schema),
   });
-  const product = useSelector((state: any) => state.product);
   const [id, setId] = useState<number>();
   const [name, setName] = useState<string>("");
   const [des, setDes] = useState<string>("");
@@ -260,7 +255,6 @@ const ProductForm = () => {
   );
   const [nameConfig, setNameConfig] = useState("");
   const [statusConfig, setStatusConfig] = useState(1);
-  const [fileList, setFileList] = useState([]);
 
   useEffect(() => {
     setId(productItem?.id);
@@ -285,7 +279,6 @@ const ProductForm = () => {
   }, [productItem]);
 
   const newTabIndex = useRef(2);
-  // const dispatch = useDispatch();
   const createProduct = async () => {
     // console.log({
     //   ...form.getFieldsValue(),
@@ -496,7 +489,7 @@ const ProductForm = () => {
             Huỷ
           </Button>,
           <Button key="submit" type="primary" onClick={handleOk}>
-            {product.isEdit ? "Cập nhập" : "Tạo mới"}
+            {state.isEditFormProduct ? "Cập nhập" : "Tạo mới"}
           </Button>,
         ]}
       >
@@ -655,9 +648,9 @@ const ProductForm = () => {
             <Tabs
               type="editable-card"
               onChange={onChangeTabs}
-              activeKey={product.isEdit ? activeKeyUpdate : activeKey}
+              activeKey={state.isEditFormProduct ? activeKeyUpdate : activeKey}
               onEdit={onEdit}
-              items={product.isEdit ? initialItemsUpdate : items}
+              items={state.isEditFormProduct ? initialItemsUpdate : items}
             />
           </Card>
         </Form>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { notification, Table, Spin, Tag, Modal, Image } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
@@ -8,11 +8,6 @@ import {
   EditOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
-import {
-  isEditProductForm,
-  updateVisibleFormProduct,
-} from "@/redux/product/productSlice";
-import { useDispatch } from "react-redux";
 import useSWR from "swr";
 import styles from "./ProductTable.module.scss";
 import { actions, useStoreContext } from "@/store";
@@ -38,8 +33,6 @@ const fetcher = async () => {
 const ProductTable = () => {
   const { data, error } = useSWR("/product", fetcher);
   const {state, dispatch} = useStoreContext();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  // const dispatch = useDispatch();
   const deleteConfirmProduct = (record: any) => {
     Modal.confirm({
       title: "Bạn có chắc chắn muốn xoá sản phẩm này không?",

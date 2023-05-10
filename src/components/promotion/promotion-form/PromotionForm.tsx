@@ -21,27 +21,15 @@ import {
   WarningOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  isEditCategoryForm,
-  updateIsVisibleFormCategory,
-} from "@/redux/category/categorySlice";
-import { RootState } from "@/redux/store";
 import {
   ref,
-  UploadResult,
-  uploadBytesResumable,
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
 import { storage } from "@/utils/firebase";
-import type { RadioChangeEvent } from "antd";
 import useSWR, { mutate } from "swr";
-import { Category } from "@/models";
-import Context from "@/store/Context";
 import { actions, useStoreContext } from "@/store";
 import { v4 } from "uuid";
-import { number } from "yup";
 
 const fetcher = async () => {
   const token = localStorage.getItem("token");
@@ -71,7 +59,6 @@ const fetchers = async (url: string) => {
 
 const PromotionForm = () => {
   const [form] = Form.useForm();
-  const categorySelector = useSelector((state: RootState) => state.category);
   const { state, dispatch } = useStoreContext();
   const { data, error } = useSWR("product-category/list", fetcher);
   const { data: promotion } = useSWR(
@@ -89,9 +76,6 @@ const PromotionForm = () => {
   const [iconUpload, setIconUpload] = useState<File>();
   const [exchangeable, setExchangeable] = useState<boolean>(false);
   const [kind, setKind] = useState(0);
-  // const dispatch = useDispatch();
-  const [fileList, setFileList] = useState([]);
-  console.log(state.isEditFormPromotion);
 
   useEffect(() => {
     setId(promotion?.id);
@@ -177,8 +161,6 @@ const PromotionForm = () => {
     }
   };
   const cancelCreatePromotion = () => {
-    dispatch(updateIsVisibleFormCategory(false));
-    dispatch(isEditCategoryForm(false));
     dispatch(actions.changeVisibleFormPromotion(false));
     form.resetFields();
   };
@@ -245,7 +227,6 @@ const PromotionForm = () => {
                 <Select
                   defaultValue="Hình thức giảm giá"
                   onChange={(e) => {
-                    console.log(e);
                     setKind(Number(e));
                   }}
                   options={[

@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 import { Button } from "antd";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
-import { useDispatch } from "react-redux";
-import { updateVisibleFormProduct } from "@/redux/product/productSlice";
 import ProductTable from "./product-table/ProductTable";
 import ProductForm from "./product-form/ProductForm";
 import { useRouter } from "next/router";
@@ -10,7 +8,6 @@ import { actions, useStoreContext } from "@/store";
 
 const ProductShow = () => {
   const {state, dispatch} = useStoreContext();
-  console.log( typeof dispatch);
   const router = useRouter();
   const showModal = () => {
     dispatch(actions.changeVisibleFormProduct(true));

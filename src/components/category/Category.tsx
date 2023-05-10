@@ -1,7 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
 import CategoryForm from "./category-form/CategoryForm";
-import { useDispatch } from "react-redux";
-import { isEditCategoryForm, updateIsVisibleFormCategory } from "@/redux/category/categorySlice";
 import { Button } from "antd";
 import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
@@ -9,9 +7,8 @@ import CategoryTable from "./category-table/CategoryTable";
 import { actions, useStoreContext } from "@/store";
 
 const CategoryShow = () => {
-  // const dispatch = useDispatch();
   const router = useRouter();
-  const {state, dispatch} = useStoreContext();
+  const { state, dispatch } = useStoreContext();
   console.log(state);
   const showModal = () => {
     dispatch(actions.changeVisibleFormCategory(true));

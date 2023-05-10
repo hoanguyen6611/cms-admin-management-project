@@ -2,11 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Input, Layout, Form, notification, Button } from "antd";
 import { useRouter } from "next/router";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import axios from "axios";
-import { EKey } from "@/models/general";
 import styles from "./Login.module.scss";
-import { useDispatch } from "react-redux";
-import { setUserLogin } from "@/redux/permission/permissionSlice";
 import * as yup from "yup";
 import { useForm, useController } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -46,7 +42,6 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
-  const dispatch = useDispatch();
   const login = async (e: any) => {
     // e.preventDefault();
     setButtonSignIn(true);

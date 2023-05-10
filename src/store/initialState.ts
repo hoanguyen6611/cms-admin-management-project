@@ -8,6 +8,7 @@ export const initialState: StateGlobal = {
     isVisibleFormAccount: false,
     isVisibleFormPromotion: false,
     isVisibleFormStore: false,
+    isVisibleFormGroupPermission: false,
     isEditFormCategory: false,
     isEditFormProduct: false,
     isEditFormPromotion: false,

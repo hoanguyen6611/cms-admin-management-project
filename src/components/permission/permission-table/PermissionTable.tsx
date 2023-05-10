@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { notification, Table, Spin } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import {
@@ -8,10 +8,8 @@ import {
   DeleteOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
-import { useSelector } from "react-redux";
 import styles from "./PermissionTable.module.scss";
 import { useRouter } from "next/router";
-import { RootState } from "@/redux/store";
 import { Permission } from "@/models";
 import useSWR from "swr";
 
@@ -34,7 +32,6 @@ const fetcher = async () => {
 const PermissionTable = () => {
   const { data, error } = useSWR("/permission", fetcher);
   const router = useRouter();
-  const user = useSelector((state: RootState) => state.permission);
   const [permission, setPermission] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const deletePermission = async (record: any) => {
@@ -105,11 +102,7 @@ const PermissionTable = () => {
     selectedRowKeys,
     onChange: onSelectChange,
   };
-  useEffect(() => {
-    if (!user) {
-      router.push("/login");
-    }
-  }, [!user]);
+ 
   if (error) return <div>An error has occured</div>;
   if (!data)
     return (
