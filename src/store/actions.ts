@@ -22,6 +22,7 @@ import {
   SET_ID_PROMOTION,
   SET_ID_STORE,
   SET_VARIANT,
+  SET_CATEGORY,
 } from "./constants";
 
 export const changeVisibleFormCategory = (payload: boolean) => ({
@@ -110,5 +111,9 @@ export const setIdStoreForm = (payload: number) => ({
 });
 export const setIdCategoryForm = (payload: number) => ({
   type: SET_ID_CATEGORY,
+  payload,
+});
+export const setCategoryList = (payload: any) => ({
+  type: SET_CATEGORY,
   payload,
 });

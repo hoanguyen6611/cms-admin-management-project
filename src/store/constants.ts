@@ -21,3 +21,4 @@ export const SET_ID_ACCOUNT = "set_id_account";
 export const SET_ID_PROMOTION = "set_id_promotion";
 export const SET_ID_STORE = "set_id_store";
 export const SET_VARIANT = "set_variant";
+export const SET_CATEGORY = "set_variant";

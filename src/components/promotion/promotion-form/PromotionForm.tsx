@@ -21,11 +21,7 @@ import {
   WarningOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-} from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/utils/firebase";
 import useSWR, { mutate } from "swr";
 import { actions, useStoreContext } from "@/store";
@@ -204,18 +200,20 @@ const PromotionForm = () => {
         ]}
       >
         <Form
-          labelCol={{ span: 12 }}
+          labelCol={{ span: 10 }}
           wrapperCol={{ span: 16 }}
           layout="horizontal"
           form={form}
         >
           <Row gutter={16}>
-            <Col span={10}>
+            <Col span={24}>
               <Form.Item label="Tên ưu đãi" name="title">
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={14}>
+          </Row>
+          <Row>
+            <Col span={24}>
               <Form.Item label="Chi tiết ưu đãi" name="description">
                 <Input />
               </Form.Item>

@@ -32,8 +32,6 @@ const fetcher = async () => {
 const CategoryTable = () => {
   const { data, error } = useSWR("/product-category", fetcher);
   const {state, dispatch} = useStoreContext();
-  // const dispatch = useDispatch();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const deleteConfirmCategory = (record: any) => {
     Modal.confirm({
       title: "Bạn có chắc chắn muốn xoá danh mục sản phẩm này không?",

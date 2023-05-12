@@ -13,6 +13,7 @@ import {
   IS_VISIBLE_PRODUCT_FORM,
   IS_VISIBLE_PROMOTION_FORM,
   IS_VISIBLE_STORE_FORM,
+  SET_CATEGORY,
   SET_ID_ACCOUNT,
   SET_ID_CATEGORY,
   SET_ID_CUSTOMER,
@@ -23,32 +24,6 @@ import {
   SET_ID_STORE,
   SET_VARIANT,
 } from "./constants";
-export interface StateGlobal {
-  isVisibleFormCategory: boolean;
-  isVisibleFormOrder: boolean;
-  isVisibleFormProduct: boolean;
-  isVisibleFormCustomer: boolean;
-  isVisibleFormAccount: boolean;
-  isVisibleFormPromotion: boolean;
-  isVisibleFormStore: boolean;
-  isVisibleFormGroupPermission: boolean;
-  isEditFormCategory: boolean;
-  isEditFormProduct: boolean;
-  isEditFormPromotion: boolean;
-  isEditFormAccount: boolean;
-  isEditFormCustomer: boolean;
-  isEditFormStore: boolean;
-  idCategory: number;
-  idProduct: number;
-  idOrder: number;
-  idCustomer: number;
-  idAccount: number;
-  idPromotion: number;
-  idStore: number;
-  idGroupPermission: number;
-  variant: {};
-  category: {};
-}
 
 export function reducer(state: any, action: any) {
   switch (action.type) {
@@ -136,6 +111,11 @@ export function reducer(state: any, action: any) {
       return {
         ...state,
         variant: action.payload,
+      };
+    case SET_CATEGORY:
+      return {
+        ...state,
+        category: action.payload,
       };
     case IS_EDIT_CATEGORY_FORM:
       return {

@@ -88,24 +88,23 @@ const fetchers = async (url: string) => {
   });
   return res.data.data;
 };
-const Variants = (props: any) => {
+const Variant = (props: any) => {
+  console.log(props);
   useEffect(() => {
     form.setFieldsValue({
-      name: props?.list?.name,
-      description: props?.list?.description,
-      price: props?.list?.price,
-      status: props?.list?.status,
+      name: props.value?.name,
+      description: props.value?.description,
+      price: props.value?.price,
+      status: props.value?.status,
     });
   }, [props]);
   const [form] = Form.useForm();
-  const [fileList, setFileList] = useState([]);
   const [name, setName] = useState("");
   const [des, setDes] = useState("");
   const [price, setPrice] = useState(0);
   const [image, setImage] = useState("");
   const [imageUpload, setImageUpload] = useState<File>();
   const [status, setStatus] = useState(0);
-  const [orderSort, setOrderSort] = useState(0);
   const uploadImageProduct = async () => {
     if (!imageUpload) {
       notification.open({
@@ -120,11 +119,11 @@ const Variants = (props: any) => {
       });
     }
   };
-  const addVariant = () => {
-    uploadImageProduct();
-    variants.push({ ...form.getFieldsValue(), image: image });
-    console.log(variants);
-  };
+  // const addVariant = () => {
+  //   uploadImageProduct();
+  //   variants.push({ ...form.getFieldsValue(), image: image });
+  //   console.log(variants);
+  // };
   const handleFileSelected = (file: any) => {
     setImageUpload(file.target.files[0]);
   };
@@ -201,7 +200,7 @@ type TargetKey = React.MouseEvent | React.KeyboardEvent | string;
 const ProductForm = () => {
   const [form] = Form.useForm();
   const { data, error } = useSWR("/product-category", fetcher);
-  const {state, dispatch} = useStoreContext();
+  const { state, dispatch } = useStoreContext();
   const { data: productItem } = useSWR(
     `https://tech-api.herokuapp.com/v1/product/get/${state?.idProduct}`,
     fetchers
@@ -228,36 +227,23 @@ const ProductForm = () => {
   const [parentId, setParentId] = useState("");
   const [categoryName, setCategoryName] = useState("");
   const [noteCategory, setNoteCategory] = useState("");
-  const [variantsShow, setVariantsShow] = useState<Variant[]>([]);
+  const [variantsUpdate, setVariantsUpdate] = useState<any>([]);
   const initialItems = [
-    { label: "Thuộc tính 1", children: <Variants></Variants>, key: "1" },
-  ];
-  const initialItemsUpdate = [
-    {
-      label: "Thuộc tính 1",
-      children: (
-        <Variants
-          list={
-            productItem?.productConfigs
-              ? productItem?.productConfigs[0]?.variants[0]
-              : []
-          }
-        ></Variants>
-      ),
-      key: "1",
-    },
+    { label: "Thuộc tính 1", children: <Variant></Variant>, key: "1" },
   ];
   const [items, setItems] = useState(initialItems);
-  const [itemsUpdate, setItemsUpdate] = useState(initialItemsUpdate);
+  // const [itemsUpdate, setItemsUpdate] = useState(initialItemsUpdate);
   const [activeKey, setActiveKey] = useState(initialItems[0].key);
-  const [activeKeyUpdate, setActiveKeyUpdate] = useState(
-    initialItemsUpdate[0].key
-  );
   const [nameConfig, setNameConfig] = useState("");
   const [statusConfig, setStatusConfig] = useState(1);
 
   useEffect(() => {
     setId(productItem?.id);
+    // setVariantsUpdate(productItem?.productConfigs[0]?.variants);
+    // console.log(variantsUpdate);
+    // console.log(variant);
+    // setVariantsUpdate(variant);
+    // console.log(variantsUpdate);
     form.setFieldsValue({
       name: productItem?.name,
       description: productItem?.description,
@@ -274,23 +260,24 @@ const ProductForm = () => {
       nameConfig: productItem?.productConfigs
         ? productItem?.productConfigs[0]?.name
         : "",
-      // variantsShow: productItem?.productConfigs[0]?.variants,
     });
   }, [productItem]);
-
+  const variantList = productItem?.productConfigs
+    ? productItem?.productConfigs[0]?.variants.map((item: any) => {
+        return {
+          // ...item,
+          label: item.name,
+          children: <Variant value={item}></Variant>,
+          key: item.id,
+        };
+      })
+    : [];
+  const [activeKeyUpdate, setActiveKeyUpdate] = useState(
+    variantList ? variantList[0]?.key : ""
+  );
+  console.log(variantList);
   const newTabIndex = useRef(2);
   const createProduct = async () => {
-    // console.log({
-    //   ...form.getFieldsValue(),
-    //   image: image,
-    //   productConfigs: [
-    //     {
-    //       name: form.getFieldsValue().nameConfig,
-    //       status: form.getFieldsValue().statusConfig,
-    //       variants: variants,
-    //     },
-    //   ],
-    // });
     const token = localStorage.getItem("token");
     const res = await axios.post(
       "https://tech-api.herokuapp.com/v1/product/create",
@@ -326,11 +313,6 @@ const ProductForm = () => {
     }
   };
   const updateProduct = async () => {
-    console.log({
-      ...form.getFieldsValue(),
-      id: id,
-      image: image,
-    });
     const token = localStorage.getItem("token");
     const res = await axios.put(
       "https://tech-api.herokuapp.com/v1/product/update",
@@ -434,7 +416,7 @@ const ProductForm = () => {
     const newPanes = [...items];
     newPanes.push({
       label: `Thuộc tính ${newActiveKey}`,
-      children: <Variants></Variants>,
+      children: <Variant></Variant>,
       key: newActiveKey,
     });
     setItems(newPanes);
@@ -473,7 +455,14 @@ const ProductForm = () => {
       remove(targetKey);
     }
   };
-
+  const a = {
+    id: 229,
+    key: 229,
+    label: "Xám",
+    name: "Xám",
+    price: 11390000,
+    status: 1,
+  };
   return (
     <div>
       <Modal
@@ -493,6 +482,7 @@ const ProductForm = () => {
           </Button>,
         ]}
       >
+        {/* <Variant value={a}></Variant> */}
         <Form
           labelCol={{ span: 9 }}
           wrapperCol={{ span: 14 }}
@@ -648,9 +638,9 @@ const ProductForm = () => {
             <Tabs
               type="editable-card"
               onChange={onChangeTabs}
-              activeKey={state.isEditFormProduct ? activeKeyUpdate : activeKey}
+              activeKey={activeKey}
               onEdit={onEdit}
-              items={state.isEditFormProduct ? initialItemsUpdate : items}
+              items={state.isEditFormProduct ? variantList : items}
             />
           </Card>
         </Form>

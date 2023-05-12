@@ -1,6 +1,5 @@
 import { createContext } from "react";
-import { initialState } from "./initialState";
-import { StateGlobal } from "./reducers";
+import { StateGlobal, initialState } from "./initialState";
 
 export interface Store {
   state: StateGlobal;

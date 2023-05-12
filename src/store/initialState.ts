@@ -1,5 +1,31 @@
-import { StateGlobal } from "./reducers";
+import { Category } from "@/models";
 
+export interface StateGlobal {
+  isVisibleFormCategory: boolean;
+  isVisibleFormOrder: boolean;
+  isVisibleFormProduct: boolean;
+  isVisibleFormCustomer: boolean;
+  isVisibleFormAccount: boolean;
+  isVisibleFormPromotion: boolean;
+  isVisibleFormStore: boolean;
+  isVisibleFormGroupPermission: boolean;
+  isEditFormCategory: boolean;
+  isEditFormProduct: boolean;
+  isEditFormPromotion: boolean;
+  isEditFormAccount: boolean;
+  isEditFormCustomer: boolean;
+  isEditFormStore: boolean;
+  idCategory: number;
+  idProduct: number;
+  idOrder: number;
+  idCustomer: number;
+  idAccount: number;
+  idPromotion: number;
+  idStore: number;
+  idGroupPermission: number;
+  variant: {};
+  category: Category[];
+}
 export const initialState: StateGlobal = {
     isVisibleFormCategory: false,
     isVisibleFormOrder: false,
@@ -24,5 +50,5 @@ export const initialState: StateGlobal = {
     idStore: 0,
     idGroupPermission: 0,
     variant: {},
-    category: {},
+    category: [],
   };

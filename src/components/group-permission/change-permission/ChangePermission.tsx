@@ -75,6 +75,7 @@ const ChangePermission = () => {
       status: group?.status,
     });
   }, [group]);
+  // const permissionList = group?.permissions.map((item: any) => item.id);
   console.log(checkedKeys);
 
   const checkNumber = (a: any) => {
