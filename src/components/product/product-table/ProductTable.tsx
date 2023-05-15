@@ -25,14 +25,14 @@ const fetcher = async () => {
   );
   res.data.data.data.map((data: any) => {
     data.key = data.id;
-    data.price = VND.format(data.price);
+    data.price = data.price;
   });
   return res.data.data.data;
 };
 
 const ProductTable = () => {
-  const { data, error } = useSWR("/product", fetcher);
-  const {state, dispatch} = useStoreContext();
+  const { data, error, mutate } = useSWR("/product", fetcher);
+  const { state, dispatch } = useStoreContext();
   const deleteConfirmProduct = (record: any) => {
     Modal.confirm({
       title: "Bạn có chắc chắn muốn xoá sản phẩm này không?",
@@ -58,6 +58,7 @@ const ProductTable = () => {
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      mutate();
     } else if (!res.data.result) {
       notification.open({
         message: res.data.message,
@@ -77,11 +78,16 @@ const ProductTable = () => {
       title: "Tên sản phẩm",
       dataIndex: "name",
       key: "name",
+      filters: [],
+      filterSearch: true,
+      onFilter: (value: any, record: any) => record.name.includes(value),
     },
     {
       title: "Giá",
       dataIndex: "price",
       key: "price",
+      render: (text) => VND.format(text),
+      sorter: (a, b) => a.price - b.price,
     },
     {
       title: "Trạng thái",
@@ -98,6 +104,17 @@ const ProductTable = () => {
           {text === 1 ? "KÍCH HOẠT" : "KHOÁ"}
         </Tag>
       ),
+      filters: [
+        {
+          text: "KÍCH HOẠT",
+          value: 1,
+        },
+        {
+          text: "KHOÁ",
+          value: 0,
+        },
+      ],
+      onFilter: (value: any, record: any) => record.status === value,
     },
     {
       title: "Số lượng",

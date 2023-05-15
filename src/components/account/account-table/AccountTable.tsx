@@ -10,7 +10,7 @@ import {
 } from "@ant-design/icons";
 import { Category } from "@/models/category";
 import styles from "./CategoryTable.module.scss";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { actions, useStoreContext } from "@/store";
 
 const fetcher = async () => {
@@ -30,7 +30,7 @@ const fetcher = async () => {
 };
 
 const AccountTable = () => {
-  const { data, error } = useSWR("/product-category", fetcher);
+  const { data, error, mutate } = useSWR("/product-category", fetcher);
   const {state, dispatch} = useStoreContext();
   // const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -59,6 +59,7 @@ const AccountTable = () => {
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      mutate();
     } else if (!res.data.result) {
       notification.open({
         message: res.data.message,

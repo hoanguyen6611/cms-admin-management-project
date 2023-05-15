@@ -8,11 +8,17 @@ import {
   BranchesOutlined,
   CustomerServiceOutlined,
   AccountBookOutlined,
+  ShoppingCartOutlined,
+  ShopOutlined,
+  BarcodeOutlined,
+  UserOutlined,
+  AppstoreOutlined,
 } from "@ant-design/icons";
 import { MenuProps } from "antd";
 import { Layout, Menu, theme } from "antd";
 import { useRouter } from "next/router";
 import Profile from "./Profile";
+import { useLocation, useNavigate, useNavigationType } from "react-router-dom";
 
 const { Header, Content, Sider } = Layout;
 
@@ -33,28 +39,27 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem("Tổng quan", "", <DashboardOutlined />),
+  getItem("Tổng quan", "", <AppstoreOutlined />),
   getItem("Phân quyền", "group", <ApartmentOutlined />),
   // getItem("Quyền", "permission"),
   getItem("Sản phẩm", "sub1", <SettingOutlined />, [
     getItem("Danh mục", "category"),
     getItem("Sản phẩm", "product"),
   ]),
-  getItem("Giao dịch", "sub2", <SnippetsOutlined />, [
-    getItem("Đơn hàng", "order"),
-    getItem("Mã giảm giá", "promotion"),
-  ]),
-  getItem("Quản lý cửa hàng", "store", <BranchesOutlined />),
+  getItem("Đơn hàng", "order", <ShoppingCartOutlined />),
+  getItem("Mã giảm giá", "promotion",<BarcodeOutlined />),
+  getItem("Quản lý cửa hàng", "store", <ShopOutlined />),
   getItem("Quản trị viên", "account", <AccountBookOutlined />),
-  getItem("Khách hàng", "customer", <CustomerServiceOutlined />),
+  getItem("Khách hàng", "customer", <UserOutlined />),
 ];
-
 const LayoutPage = (props: any) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [selectedKeys, setSelectedKeys] = useState("/");
   const {
     token: { colorBgContainer },
   } = theme.useToken();
   const router = useRouter();
+  // const navigate = useNavigate();
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
@@ -70,15 +75,19 @@ const LayoutPage = (props: any) => {
           }}
           className="logo"
         />
-        <Menu
-          theme="dark"
-          defaultSelectedKeys={["dashboard"]}
-          mode="inline"
-          items={items}
-          onClick={(info) => {
-            router.push(`/${info.key}`);
-          }}
-        />
+        <div className="SideMenu">
+          <Menu
+            theme="dark"
+            defaultSelectedKeys={["dashboard"]}
+            className="SideMenuVertical"
+            mode="inline"
+            items={items}
+            onClick={(info) => {
+              router.push(`/${info.key}`);
+              // navigate(info.key);
+            }}
+          />
+        </div>
       </Sider>
       <Layout className="site-layout">
         <Header style={{ padding: 0, background: colorBgContainer }}>

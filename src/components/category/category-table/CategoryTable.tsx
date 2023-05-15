@@ -10,8 +10,9 @@ import {
 } from "@ant-design/icons";
 import { Category } from "@/models/category";
 import styles from "./CategoryTable.module.scss";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { actions, useStoreContext } from "@/store";
+import { fetcherCategory } from "@/utils/category";
 
 const fetcher = async () => {
   const token = localStorage.getItem("token");
@@ -25,13 +26,15 @@ const fetcher = async () => {
   );
   res.data.data.data.map((data: any) => {
     data.key = data.id;
+    data.value = data.id;
+    data.label = data.name;
   });
   return res.data.data.data;
 };
 
 const CategoryTable = () => {
-  const { data, error } = useSWR("/product-category", fetcher);
-  const {state, dispatch} = useStoreContext();
+  const { data, error, mutate } = useSWR("/product-category", fetcherCategory);
+  const { state, dispatch } = useStoreContext();
   const deleteConfirmCategory = (record: any) => {
     Modal.confirm({
       title: "Bạn có chắc chắn muốn xoá danh mục sản phẩm này không?",
@@ -57,6 +60,7 @@ const CategoryTable = () => {
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      mutate();
     } else if (!res.data.result) {
       notification.open({
         message: res.data.message,
@@ -93,6 +97,17 @@ const CategoryTable = () => {
           {text === 1 ? "KÍCH HOẠT" : "KHOÁ"}
         </Tag>
       ),
+      filters: [
+        {
+          text: "KÍCH HOẠT",
+          value: 1,
+        },
+        {
+          text: "KHOÁ",
+          value: 0,
+        },
+      ],
+      onFilter: (value: any, record: any) => record.status === value,
     },
     {
       title: "",

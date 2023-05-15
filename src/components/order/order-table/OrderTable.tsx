@@ -44,7 +44,7 @@ const fetchers = async () => {
 };
 
 const OrderTable = () => {
-  const { data, error } = useSWR("/product", fetcher);
+  const { data, error, mutate } = useSWR("/product", fetcher);
   const { data: store, error: errorStore } = useSWR("/store/list", fetchers);
   const {state, dispatch} = useStoreContext();
   const deleteConfirmProduct = (record: any) => {
@@ -72,6 +72,7 @@ const OrderTable = () => {
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      mutate();
     } else if (!res.data.result) {
       notification.open({
         message: res.data.message,

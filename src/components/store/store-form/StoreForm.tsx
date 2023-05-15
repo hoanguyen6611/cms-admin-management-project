@@ -13,16 +13,9 @@ import {
   Upload,
 } from "antd";
 import React, { useEffect, useState } from "react";
-import {
-  CheckOutlined,
-  WarningOutlined,
-} from "@ant-design/icons";
+import { CheckOutlined, WarningOutlined } from "@ant-design/icons";
 import axios from "axios";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-} from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/utils/firebase";
 import useSWR, { mutate } from "swr";
 import { actions, useStoreContext } from "@/store";
@@ -64,7 +57,7 @@ type FormData = yup.InferType<typeof schema>;
 
 const StoreForm = () => {
   const [form] = Form.useForm();
-  const {state, dispatch} = useStoreContext();
+  const { state, dispatch } = useStoreContext();
   const { data: store } = useSWR(
     `https://tech-api.herokuapp.com/v1/store/get/${state.idStore}`,
     fetchers
@@ -210,7 +203,11 @@ const StoreForm = () => {
           <Row gutter={16}>
             <Col span={24}>
               <Form.Item label="Tên cửa hàng" name="name">
-                <Input value={name} onChange={(e) => setName(e.target.value)} />
+                <Input
+                  style={{ width: 500 }}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -236,12 +233,12 @@ const StoreForm = () => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item label="Số điện thoại" name="phone">
-                <Input></Input>
+                <Input style={{ width: 200 }} />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item label="Mã cửa hàng" name="shopId">
-                <Input></Input>
+                <Input style={{ width: 200 }} />
               </Form.Item>
             </Col>
           </Row>

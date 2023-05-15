@@ -10,7 +10,7 @@ import {
 } from "@ant-design/icons";
 import { Category } from "@/models/category";
 import styles from "./CategoryTable.module.scss";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { actions, useStoreContext } from "@/store";
 import { VND } from "@/utils/formatVNĐ";
 
@@ -32,8 +32,8 @@ const fetcher = async () => {
 };
 
 const PromotionTable = () => {
-  const { data: promotion, error } = useSWR("/v1/promotion/list", fetcher);
-  const {state, dispatch} = useStoreContext();
+  const { data: promotion, error, mutate } = useSWR("/v1/promotion/list", fetcher);
+  const { state, dispatch } = useStoreContext();
   const deleteConfirmPromotion = (record: any) => {
     Modal.confirm({
       title: "Bạn có chắc chắn muốn xoá danh mục sản phẩm này không?",
@@ -59,6 +59,7 @@ const PromotionTable = () => {
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      mutate();
     } else if (!res.data.result) {
       notification.open({
         message: res.data.message,
@@ -105,6 +106,17 @@ const PromotionTable = () => {
           {text === 1 ? "KÍCH HOẠT" : "KHOÁ"}
         </Tag>
       ),
+      filters: [
+        {
+          text: "KÍCH HOẠT",
+          value: 1,
+        },
+        {
+          text: "KHOÁ",
+          value: 0,
+        },
+      ],
+      onFilter: (value: any, record: any) => record.status === value,
     },
     {
       title: "",

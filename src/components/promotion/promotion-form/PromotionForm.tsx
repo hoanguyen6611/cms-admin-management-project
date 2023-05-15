@@ -189,7 +189,7 @@ const PromotionForm = () => {
         okType={"danger"}
         onOk={handleOk}
         onCancel={cancelCreatePromotion}
-        width={1000}
+        width={1100}
         footer={[
           <Button key="back" onClick={cancelCreatePromotion}>
             Huỷ
@@ -201,26 +201,25 @@ const PromotionForm = () => {
       >
         <Form
           labelCol={{ span: 10 }}
-          wrapperCol={{ span: 16 }}
+          wrapperCol={{ span: 10 }}
           layout="horizontal"
           form={form}
         >
           <Row gutter={16}>
-            <Col span={24}>
+            <Col span={12}>
               <Form.Item label="Tên ưu đãi" name="title">
-                <Input />
+                <Input style={{ width: 300 }} />
               </Form.Item>
             </Col>
-          </Row>
-          <Row>
-            <Col span={24}>
+            <Col span={12}>
               <Form.Item label="Chi tiết ưu đãi" name="description">
-                <Input />
+                <Input style={{ width: 300 }} />
               </Form.Item>
             </Col>
           </Row>
-          <Row gutter={8}>
-            <Col span={8}>
+          <Row></Row>
+          <Row gutter={4}>
+            <Col span={12}>
               <Form.Item label="Hình thức giảm giá" name="kind">
                 <Select
                   defaultValue="Hình thức giảm giá"
@@ -234,18 +233,24 @@ const PromotionForm = () => {
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
-              <Form.Item label="Giảm giá" name="value">
-                <InputNumber
-                  addonAfter={kind === 1 ? "VNĐ" : "" && kind === 2 ? "%" : ""}
-                  style={{ width: 150 }}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8} hidden={kind === 1}>
-              <Form.Item label="Giá trị giảm tối đa" name="maxValueForPercent">
-                <InputNumber style={{ width: 150 }} />
-              </Form.Item>
+            <Col span={12}>
+              <Row gutter={kind === 1 ? 0 : 4}>
+                <Col span={kind === 1 ? 24 : 12}>
+                  <Form.Item label="Giảm giá" name="value">
+                    <InputNumber
+                      addonAfter={
+                        kind === 1 ? "VNĐ" : "" && kind === 2 ? "%" : ""
+                      }
+                      style={{ width: 100 }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12} hidden={kind !== 2}>
+                  <Form.Item label="Giảm tối đa" name="maxValueForPercent">
+                    <InputNumber style={{ width: 100 }} />
+                  </Form.Item>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <Row gutter={16}>

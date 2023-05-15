@@ -20,14 +20,10 @@ import {
   WarningOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-} from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/utils/firebase";
 import type { RadioChangeEvent } from "antd";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { Category } from "@/models";
 import Context from "@/store/Context";
 import { actions, useStoreContext } from "@/store";
@@ -36,6 +32,7 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import styles from "./CategoryForm.module.scss";
+import { fetcherCategory } from "@/utils/category";
 
 const fetcher = async () => {
   const token = localStorage.getItem("token");
@@ -69,8 +66,8 @@ type FormData = yup.InferType<typeof schema>;
 
 const CategoryForm = () => {
   const [form] = Form.useForm();
-  const {state, dispatch} = useStoreContext();
-  const { data, error } = useSWR("product-category/list", fetcher);
+  const { state, dispatch } = useStoreContext();
+  const { data, error, mutate } = useSWR("product-category", fetcherCategory);
   const { data: category } = useSWR(
     `https://tech-api.herokuapp.com/v1/product-category/get/${state.idCategory}`,
     fetchers
@@ -84,7 +81,6 @@ const CategoryForm = () => {
   const [note, setNote] = useState("");
   const [icon, setIcon] = useState("");
   const [iconUpload, setIconUpload] = useState<File>();
-  // const dispatch = useDispatch();
   const [fileList, setFileList] = useState([]);
   const {
     register,
@@ -116,6 +112,7 @@ const CategoryForm = () => {
       {
         ...form.getFieldsValue(),
         icon: icon,
+        orderSort: 0
       },
       {
         headers: {
@@ -129,7 +126,12 @@ const CategoryForm = () => {
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
-      mutate("/product-category", fetcher, false);
+      mutate();
+    } else {
+      notification.open({
+        message: res.data,
+        icon: <WarningOutlined style={{ color: "red" }} />,
+      });
     }
   };
   const updateCategory = async () => {

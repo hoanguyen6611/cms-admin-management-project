@@ -15,7 +15,11 @@ import {
   Button,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
-import { CheckOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  CheckOutlined,
+  PlusOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
 import axios from "axios";
 const { TextArea } = Input;
 import * as yup from "yup";
@@ -89,13 +93,13 @@ const fetchers = async (url: string) => {
   return res.data.data;
 };
 const Variant = (props: any) => {
-  console.log(props);
   useEffect(() => {
     form.setFieldsValue({
       name: props.value?.name,
       description: props.value?.description,
       price: props.value?.price,
-      status: props.value?.status,
+      image: props.value?.image,
+      status: props?.status,
     });
   }, [props]);
   const [form] = Form.useForm();
@@ -167,6 +171,7 @@ const Variant = (props: any) => {
         <Row>
           <Col span={12}>
             <Form.Item name="image">
+              <Image width={250} src={props.value?.image} alt="image"></Image>
               <Button className="p-4 border-none">
                 <input
                   hidden
@@ -264,10 +269,13 @@ const ProductForm = () => {
   }, [productItem]);
   const variantList = productItem?.productConfigs
     ? productItem?.productConfigs[0]?.variants.map((item: any) => {
+        variants.push(item);
         return {
           // ...item,
           label: item.name,
-          children: <Variant value={item}></Variant>,
+          children: (
+            <Variant value={item} status={productItem?.status}></Variant>
+          ),
           key: item.id,
         };
       })
@@ -275,7 +283,6 @@ const ProductForm = () => {
   const [activeKeyUpdate, setActiveKeyUpdate] = useState(
     variantList ? variantList[0]?.key : ""
   );
-  console.log(variantList);
   const newTabIndex = useRef(2);
   const createProduct = async () => {
     const token = localStorage.getItem("token");
@@ -300,15 +307,16 @@ const ProductForm = () => {
     );
     if (res.data.result) {
       form.resetFields();
+      dispatch(actions.changeVisibleFormProduct(false));
+      dispatch(actions.changeEditFormProduct(false));
       notification.open({
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
-      mutate("/product-category", list, true);
     } else {
       notification.open({
         message: res.data.message,
-        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+        icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }
   };
@@ -320,6 +328,13 @@ const ProductForm = () => {
         ...form.getFieldsValue(),
         id: id,
         image: image,
+        productConfigs: [
+          {
+            name: form.getFieldsValue().nameConfig,
+            status: form.getFieldsValue().statusConfig,
+            variants: variants,
+          },
+        ],
       },
       {
         headers: {
@@ -329,6 +344,13 @@ const ProductForm = () => {
     );
     if (res.data.result) {
       form.resetFields();
+      dispatch(actions.changeVisibleFormProduct(false));
+      dispatch(actions.changeEditFormProduct(false));
+      notification.open({
+        message: res.data.message,
+        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+      });
+    } else {
       notification.open({
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -352,17 +374,14 @@ const ProductForm = () => {
   const handleOk = async () => {
     if (id) {
       updateProduct();
-      dispatch(actions.changeVisibleFormProduct(false));
-      dispatch(actions.changeEditFormProduct(false));
     } else {
       uploadImageProduct();
       createProduct();
-      dispatch(actions.changeVisibleFormProduct(false));
-      dispatch(actions.changeEditFormProduct(false));
     }
   };
 
   const handleCancel = () => {
+    // variants
     form.resetFields();
     dispatch(actions.changeVisibleFormProduct(false));
     dispatch(actions.changeEditFormProduct(false));
@@ -455,14 +474,6 @@ const ProductForm = () => {
       remove(targetKey);
     }
   };
-  const a = {
-    id: 229,
-    key: 229,
-    label: "Xám",
-    name: "Xám",
-    price: 11390000,
-    status: 1,
-  };
   return (
     <div>
       <Modal
@@ -482,7 +493,6 @@ const ProductForm = () => {
           </Button>,
         ]}
       >
-        {/* <Variant value={a}></Variant> */}
         <Form
           labelCol={{ span: 9 }}
           wrapperCol={{ span: 14 }}
