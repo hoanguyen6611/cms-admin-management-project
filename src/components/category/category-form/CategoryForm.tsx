@@ -112,7 +112,7 @@ const CategoryForm = () => {
       {
         ...form.getFieldsValue(),
         icon: icon,
-        orderSort: 0
+        orderSort: 0,
       },
       {
         headers: {
@@ -126,6 +126,8 @@ const CategoryForm = () => {
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      dispatch(actions.changeVisibleFormCategory(false));
+      dispatch(actions.changeEditFormCategory(false));
       mutate();
     } else {
       notification.open({
@@ -155,6 +157,9 @@ const CategoryForm = () => {
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      dispatch(actions.changeVisibleFormCategory(false));
+      dispatch(actions.changeEditFormCategory(false));
+      mutate();
     } else {
       notification.open({
         message: res.data,
@@ -167,17 +172,11 @@ const CategoryForm = () => {
     uploadImage();
     if (id) {
       updateCategory();
-      dispatch(actions.changeVisibleFormCategory(false));
-      dispatch(actions.changeEditFormCategory(false));
     } else {
       createCategoryForm();
-      dispatch(actions.changeVisibleFormCategory(false));
-      dispatch(actions.changeEditFormCategory(false));
     }
   };
   const cancelCreateCategory = () => {
-    // dispatch(updateIsVisibleFormCategory(false));
-    // dispatch(isEditCategoryForm(false));
     form.resetFields();
     dispatch(actions.changeVisibleFormCategory(false));
     dispatch(actions.changeEditFormCategory(false));

@@ -34,6 +34,7 @@ import { Variant } from "@/models";
 import { v4 } from "uuid";
 import { actions, useStoreContext } from "@/store";
 import { VND } from "@/utils/formatVNĐ";
+import { uploadImageProduct } from "@/utils/uploadImage";
 
 const schema = yup
   .object({
@@ -109,27 +110,30 @@ const Variant = (props: any) => {
   const [image, setImage] = useState("");
   const [imageUpload, setImageUpload] = useState<File>();
   const [status, setStatus] = useState(0);
-  const uploadImageProduct = async () => {
-    if (!imageUpload) {
-      notification.open({
-        message: "Upload ảnh chưa thành công",
-      });
-    } else {
-      const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
-      await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
-        await getDownloadURL(snapshot.ref).then((url) => {
-          setImage(url);
-        });
-      });
-    }
-  };
-  // const addVariant = () => {
-  //   uploadImageProduct();
-  //   variants.push({ ...form.getFieldsValue(), image: image });
-  //   console.log(variants);
+  // const uploadImageProduct = async () => {
+  //   if (!imageUpload) {
+  //     notification.open({
+  //       message: "Upload ảnh chưa thành công",
+  //     });
+  //   } else {
+  //     const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
+  //     await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
+  //       await getDownloadURL(snapshot.ref).then((url) => {
+  //         setImage(url);
+  //       });
+  //     });
+  //   }
   // };
   const handleFileSelected = (file: any) => {
     setImageUpload(file.target.files[0]);
+  };
+  const addVariant = async () => {
+    // const imageUpload = await uploadImageProduct(imageUpload);
+    variant = {
+      ...form.getFieldsValue(),
+      image: image,
+    };
+    variants.push(variant);
   };
   return (
     <div>
@@ -138,9 +142,6 @@ const Variant = (props: any) => {
         wrapperCol={{ span: 14 }}
         layout="horizontal"
         form={form}
-        onChange={() => {
-          variant = form.getFieldsValue();
-        }}
       >
         <Row>
           <Col span={8}>
@@ -171,7 +172,12 @@ const Variant = (props: any) => {
         <Row>
           <Col span={12}>
             <Form.Item name="image">
-              <Image width={250} src={props.value?.image} alt="image"></Image>
+              <Image
+                hidden={!props.value?.image}
+                width={250}
+                src={props.value?.image}
+                alt="image"
+              ></Image>
               <Button className="p-4 border-none">
                 <input
                   hidden
@@ -196,7 +202,7 @@ const Variant = (props: any) => {
           </Col>
         </Row>
       </Form>
-      {/* <Button onClick={addVariant}>Thêm</Button> */}
+      <Button onClick={addVariant}>Thêm tuỳ chọn</Button>
     </div>
   );
 };
@@ -244,11 +250,6 @@ const ProductForm = () => {
 
   useEffect(() => {
     setId(productItem?.id);
-    // setVariantsUpdate(productItem?.productConfigs[0]?.variants);
-    // console.log(variantsUpdate);
-    // console.log(variant);
-    // setVariantsUpdate(variant);
-    // console.log(variantsUpdate);
     form.setFieldsValue({
       name: productItem?.name,
       description: productItem?.description,
@@ -271,7 +272,6 @@ const ProductForm = () => {
     ? productItem?.productConfigs[0]?.variants.map((item: any) => {
         variants.push(item);
         return {
-          // ...item,
           label: item.name,
           children: (
             <Variant value={item} status={productItem?.status}></Variant>
@@ -285,40 +285,51 @@ const ProductForm = () => {
   );
   const newTabIndex = useRef(2);
   const createProduct = async () => {
-    const token = localStorage.getItem("token");
-    const res = await axios.post(
-      "https://tech-api.herokuapp.com/v1/product/create",
-      {
-        ...form.getFieldsValue(),
-        image: image,
-        productConfigs: [
-          {
-            name: form.getFieldsValue().nameConfig,
-            status: form.getFieldsValue().statusConfig,
-            variants: variants,
-          },
-        ],
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+    console.log({
+      ...form.getFieldsValue(),
+      image: image,
+      productConfigs: [
+        {
+          name: form.getFieldsValue().nameConfig,
+          status: form.getFieldsValue().statusConfig,
+          variants: variants,
         },
-      }
-    );
-    if (res.data.result) {
-      form.resetFields();
-      dispatch(actions.changeVisibleFormProduct(false));
-      dispatch(actions.changeEditFormProduct(false));
-      notification.open({
-        message: res.data.message,
-        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
-      });
-    } else {
-      notification.open({
-        message: res.data.message,
-        icon: <WarningOutlined style={{ color: "red" }} />,
-      });
-    }
+      ],
+    });
+    // const token = localStorage.getItem("token");
+    // const res = await axios.post(
+    //   "https://tech-api.herokuapp.com/v1/product/create",
+    //   {
+    //     ...form.getFieldsValue(),
+    //     image: image,
+    //     productConfigs: [
+    //       {
+    //         name: form.getFieldsValue().nameConfig,
+    //         status: form.getFieldsValue().statusConfig,
+    //         variants: variants,
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   }
+    // );
+    // if (res.data.result) {
+    //   form.resetFields();
+    //   dispatch(actions.changeVisibleFormProduct(false));
+    //   dispatch(actions.changeEditFormProduct(false));
+    //   notification.open({
+    //     message: res.data.message,
+    //     icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+    //   });
+    // } else {
+    //   notification.open({
+    //     message: res.data.message,
+    //     icon: <WarningOutlined style={{ color: "red" }} />,
+    //   });
+    // }
   };
   const updateProduct = async () => {
     const token = localStorage.getItem("token");
@@ -366,16 +377,21 @@ const ProductForm = () => {
       const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
       await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
         await getDownloadURL(snapshot.ref).then((url) => {
+          console.log(url);
           setImage(url);
+          console.log(image);
+          return url;
         });
       });
     }
   };
   const handleOk = async () => {
     if (id) {
+      await uploadImageProduct();
       updateProduct();
     } else {
-      uploadImageProduct();
+      const test = await uploadImageProduct();
+      console.log(test);
       createProduct();
     }
   };
@@ -388,11 +404,9 @@ const ProductForm = () => {
     dispatch(actions.setIdProductForm(0));
   };
   const handleChange = (value: string) => {
-    console.log(value);
     setCategoryId(value);
   };
   const handleChangeParent = (value: string) => {
-    console.log(value);
     setParentId(value);
   };
   const handleCancelcreateCategory = () => {
@@ -440,8 +454,6 @@ const ProductForm = () => {
     });
     setItems(newPanes);
     setActiveKey(newActiveKey);
-    variants.push(variant);
-    console.log(variants);
   };
 
   const remove = (targetKey: TargetKey) => {
