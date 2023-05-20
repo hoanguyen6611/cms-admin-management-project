@@ -95,16 +95,16 @@ const AccountProfile = () => {
           </Col>
           <Col span={20}>
             <Form.Item label="Tên đăng nhập" name="username">
-              <Input onChange={(e) => setUsername(e.target.value)} />
+              <Input disabled onChange={(e) => setUsername(e.target.value)} />
             </Form.Item>
             <Form.Item label="Họ và tên" name="fullName">
-              <Input onChange={(e) => setFullName(e.target.value)} />
+              <Input disabled onChange={(e) => setFullName(e.target.value)} />
             </Form.Item>
             <Form.Item label="Email" name="email">
-              <Input onChange={(e) => setEmail(e.target.value)} />
+              <Input disabled onChange={(e) => setEmail(e.target.value)} />
             </Form.Item>
             <Form.Item label="Điện thoại" name="phone">
-              <Input onChange={(e) => setPhone(e.target.value)} />
+              <Input disabled onChange={(e) => setPhone(e.target.value)} />
             </Form.Item>
           </Col>
         </Row>
