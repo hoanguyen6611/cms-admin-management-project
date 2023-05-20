@@ -25,6 +25,8 @@ export interface StateGlobal {
   idGroupPermission: number;
   variant: {};
   category: Category[];
+  fromDate?:any;
+  toDate?:any;
 }
 export const initialState: StateGlobal = {
     isVisibleFormCategory: false,

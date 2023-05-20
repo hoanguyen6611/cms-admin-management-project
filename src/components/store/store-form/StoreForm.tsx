@@ -15,11 +15,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { CheckOutlined, WarningOutlined } from "@ant-design/icons";
 import axios from "axios";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "@/utils/firebase";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { actions, useStoreContext } from "@/store";
-import { v4 } from "uuid";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -50,23 +47,79 @@ const fetchers = async (url: string) => {
   });
   return res.data.data;
 };
+const fetchersDistrict = async (url: string) => {
+  const token = "304ba88b-84e2-11ed-bcba-eac62dba9bd9";
+  const res = await axios.get(url, {
+    headers: {
+      token: `${token}`,
+    },
+  });
+  res.data.data.map((data: any) => {
+    data.value = data.DistrictID;
+    data.label = data.DistrictName;
+  });
+  return res.data.data;
+};
+const fetchersWard = async (url: string) => {
+  const token = "304ba88b-84e2-11ed-bcba-eac62dba9bd9";
+  const res = await axios.get(url, {
+    headers: {
+      token: `${token}`,
+    },
+  });
+  res.data.data.map((data: any) => {
+    data.value = data.WardCode;
+    data.label = data.WardName;
+  });
+  return res.data.data;
+};
 const schema = yup.object({
   name: yup.string().required("Trường tên là trường bắt buộc"),
 });
 type FormData = yup.InferType<typeof schema>;
+const fetcherProvince = async () => {
+  const token = "304ba88b-84e2-11ed-bcba-eac62dba9bd9";
+  const res = await axios.get(
+    "https://online-gateway.ghn.vn/shiip/public-api/master-data/province",
+    {
+      headers: {
+        token: `${token}`,
+      },
+    }
+  );
+  res.data.data.map((data: any) => {
+    data.value = data.ProvinceID;
+    data.label = data.ProvinceName;
+  });
+  return res.data.data;
+};
 
 const StoreForm = () => {
   const [form] = Form.useForm();
   const { state, dispatch } = useStoreContext();
-  const { data: store } = useSWR(
-    `https://tech-api.herokuapp.com/v1/store/get/${state.idStore}`,
-    fetchers
-  );
   const [id, setId] = useState<number>();
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("");
   const [iconUpload, setIconUpload] = useState<File>();
-  // const dispatch = useDispatch();
+  const [provinceCode, setProvinceCode] = useState();
+  const [provinceName, setProvinceName] = useState();
+  const [districtCode, setDistrictCode] = useState();
+  const [districtName, setDistrictName] = useState();
+  const [wardCode, setWardCode] = useState();
+  const [wardName, setWardName] = useState();
+  const { data: store } = useSWR(
+    `https://tech-api.herokuapp.com/v1/store/get/${state.idStore}`,
+    fetchers
+  );
+  const { data: province } = useSWR("/", fetcherProvince);
+  const { data: district } = useSWR(
+    `https://online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${provinceCode}`,
+    fetchersDistrict
+  );
+  const { data: ward } = useSWR(
+    `https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${districtCode}`,
+    fetchersWard
+  );
   const {
     register,
     handleSubmit,
@@ -79,6 +132,9 @@ const StoreForm = () => {
   });
   useEffect(() => {
     setId(store?.id);
+    setProvinceCode(store?.provinceCode);
+    setDistrictCode(store?.districtCode);
+    setWardCode(store?.wardCode);
     form.setFieldsValue({
       name: store?.name,
       longitude: store?.longitude,
@@ -86,16 +142,39 @@ const StoreForm = () => {
       shopId: store?.shopId,
       addressDetails: store?.addressDetails,
       phone: store?.phone,
+      provinceCode: store?.provinceCode,
+      districtCode: store?.districtCode,
+      wardCode: store?.wardCode,
     });
   }, [store]);
+  const nameProvince = province?.find(
+    (item: any) => item.ProvinceID === provinceCode
+  )?.ProvinceName;
+  const nameDistrict = district?.find(
+    (item: any) => item.DistrictID === districtCode
+  )?.DistrictName;
+  const nameWard = ward?.find(
+    (item: any) => item.WardCode === wardCode
+  )?.WardName;
 
   const createStore = async () => {
+    const storeValue = form.getFieldsValue();
+    delete storeValue.shopId;
+    const storeCreate = {
+      ...storeValue,
+      addressDetails:
+        storeValue.addressDetails +
+        " " +
+        nameWard +
+        " " +
+        nameDistrict +
+        " " +
+        nameProvince,
+    };
     const token = localStorage.getItem("token");
     const res = await axios.post(
       "https://tech-api.herokuapp.com/v1/store/create",
-      {
-        ...form.getFieldsValue(),
-      },
+      storeCreate,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -104,25 +183,26 @@ const StoreForm = () => {
     );
     if (res.data.result) {
       dispatch(actions.changeVisibleFormStore(false));
-      //   dispatch(actions.changeEditFormCategory(false));
+      dispatch(actions.changeEditFormCategory(false));
       form.resetFields();
       notification.open({
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
-      mutate("/product-category", fetcher, false);
     }
   };
   const updateStore = async () => {
-    const store = {
-      ...form.getFieldsValue(),
+    const storeValue = form.getFieldsValue();
+    delete storeValue.shopId;
+    const storeCreate = {
+      ...storeValue,
+      addressDetails: storeValue.addressDetails,
       id: id,
     };
-    delete store?.shopId;
     const token = localStorage.getItem("token");
     const res = await axios.put(
       "https://tech-api.herokuapp.com/v1/store/update",
-      store,
+      storeCreate,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -155,22 +235,14 @@ const StoreForm = () => {
   const cancelFormStore = () => {
     dispatch(actions.changeVisibleFormStore(false));
   };
-  const handleFileSelected = (file: any) => {
-    setIconUpload(file.target.files[0]);
+  const handleChangeProvince = (value: any) => {
+    setProvinceCode(value);
   };
-  const uploadImage = async () => {
-    if (!iconUpload) {
-      notification.open({
-        message: "Upload ảnh chưa thành công",
-      });
-    } else {
-      const imageRef = ref(storage, `images/${iconUpload.name + v4()}`);
-      await uploadBytes(imageRef, iconUpload).then(async (snapshot) => {
-        await getDownloadURL(snapshot.ref).then((url) => {
-          setIcon(url);
-        });
-      });
-    }
+  const handleChangeDistrict = (value: any) => {
+    setDistrictCode(value);
+  };
+  const handleChangeWard = (value: any) => {
+    setWardCode(value);
   };
   return (
     <div>
@@ -184,37 +256,70 @@ const StoreForm = () => {
         okType={"danger"}
         onOk={handleOk}
         onCancel={cancelFormStore}
-        width={800}
+        width={1000}
         footer={[
           <Button key="back" onClick={cancelFormStore}>
             Huỷ
           </Button>,
           <Button key="submit" type="primary" onClick={handleOk}>
-            {state.isEditFormCategory ? "Cập nhập" : "Thêm mới"}
+            {state.isEditFormStore ? "Cập nhập" : "Thêm mới"}
           </Button>,
         ]}
       >
         <Form
-          labelCol={{ span: 6 }}
+          labelCol={{ span: 8 }}
           wrapperCol={{ span: 14 }}
           layout="horizontal"
           form={form}
         >
-          <Row gutter={16}>
-            <Col span={24}>
+          <Row gutter={4}>
+            <Col span={10}>
               <Form.Item label="Tên cửa hàng" name="name">
                 <Input
-                  style={{ width: 500 }}
+                  style={{ width: 200 }}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </Form.Item>
             </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={24}>
+            <Col span={14}>
               <Form.Item label="Địa chỉ cửa hàng" name="addressDetails">
-                <Input style={{ width: 500 }} />
+                <Input style={{ width: 350 }} />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={2}>
+            <Col span={8}>
+              <Form.Item label="Tỉnh thành" name="provinceCode">
+                <Select
+                  showSearch
+                  defaultValue="Chọn tỉnh thành"
+                  style={{ width: 150 }}
+                  options={province}
+                  onChange={handleChangeProvince}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="Quận" name="districtCode">
+                <Select
+                  showSearch
+                  defaultValue="Chọn quận huyện"
+                  style={{ width: 150 }}
+                  options={district}
+                  onChange={handleChangeDistrict}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="Phường xã" name="wardCode">
+                <Select
+                  showSearch
+                  defaultValue="Chọn phường xã"
+                  style={{ width: 200 }}
+                  options={ward}
+                  onChange={handleChangeWard}
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -236,7 +341,7 @@ const StoreForm = () => {
                 <Input style={{ width: 200 }} />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={12} hidden={!state.isEditFormStore}>
               <Form.Item label="Mã cửa hàng" name="shopId">
                 <Input style={{ width: 200 }} />
               </Form.Item>

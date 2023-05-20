@@ -22,3 +22,6 @@ export const SET_ID_PROMOTION = "set_id_promotion";
 export const SET_ID_STORE = "set_id_store";
 export const SET_VARIANT = "set_variant";
 export const SET_CATEGORY = "set_variant";
+export const SET_FROM_DATE = "set_from_date";
+export const SET_TO_DATE = "set_to_date";
+

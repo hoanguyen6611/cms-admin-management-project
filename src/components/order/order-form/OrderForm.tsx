@@ -147,9 +147,9 @@ const OrderForm = () => {
       render: (text) => text?.saleOff + "%",
     },
     {
-      title: "Giá bán",
+      title: "Thành tiền",
       dataIndex: "productDto",
-      key: "saleOff",
+      key: "moneyTotal",
       render: (text) => VND.format(text?.price),
     },
   ];

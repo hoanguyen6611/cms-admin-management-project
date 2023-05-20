@@ -23,6 +23,8 @@ import {
   SET_ID_STORE,
   SET_VARIANT,
   SET_CATEGORY,
+  SET_FROM_DATE,
+  SET_TO_DATE,
 } from "./constants";
 
 export const changeVisibleFormCategory = (payload: boolean) => ({
@@ -115,5 +117,13 @@ export const setIdCategoryForm = (payload: number) => ({
 });
 export const setCategoryList = (payload: any) => ({
   type: SET_CATEGORY,
+  payload,
+});
+export const setFromDate = (payload: any) => ({
+  type: SET_FROM_DATE,
+  payload,
+});
+export const setToDate = (payload: any) => ({
+  type: SET_TO_DATE,
   payload,
 });

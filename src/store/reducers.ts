@@ -14,6 +14,7 @@ import {
   IS_VISIBLE_PROMOTION_FORM,
   IS_VISIBLE_STORE_FORM,
   SET_CATEGORY,
+  SET_FROM_DATE,
   SET_ID_ACCOUNT,
   SET_ID_CATEGORY,
   SET_ID_CUSTOMER,
@@ -22,6 +23,7 @@ import {
   SET_ID_PRODUCT,
   SET_ID_PROMOTION,
   SET_ID_STORE,
+  SET_TO_DATE,
   SET_VARIANT,
 } from "./constants";
 
@@ -116,6 +118,16 @@ export function reducer(state: any, action: any) {
       return {
         ...state,
         category: action.payload,
+      };
+    case SET_FROM_DATE:
+      return {
+        ...state,
+        fromDate: action.payload,
+      };
+    case SET_TO_DATE:
+      return {
+        ...state,
+        toDate: action.payload,
       };
     case IS_EDIT_CATEGORY_FORM:
       return {
