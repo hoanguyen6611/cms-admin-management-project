@@ -15,14 +15,14 @@ export interface StateGlobal {
   isEditFormAccount: boolean;
   isEditFormCustomer: boolean;
   isEditFormStore: boolean;
-  idCategory: number;
-  idProduct: number;
-  idOrder: number;
-  idCustomer: number;
-  idAccount: number;
-  idPromotion: number;
-  idStore: number;
-  idGroupPermission: number;
+  idCategory?: number;
+  idProduct?: number;
+  idOrder?: number;
+  idCustomer?: number;
+  idAccount?: number;
+  idPromotion?: number;
+  idStore?: number;
+  idGroupPermission?: number;
   variant: {};
   category: Category[];
   fromDate?:any;
@@ -43,14 +43,6 @@ export const initialState: StateGlobal = {
     isEditFormAccount: false,
     isEditFormCustomer: false,
     isEditFormStore: false,
-    idCategory: 0,
-    idProduct: 0,
-    idOrder: 0,
-    idCustomer: 0,
-    idAccount: 0,
-    idPromotion: 0,
-    idStore: 0,
-    idGroupPermission: 0,
     variant: {},
     category: [],
   };

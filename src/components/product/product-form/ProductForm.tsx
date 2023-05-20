@@ -13,10 +13,13 @@ import {
   Tabs,
   Image,
   Button,
+  Table,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import {
   CheckOutlined,
+  MinusCircleOutlined,
+  PlusCircleOutlined,
   PlusOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
@@ -30,11 +33,12 @@ import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { storage } from "@/utils/firebase";
 import type { RadioChangeEvent } from "antd";
 import useSWR, { mutate } from "swr";
-import { Variant } from "@/models";
+import { Category, Variant } from "@/models";
 import { v4 } from "uuid";
 import { actions, useStoreContext } from "@/store";
 import { VND } from "@/utils/formatVNĐ";
 import { uploadImageProduct } from "@/utils/uploadImage";
+import { ColumnsType } from "antd/es/table";
 
 const schema = yup
   .object({
@@ -94,6 +98,7 @@ const fetchers = async (url: string) => {
   return res.data.data;
 };
 const Variant = (props: any) => {
+  const { state, dispatch } = useStoreContext();
   useEffect(() => {
     form.setFieldsValue({
       name: props.value?.name,
@@ -110,31 +115,67 @@ const Variant = (props: any) => {
   const [image, setImage] = useState("");
   const [imageUpload, setImageUpload] = useState<File>();
   const [status, setStatus] = useState(0);
-  // const uploadImageProduct = async () => {
-  //   if (!imageUpload) {
-  //     notification.open({
-  //       message: "Upload ảnh chưa thành công",
-  //     });
-  //   } else {
-  //     const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
-  //     await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
-  //       await getDownloadURL(snapshot.ref).then((url) => {
-  //         setImage(url);
-  //       });
-  //     });
-  //   }
-  // };
   const handleFileSelected = (file: any) => {
     setImageUpload(file.target.files[0]);
   };
   const addVariant = async () => {
-    // const imageUpload = await uploadImageProduct(imageUpload);
-    variant = {
-      ...form.getFieldsValue(),
-      image: image,
-    };
-    variants.push(variant);
+    if (!imageUpload) {
+      notification.open({
+        message: "Upload ảnh chưa thành công",
+      });
+    } else {
+      const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
+      await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
+        await getDownloadURL(snapshot.ref).then((url) => {
+          variant = {
+            ...form.getFieldsValue(),
+            image: url,
+          };
+          variants.push(variant);
+        });
+      });
+    }
   };
+  const dataSource = [
+    {
+      key: "1",
+      store: "Teck Thủ Đức",
+      number: 5,
+    },
+    {
+      key: "2",
+      store: "Teck Quận 1",
+      number: 4,
+    },
+  ];
+  const columns: ColumnsType<any> = [
+    {
+      title: "Chi nhánh",
+      dataIndex: "store",
+      key: "store",
+    },
+    {
+      title: "Tồn kho",
+      dataIndex: "number",
+      key: "number",
+    },
+    {
+      title: "",
+      dataIndex: "id",
+      key: "action",
+      render: (record) => {
+        return (
+          <>
+            <MinusCircleOutlined
+              className="mr-2"
+              style={{ fontSize: "25px" }}
+            />
+            <PlusCircleOutlined style={{ fontSize: "25px" }} />
+          </>
+        );
+      },
+    },
+  ];
   return (
     <div>
       <Form
@@ -203,6 +244,10 @@ const Variant = (props: any) => {
         </Row>
       </Form>
       <Button onClick={addVariant}>Thêm tuỳ chọn</Button>
+      <div hidden={!state.isEditFormProduct}>
+        <h4 className="text-center font-bold text-xl p-2">Nhập/Xuất hàng</h4>
+        <Table size="small" columns={columns} dataSource={dataSource} />
+      </div>
     </div>
   );
 };
@@ -213,7 +258,9 @@ const ProductForm = () => {
   const { data, error } = useSWR("/product-category", fetcher);
   const { state, dispatch } = useStoreContext();
   const { data: productItem } = useSWR(
-    `https://tech-api.herokuapp.com/v1/product/get/${state?.idProduct}`,
+    state?.idProduct
+      ? `https://tech-api.herokuapp.com/v1/product/get/${state?.idProduct}`
+      : "",
     fetchers
   );
   const {
@@ -280,14 +327,14 @@ const ProductForm = () => {
         };
       })
     : [];
-  const [activeKeyUpdate, setActiveKeyUpdate] = useState(
-    variantList ? variantList[0]?.key : ""
-  );
+  // const [activeKeyUpdate, setActiveKeyUpdate] = useState(
+  //   variantList ? variantList[0]?.key : ""
+  // );
   const newTabIndex = useRef(2);
-  const createProduct = async () => {
-    console.log({
+  const createProduct = async (urlImage: string) => {
+    const product = {
       ...form.getFieldsValue(),
-      image: image,
+      image: urlImage,
       productConfigs: [
         {
           name: form.getFieldsValue().nameConfig,
@@ -295,41 +342,32 @@ const ProductForm = () => {
           variants: variants,
         },
       ],
-    });
-    // const token = localStorage.getItem("token");
-    // const res = await axios.post(
-    //   "https://tech-api.herokuapp.com/v1/product/create",
-    //   {
-    //     ...form.getFieldsValue(),
-    //     image: image,
-    //     productConfigs: [
-    //       {
-    //         name: form.getFieldsValue().nameConfig,
-    //         status: form.getFieldsValue().statusConfig,
-    //         variants: variants,
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //   }
-    // );
-    // if (res.data.result) {
-    //   form.resetFields();
-    //   dispatch(actions.changeVisibleFormProduct(false));
-    //   dispatch(actions.changeEditFormProduct(false));
-    //   notification.open({
-    //     message: res.data.message,
-    //     icon: <CheckOutlined style={{ color: "#52c41a" }} />,
-    //   });
-    // } else {
-    //   notification.open({
-    //     message: res.data.message,
-    //     icon: <WarningOutlined style={{ color: "red" }} />,
-    //   });
-    // }
+    };
+    const token = localStorage.getItem("token");
+    const res = await axios.post(
+      "https://tech-api.herokuapp.com/v1/product/create",
+      product,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (res.data.result) {
+      form.resetFields();
+      dispatch(actions.changeVisibleFormProduct(false));
+      dispatch(actions.changeEditFormProduct(false));
+      notification.open({
+        message: "Thêm sản phẩm thành công",
+        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+      });
+      variants;
+    } else {
+      notification.open({
+        message: "Thêm sản phẩm thất bại",
+        icon: <WarningOutlined style={{ color: "red" }} />,
+      });
+    }
   };
   const updateProduct = async () => {
     const token = localStorage.getItem("token");
@@ -358,12 +396,12 @@ const ProductForm = () => {
       dispatch(actions.changeVisibleFormProduct(false));
       dispatch(actions.changeEditFormProduct(false));
       notification.open({
-        message: res.data.message,
+        message: "Cập nhập thông tin sản phẩm thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
     } else {
       notification.open({
-        message: res.data.message,
+        message: "Cập nhập thông tin sản phẩm thất bại",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
     }
@@ -373,13 +411,13 @@ const ProductForm = () => {
       notification.open({
         message: "Upload ảnh chưa thành công",
       });
+      return;
     } else {
       const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
       await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
         await getDownloadURL(snapshot.ref).then((url) => {
           console.log(url);
           setImage(url);
-          console.log(image);
           return url;
         });
       });
@@ -390,9 +428,19 @@ const ProductForm = () => {
       await uploadImageProduct();
       updateProduct();
     } else {
-      const test = await uploadImageProduct();
-      console.log(test);
-      createProduct();
+      if (!imageUpload) {
+        notification.open({
+          message: "Upload ảnh chưa thành công",
+        });
+        return;
+      } else {
+        const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
+        await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
+          await getDownloadURL(snapshot.ref).then((url) => {
+            createProduct(url);
+          });
+        });
+      }
     }
   };
 

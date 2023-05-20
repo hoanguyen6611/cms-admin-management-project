@@ -55,13 +55,13 @@ const ProductTable = () => {
     );
     if (res.data.result) {
       notification.open({
-        message: res.data.message,
+        message: 'Xoá sản phẩm thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       mutate();
     } else if (!res.data.result) {
       notification.open({
-        message: res.data.message,
+        message: 'Xoá sản phẩm thất bại',
         icon: <CloseOutlined style={{ color: "red" }} />,
       });
     }
