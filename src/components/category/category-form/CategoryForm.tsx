@@ -92,7 +92,6 @@ const CategoryForm = () => {
   } = useForm<FormData>({
     resolver: yupResolver(schema),
   });
-  console.log(state);
   useEffect(() => {
     setId(category?.id);
     form.setFieldsValue({

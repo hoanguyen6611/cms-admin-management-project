@@ -13,6 +13,8 @@ import {
 import axios from "axios";
 import useSWR from "swr";
 import { DatePicker, DatePickerProps } from "antd";
+import { VND } from "@/utils/formatVNĐ";
+import { faker } from "@faker-js/faker";
 
 ChartJS.register(
   CategoryScale,
@@ -37,7 +39,7 @@ const BarChart = () => {
   const { data: revenueByYear } = useSWR(
     year
       ? `https://tech-api.herokuapp.com/v1/orders/revenue-by-year?year=${year}`
-      : "",
+      : `https://tech-api.herokuapp.com/v1/orders/revenue-by-year?year=2023`,
     fetchers
   );
   const options = {
@@ -73,7 +75,7 @@ const BarChart = () => {
     datasets: [
       {
         label: "Tổng doanh thu theo tháng",
-        data: labels.map(() => revenueByYear?.map((item: any) => item.revenue)),
+        data: revenueByYear?.map((item: any) => item.revenue),
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
     ],

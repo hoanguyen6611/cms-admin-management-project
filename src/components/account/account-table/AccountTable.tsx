@@ -31,7 +31,7 @@ const fetcher = async () => {
 
 const AccountTable = () => {
   const { data, error, mutate } = useSWR("/product-category", fetcher);
-  const {state, dispatch} = useStoreContext();
+  const { state, dispatch } = useStoreContext();
   // const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const deleteConfirmAccount = (record: any) => {
@@ -101,6 +101,17 @@ const AccountTable = () => {
           {text === 1 ? "KÍCH HOẠT" : "KHOÁ"}
         </Tag>
       ),
+      filters: [
+        {
+          text: "KÍCH HOẠT",
+          value: 1,
+        },
+        {
+          text: "KHOÁ",
+          value: 0,
+        },
+      ],
+      onFilter: (value: any, record: any) => record.status === value,
     },
     {
       title: "",

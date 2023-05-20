@@ -9,7 +9,6 @@ import { actions, useStoreContext } from "@/store";
 const CategoryShow = () => {
   const router = useRouter();
   const { state, dispatch } = useStoreContext();
-  console.log(state);
   const showModal = () => {
     dispatch(actions.changeVisibleFormCategory(true));
     dispatch(actions.changeEditFormCategory(false));
