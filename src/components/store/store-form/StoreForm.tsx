@@ -164,7 +164,7 @@ const StoreForm = () => {
       ...storeValue,
       addressDetails:
         storeValue.addressDetails +
-        " " +
+        ", " +
         nameWard +
         " " +
         nameDistrict +
@@ -183,7 +183,7 @@ const StoreForm = () => {
     );
     if (res.data.result) {
       dispatch(actions.changeVisibleFormStore(false));
-      dispatch(actions.changeEditFormCategory(false));
+      dispatch(actions.changeEditFormStore(false));
       form.resetFields();
       notification.open({
         message: res.data.message,
@@ -343,7 +343,7 @@ const StoreForm = () => {
             </Col>
             <Col span={12} hidden={!state.isEditFormStore}>
               <Form.Item label="Mã cửa hàng" name="shopId">
-                <Input style={{ width: 200 }} />
+                <Input disabled style={{ width: 200 }} />
               </Form.Item>
             </Col>
           </Row>

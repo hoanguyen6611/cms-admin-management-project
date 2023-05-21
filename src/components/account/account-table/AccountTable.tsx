@@ -12,6 +12,7 @@ import { Category } from "@/models/category";
 import styles from "./CategoryTable.module.scss";
 import useSWR from "swr";
 import { actions, useStoreContext } from "@/store";
+import { Account } from "@/models/account";
 
 const fetcher = async () => {
   const token = localStorage.getItem("token");
@@ -56,25 +57,18 @@ const AccountTable = () => {
     );
     if (res.data.result) {
       notification.open({
-        message: res.data.message,
+        message: 'Xoá tài khoản thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       mutate();
     } else if (!res.data.result) {
       notification.open({
-        message: res.data.message,
+        message: 'Xoá tài khoản thất bại',
         icon: <CloseOutlined style={{ color: "red" }} />,
       });
     }
   };
-  const columns: ColumnsType<Category> = [
-    // {
-    //   title: "",
-    //   dataIndex: "icon",
-    //   key: "icon",
-    //   width: 50,
-    //   render: (text) => <Image width={50} src={text} alt="icon"></Image>,
-    // },
+  const columns: ColumnsType<Account> = [
     {
       title: "Họ và tên",
       dataIndex: "fullName",
@@ -138,6 +132,7 @@ const AccountTable = () => {
   const isEditAccount = async (record: number) => {
     dispatch(actions.setIdAccountForm(record));
     dispatch(actions.changeVisibleFormAccount(true));
+    dispatch(actions.changeEditFormAccount(true));
   };
   if (!data)
     return (

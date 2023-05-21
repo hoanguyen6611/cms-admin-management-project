@@ -57,11 +57,13 @@ const stores = async () => {
 
 const CustomerForm = () => {
   const [form] = Form.useForm();
-  const {state, dispatch} = useStoreContext();
+  const { state, dispatch } = useStoreContext();
   const [id, setId] = useState();
   const [birthday, setBirthday] = useState<string>("");
   const { data: customer } = useSWR(
-    `https://tech-api.herokuapp.com/v1/customer/get/${state.idCustomer}`,
+    state.idCustomer
+      ? `https://tech-api.herokuapp.com/v1/customer/get/${state.idCustomer}`
+      : "",
     fetchers
   );
   const { data: store, error } = useSWR("/store/list", fetcher);
@@ -125,12 +127,12 @@ const CustomerForm = () => {
       dispatch(actions.changeVisibleFormCustomer(false));
       form.resetFields();
       notification.open({
-        message: res.data.message,
+        message: 'Thêm mới khách hàng thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
     } else {
       notification.open({
-        message: res.data,
+        message: 'Thêm mới khách hàng thất bại',
         icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }
@@ -146,29 +148,29 @@ const CustomerForm = () => {
     };
     delete customer.createdDate;
     console.log(customer);
-    // const token = localStorage.getItem("token");
-    // const res = await axios.put(
-    //   "https://tech-api.herokuapp.com/v1/customer/update",
-    //   customer,
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //   }
-    // );
-    // if (res.data.result) {
-    //   dispatchs(actions.changeVisibleFormCustomer(true));
-    //   form.resetFields();
-    //   notification.open({
-    //     message: res.data.message,
-    //     icon: <CheckOutlined style={{ color: "#52c41a" }} />,
-    //   });
-    // } else {
-    //   notification.open({
-    //     message: res.data,
-    //     icon: <WarningOutlined style={{ color: "red" }} />,
-    //   });
-    // }
+    const token = localStorage.getItem("token");
+    const res = await axios.put(
+      "https://tech-api.herokuapp.com/v1/customer/update",
+      customer,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (res.data.result) {
+      dispatch(actions.changeVisibleFormCustomer(true));
+      form.resetFields();
+      notification.open({
+        message: 'Cập nhập thông tin khách hàng thành công',
+        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+      });
+    } else {
+      notification.open({
+        message: 'Cập nhập thông tin khách hàng thất bại',
+        icon: <WarningOutlined style={{ color: "red" }} />,
+      });
+    }
   };
   const handleOk = async () => {
     if (id) {

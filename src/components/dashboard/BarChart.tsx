@@ -15,6 +15,7 @@ import useSWR from "swr";
 import { DatePicker, DatePickerProps } from "antd";
 import { VND } from "@/utils/formatVNĐ";
 import { faker } from "@faker-js/faker";
+import dayjs from 'dayjs';
 
 ChartJS.register(
   CategoryScale,
@@ -83,10 +84,11 @@ const BarChart = () => {
   const onChange: DatePickerProps["onChange"] = (date, dateString) => {
     setYear(dateString);
   };
+  const yearFormat = 'YYYY';
   return (
     <div>
       <div className="p-3">
-        <DatePicker onChange={onChange} picker="year" />
+        <DatePicker defaultValue={dayjs('2023', yearFormat)} onChange={onChange} picker="year" />
       </div>
       <div className="w-full md:col-span-2 relative lg:h-[70vh] h-[58vh] m-auto p-4 border rounded-lg bg-white">
         <Bar options={options} data={data} />

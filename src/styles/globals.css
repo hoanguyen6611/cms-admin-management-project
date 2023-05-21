@@ -24,3 +24,12 @@ body {
   background: #1fdf64;
   border: 1px solid #1fdf64;
 }
+:where(.css-dev-only-do-not-override-1me4733).ant-tabs .ant-tabs-tab:hover {
+  color: #1fdf64;
+}
+:where(.css-dev-only-do-not-override-1me4733).ant-tabs-card
+  > .ant-tabs-nav
+  .ant-tabs-tab-active {
+  color: #1fdf64;
+  background: #ffffff;
+}

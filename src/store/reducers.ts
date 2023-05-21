@@ -9,6 +9,7 @@ import {
   IS_VISIBLE_CATEGORY_FORM,
   IS_VISIBLE_CUSTOMER_FORM,
   IS_VISIBLE_GROUP_PERMISSION_FORM,
+  IS_VISIBLE_IMPORT_PRODUCT_FORM,
   IS_VISIBLE_ORDER_FORM,
   IS_VISIBLE_PRODUCT_FORM,
   IS_VISIBLE_PROMOTION_FORM,
@@ -19,6 +20,7 @@ import {
   SET_ID_CATEGORY,
   SET_ID_CUSTOMER,
   SET_ID_GROUP_PERMISSION,
+  SET_ID_IMPORT_PRODUCT,
   SET_ID_ORDER,
   SET_ID_PRODUCT,
   SET_ID_PROMOTION,
@@ -69,6 +71,11 @@ export function reducer(state: any, action: any) {
         ...state,
         isVisibleFormGroupPermission: action.payload,
       };
+    case IS_VISIBLE_IMPORT_PRODUCT_FORM:
+      return {
+        ...state,
+        isVisibleFormImportProduct: action.payload,
+      };
     case SET_ID_CATEGORY:
       return {
         ...state,
@@ -108,6 +115,11 @@ export function reducer(state: any, action: any) {
       return {
         ...state,
         idStore: action.payload,
+      };
+    case SET_ID_IMPORT_PRODUCT:
+      return {
+        ...state,
+        idImportProduct: action.payload,
       };
     case SET_VARIANT:
       return {

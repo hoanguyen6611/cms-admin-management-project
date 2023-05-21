@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, notification, Table, Spin } from "antd";
+import { Modal, notification, Table, Spin, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import {
@@ -55,13 +55,13 @@ const StoreTable = () => {
     );
     if (res.data.result) {
       notification.open({
-        message: res.data.message,
+        message: 'Xoá cửa hàng thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       mutate();
     } else if (!res.data.result) {
       notification.open({
-        message: res.data.message,
+        message: 'Xoá cửa hàng thất bại',
         icon: <CloseOutlined style={{ color: "red" }} />,
       });
     }
@@ -76,6 +76,11 @@ const StoreTable = () => {
       title: "Địa chỉ cửa hàng",
       dataIndex: "addressDetails",
       key: "addressDetails",
+    },
+    {
+      title: "Mã cửa hàng",
+      dataIndex: "shopId",
+      key: "shopId",
     },
     // {
     //   title: "Trạng thái",

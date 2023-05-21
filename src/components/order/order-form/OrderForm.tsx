@@ -112,7 +112,7 @@ const OrderForm = () => {
   };
   const columns: ColumnsType<OrdersDetailDtoList> = [
     {
-      title: "Mã sản phẩm",
+      title: "#",
       dataIndex: "productDto",
       key: "idProduct",
       render: (text) => text?.id,

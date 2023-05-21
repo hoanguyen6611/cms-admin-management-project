@@ -71,7 +71,9 @@ const AccountForm = () => {
   const [form] = Form.useForm();
   const { state, dispatch } = useStoreContext();
   const { data: account } = useSWR(
-    `https://tech-api.herokuapp.com/v1/account/get/${state.idAccount}`,
+    state.idAccount
+      ? `https://tech-api.herokuapp.com/v1/account/get/${state.idAccount}`
+      : "",
     fetchers
   );
   const { data: groups, error: errorGroup } = useSWR(
@@ -136,12 +138,12 @@ const AccountForm = () => {
       dispatch(actions.changeVisibleFormAccount(false));
       form.resetFields();
       notification.open({
-        message: res.data.message,
+        message: "Tạo tài khoản thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
     } else {
       notification.open({
-        message: res.data,
+        message: "Tạo tài khoản thất bại",
         icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }
@@ -169,12 +171,12 @@ const AccountForm = () => {
       dispatch(actions.changeVisibleFormAccount(false));
       form.resetFields();
       notification.open({
-        message: res.data.message,
+        message: "Cập nhập thông tin tài khoản thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
     } else {
       notification.open({
-        message: res.data,
+        message: "Cập nhập thông tin tài khoản thất bại",
         icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }
@@ -182,7 +184,11 @@ const AccountForm = () => {
   return (
     <div>
       <Modal
-        title="Xem thông tin tài khoản"
+        title={
+          state.isEditFormAccount
+            ? "Cập nhập thông tin tài khoản"
+            : "Tạo mới tài khoản"
+        }
         open={state.isVisibleFormAccount}
         okType={"danger"}
         onCancel={cancelOrderForm}
@@ -192,7 +198,7 @@ const AccountForm = () => {
             Huỷ
           </Button>,
           <Button key="submit" type="primary" onClick={handleOk}>
-            {id ? "Cập nhập" : "Thêm mới"}
+            {state.isEditFormAccount ? "Cập nhập" : "Thêm mới"}
           </Button>,
         ]}
       >

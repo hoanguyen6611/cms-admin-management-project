@@ -13,6 +13,7 @@ import {
   BarcodeOutlined,
   UserOutlined,
   AppstoreOutlined,
+  BorderlessTableOutlined,
 } from "@ant-design/icons";
 import { MenuProps } from "antd";
 import { Layout, Menu, theme } from "antd";
@@ -46,6 +47,7 @@ const items: MenuItem[] = [
     getItem("Danh mục", "category"),
     getItem("Sản phẩm", "product"),
   ]),
+  getItem("Lịch sử nhập hàng", "import-product", <BorderlessTableOutlined />),
   getItem("Đơn hàng", "order", <ShoppingCartOutlined />),
   getItem("Mã giảm giá", "promotion",<BarcodeOutlined />),
   getItem("Quản lý cửa hàng", "store", <ShopOutlined />),

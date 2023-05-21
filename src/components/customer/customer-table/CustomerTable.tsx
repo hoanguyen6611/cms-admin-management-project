@@ -23,6 +23,7 @@ import { Category } from "@/models/category";
 import styles from "./CategoryTable.module.scss";
 import useSWR from "swr";
 import { actions, useStoreContext } from "@/store";
+import { Customer } from "@/models/customer";
 
 const fetcher = async () => {
   const token = localStorage.getItem("token");
@@ -67,18 +68,18 @@ const CustomerTable = () => {
     );
     if (res.data.result) {
       notification.open({
-        message: res.data.message,
+        message: 'Xoá tài khoản thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       mutate();
     } else if (!res.data.result) {
       notification.open({
-        message: res.data.message,
+        message: 'Xoá tài khoản thất bại',
         icon: <CloseOutlined style={{ color: "red" }} />,
       });
     }
   };
-  const columns: ColumnsType<Category> = [
+  const columns: ColumnsType<Customer> = [
     {
       title: "",
       dataIndex: "icon",

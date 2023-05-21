@@ -14,6 +14,7 @@ import {
   Image,
   Button,
   Table,
+  Divider,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -55,6 +56,7 @@ const schema = yup
   .required();
 type FormData = yup.InferType<typeof schema>;
 const variants: Variant[] = [];
+const storeList: any = [];
 var variant: any = {};
 const list = async () => {
   const token = localStorage.getItem("token");
@@ -110,11 +112,13 @@ const Variant = (props: any) => {
   }, [props]);
   const [form] = Form.useForm();
   const [name, setName] = useState("");
-  const [des, setDes] = useState("");
+  const [color, setColor] = useState("");
   const [price, setPrice] = useState(0);
   const [image, setImage] = useState("");
   const [imageUpload, setImageUpload] = useState<File>();
   const [status, setStatus] = useState(0);
+  const [importProduct, setImportProduct] = useState<boolean>(false);
+  const [numberImportProduct, setNumberImportProduct] = useState<number>();
   const handleFileSelected = (file: any) => {
     setImageUpload(file.target.files[0]);
   };
@@ -127,8 +131,10 @@ const Variant = (props: any) => {
       const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
       await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
         await getDownloadURL(snapshot.ref).then((url) => {
+          const vaf = form.getFieldsValue();
+          delete vaf.importProduct;
           variant = {
-            ...form.getFieldsValue(),
+            ...vaf,
             image: url,
           };
           variants.push(variant);
@@ -138,11 +144,13 @@ const Variant = (props: any) => {
   };
   const dataSource = [
     {
+      id: 210,
       key: "1",
       store: "Teck Thủ Đức",
       number: 5,
     },
     {
+      id: 373,
       key: "2",
       store: "Teck Quận 1",
       number: 4,
@@ -160,22 +168,66 @@ const Variant = (props: any) => {
       key: "number",
     },
     {
-      title: "",
+      title: "Số lượng nhập",
       dataIndex: "id",
       key: "action",
       render: (record) => {
         return (
           <>
-            <MinusCircleOutlined
+            <InputNumber
+              onChange={(e: any) => {
+                // setNumberImportProduct(e);
+                storeList.push({
+                  storeId: record,
+                  quantity: e,
+                  variantId: props.value?.id,
+                });
+              }}
               className="mr-2"
-              style={{ fontSize: "25px" }}
-            />
-            <PlusCircleOutlined style={{ fontSize: "25px" }} />
+            ></InputNumber>
           </>
         );
       },
     },
   ];
+  const columnsNoImport: ColumnsType<any> = [
+    {
+      title: "Chi nhánh",
+      dataIndex: "store",
+      key: "store",
+    },
+    {
+      title: "Tồn kho",
+      dataIndex: "number",
+      key: "number",
+    },
+  ];
+  const addNumberOfProduct = async () => {
+    const token = localStorage.getItem("token");
+    const res = await axios.post(
+      "https://tech-api.herokuapp.com/v1/import/request-import",
+      {
+        importItems: storeList,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (res.data.result) {
+      setImportProduct(false);
+      notification.open({
+        message: "Tạo yêu cầu nhập hàng thành công",
+        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+      });
+    } else {
+      notification.open({
+        message: "Tạo yêu cầu nhập hàng thất bại",
+        icon: <WarningOutlined style={{ color: "red" }} />,
+      });
+    }
+  };
   return (
     <div>
       <Form
@@ -194,10 +246,10 @@ const Variant = (props: any) => {
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="Thông tin" name="description">
+            <Form.Item label="Mã màu" name="color">
               <Input
                 style={{ width: 200 }}
-                onChange={(e) => setDes(e.target.value)}
+                onChange={(e) => setColor(e.target.value)}
               />
             </Form.Item>
           </Col>
@@ -243,10 +295,40 @@ const Variant = (props: any) => {
           </Col>
         </Row>
       </Form>
-      <Button onClick={addVariant}>Thêm tuỳ chọn</Button>
+      <Row className="pt-4">
+        <Col span={17}></Col>
+        <Col span={7}>
+          <Button onClick={addVariant}>Thêm màu</Button>
+        </Col>
+      </Row>
+      <Divider />
       <div hidden={!state.isEditFormProduct}>
-        <h4 className="text-center font-bold text-xl p-2">Nhập/Xuất hàng</h4>
-        <Table size="small" columns={columns} dataSource={dataSource} />
+        <h4 className="text-center font-bold text-xl p-2">Quản lý tồn kho</h4>
+        <Row>
+          <Col span={17}></Col>
+          <Col span={7}>
+            <Form.Item label="Nhập hàng" name="importProduct">
+              <Switch
+                style={{ width: 50 }}
+                onChange={(checked: boolean) => setImportProduct(checked)}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Table
+          size="small"
+          columns={importProduct ? columns : columnsNoImport}
+          dataSource={dataSource}
+          pagination={false}
+        />
+        <Row className="pt-4" hidden={!importProduct}>
+          <Col span={17}></Col>
+          <Col span={7}>
+            <Button onClick={addNumberOfProduct} key="submit" type="primary">
+              Nhập hàng
+            </Button>
+          </Col>
+        </Row>
       </div>
     </div>
   );
@@ -285,15 +367,11 @@ const ProductForm = () => {
   const [parentId, setParentId] = useState("");
   const [categoryName, setCategoryName] = useState("");
   const [noteCategory, setNoteCategory] = useState("");
-  const [variantsUpdate, setVariantsUpdate] = useState<any>([]);
   const initialItems = [
     { label: "Thuộc tính 1", children: <Variant></Variant>, key: "1" },
   ];
   const [items, setItems] = useState(initialItems);
-  // const [itemsUpdate, setItemsUpdate] = useState(initialItemsUpdate);
   const [activeKey, setActiveKey] = useState(initialItems[0].key);
-  const [nameConfig, setNameConfig] = useState("");
-  const [statusConfig, setStatusConfig] = useState(1);
 
   useEffect(() => {
     setId(productItem?.id);
@@ -337,8 +415,8 @@ const ProductForm = () => {
       image: urlImage,
       productConfigs: [
         {
-          name: form.getFieldsValue().nameConfig,
-          status: form.getFieldsValue().statusConfig,
+          name: "Màu sắc",
+          status: 1,
           variants: variants,
         },
       ],
@@ -615,7 +693,6 @@ const ProductForm = () => {
                   <div className="ml-10">
                     <Switch
                       style={{ width: 50 }}
-                      defaultChecked={false}
                       onChange={(checked: boolean) => {
                         setSoldOut(checked);
                       }}
@@ -630,7 +707,6 @@ const ProductForm = () => {
                   <Switch
                     style={{ width: 50 }}
                     onChange={(checked: boolean) => setSaleOff(checked)}
-                    defaultChecked={false}
                   />
                 </Form.Item>
               </Col>
@@ -682,29 +758,7 @@ const ProductForm = () => {
               </Button>
             </Form.Item>
           </Card>
-          <Card className="mb-4" title="Thông tin thuộc tính">
-            <Row>
-              <Col span={8}>
-                <Form.Item label="Tên thuộc tính" name="nameConfig">
-                  <Input
-                    style={{ width: 150 }}
-                    onChange={(e) => setNameConfig(e.target.value)}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Trạng thái" name="statusConfig">
-                  <Radio.Group
-                    onChange={(e: RadioChangeEvent) => {
-                      setStatusConfig(e.target.value);
-                    }}
-                  >
-                    <Radio value={0}>Khoá</Radio>
-                    <Radio value={1}>Mở</Radio>
-                  </Radio.Group>
-                </Form.Item>
-              </Col>
-            </Row>
+          <Card className="mb-4" title="Màu sắc">
             <Tabs
               type="editable-card"
               onChange={onChangeTabs}

@@ -9,6 +9,7 @@ export interface StateGlobal {
   isVisibleFormPromotion: boolean;
   isVisibleFormStore: boolean;
   isVisibleFormGroupPermission: boolean;
+  isVisibleFormImportProduct: boolean;
   isEditFormCategory: boolean;
   isEditFormProduct: boolean;
   isEditFormPromotion: boolean;
@@ -23,6 +24,7 @@ export interface StateGlobal {
   idPromotion?: number;
   idStore?: number;
   idGroupPermission?: number;
+  idImportProduct?: number;
   variant: {};
   category: Category[];
   fromDate?:any;
@@ -37,6 +39,7 @@ export const initialState: StateGlobal = {
     isVisibleFormPromotion: false,
     isVisibleFormStore: false,
     isVisibleFormGroupPermission: false,
+    isVisibleFormImportProduct: false,
     isEditFormCategory: false,
     isEditFormProduct: false,
     isEditFormPromotion: false,

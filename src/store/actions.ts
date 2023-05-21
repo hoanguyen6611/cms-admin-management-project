@@ -25,6 +25,8 @@ import {
   SET_CATEGORY,
   SET_FROM_DATE,
   SET_TO_DATE,
+  IS_VISIBLE_IMPORT_PRODUCT_FORM,
+  SET_ID_IMPORT_PRODUCT,
 } from "./constants";
 
 export const changeVisibleFormCategory = (payload: boolean) => ({
@@ -57,6 +59,10 @@ export const changeVisibleFormStore = (payload: boolean) => ({
 });
 export const changeVisibleFormGroupPermission = (payload: boolean) => ({
   type: IS_VISIBLE_GROUP_PERMISSION_FORM,
+  payload,
+});
+export const changeVisibleFormImportProduct = (payload: boolean) => ({
+  type: IS_VISIBLE_IMPORT_PRODUCT_FORM,
   payload,
 });
 export const changeEditFormCategory = (payload: boolean) => ({
@@ -113,6 +119,10 @@ export const setIdStoreForm = (payload: number) => ({
 });
 export const setIdCategoryForm = (payload: number) => ({
   type: SET_ID_CATEGORY,
+  payload,
+});
+export const setIdImportProductForm = (payload: number) => ({
+  type: SET_ID_IMPORT_PRODUCT,
   payload,
 });
 export const setCategoryList = (payload: any) => ({
