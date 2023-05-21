@@ -47,6 +47,12 @@ const Selling = () => {
       : "https://tech-api.herokuapp.com/v1/product/list-revenue",
     fetchers
   );
+  const { data: revenueStore } = useSWR(
+    state.fromDate && state.toDate
+      ? `https://tech-api.herokuapp.com/v1/store/list-revenue?from=${state.fromDate}&to=${state.toDate}`
+      : "https://tech-api.herokuapp.com/v1/store/list-revenue",
+    fetchers
+  );
   const [show, setShow] = useState<string>("1");
   const columns: ColumnsType<any> = [
     {
@@ -58,6 +64,23 @@ const Selling = () => {
       title: "Số lượng",
       dataIndex: "amount",
       key: "amount",
+    },
+    {
+      title: "Tổng doanh thu",
+      dataIndex: "revenue",
+      key: "revenue",
+    },
+  ];
+  const columnsRevenueStore: ColumnsType<any> = [
+    {
+      title: "Tên cửa hàng",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Số lượng đơn hàng",
+      dataIndex: "orders",
+      key: "orders",
     },
     {
       title: "Tổng doanh thu",
@@ -93,7 +116,11 @@ const Selling = () => {
           <h1 className="font-bold text-center text-2xl p-2">
             Thống kê bán hàng các chi nhánh
           </h1>
-          <Table columns={columns} dataSource={data} pagination={false} />
+          <Table
+            columns={columnsRevenueStore}
+            dataSource={revenueStore}
+            pagination={false}
+          />
         </div>
       )}
     </div>

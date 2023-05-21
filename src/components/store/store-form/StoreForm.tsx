@@ -99,14 +99,10 @@ const StoreForm = () => {
   const { state, dispatch } = useStoreContext();
   const [id, setId] = useState<number>();
   const [name, setName] = useState("");
-  const [icon, setIcon] = useState("");
-  const [iconUpload, setIconUpload] = useState<File>();
   const [provinceCode, setProvinceCode] = useState();
-  const [provinceName, setProvinceName] = useState();
   const [districtCode, setDistrictCode] = useState();
-  const [districtName, setDistrictName] = useState();
   const [wardCode, setWardCode] = useState();
-  const [wardName, setWardName] = useState();
+  const [statusButton, setStatusButton] = useState<boolean>(false);
   const { data: store } = useSWR(
     `https://tech-api.herokuapp.com/v1/store/get/${state.idStore}`,
     fetchers
@@ -158,6 +154,7 @@ const StoreForm = () => {
   )?.WardName;
 
   const createStore = async () => {
+    setStatusButton(true);
     const storeValue = form.getFieldsValue();
     delete storeValue.shopId;
     const storeCreate = {
@@ -185,6 +182,7 @@ const StoreForm = () => {
       dispatch(actions.changeVisibleFormStore(false));
       dispatch(actions.changeEditFormStore(false));
       form.resetFields();
+      setStatusButton(false);
       notification.open({
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -192,6 +190,7 @@ const StoreForm = () => {
     }
   };
   const updateStore = async () => {
+    setStatusButton(true);
     const storeValue = form.getFieldsValue();
     delete storeValue.shopId;
     const storeCreate = {
@@ -213,6 +212,7 @@ const StoreForm = () => {
       dispatch(actions.changeVisibleFormStore(false));
       dispatch(actions.changeEditFormStore(false));
       form.resetFields();
+      setStatusButton(false);
       notification.open({
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -261,7 +261,12 @@ const StoreForm = () => {
           <Button key="back" onClick={cancelFormStore}>
             Huỷ
           </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
+          <Button
+            disabled={statusButton}
+            key="submit"
+            type="primary"
+            onClick={handleOk}
+          >
             {state.isEditFormStore ? "Cập nhập" : "Thêm mới"}
           </Button>,
         ]}

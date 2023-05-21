@@ -32,7 +32,11 @@ const fetcher = async () => {
 };
 
 const PromotionTable = () => {
-  const { data: promotion, error, mutate } = useSWR("/v1/promotion/list", fetcher);
+  const {
+    data: promotion,
+    error,
+    mutate,
+  } = useSWR("/v1/promotion/list", fetcher);
   const { state, dispatch } = useStoreContext();
   const deleteConfirmPromotion = (record: any) => {
     Modal.confirm({
@@ -68,13 +72,6 @@ const PromotionTable = () => {
     }
   };
   const columns: ColumnsType<Category> = [
-    // {
-    //   title: "",
-    //   dataIndex: "icon",
-    //   key: "icon",
-    //   width: 50,
-    //   render: (text) => <Image width={50} src={text} alt="icon"></Image>,
-    // },
     {
       title: "Tên ưu đãi",
       dataIndex: "title",
@@ -97,9 +94,8 @@ const PromotionTable = () => {
       // width:70,
       render: (text) => (
         <Tag
-          style={
-            text === 1 ? { width: 80, height: 25 } : { width: 50, height: 25 }
-          }
+          className="text-center"
+          style={{ width: 80, height: 25 }}
           color={text === 1 ? "green" : "red"}
           key={text}
         >

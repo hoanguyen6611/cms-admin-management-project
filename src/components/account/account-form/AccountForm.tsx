@@ -68,6 +68,7 @@ const group = async () => {
 };
 const AccountForm = () => {
   const [id, setId] = useState();
+  const [statusButton, setStatusButton] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { state, dispatch } = useStoreContext();
   const { data: account } = useSWR(
@@ -80,8 +81,6 @@ const AccountForm = () => {
     "/group-permission",
     group
   );
-
-  const { data: store, error } = useSWR("/store/list", fetcher);
   useEffect(() => {
     setId(account?.id);
     form.setFieldsValue({
@@ -119,6 +118,7 @@ const AccountForm = () => {
     }
   };
   const createAccount = async () => {
+    setStatusButton(true);
     const account = {
       ...form.getFieldsValue(),
       avatarPath:
@@ -137,6 +137,7 @@ const AccountForm = () => {
     if (res.data.result) {
       dispatch(actions.changeVisibleFormAccount(false));
       form.resetFields();
+      setStatusButton(false);
       notification.open({
         message: "Tạo tài khoản thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -149,6 +150,7 @@ const AccountForm = () => {
     }
   };
   const updateAccount = async () => {
+    setStatusButton(true);
     const account = {
       ...form.getFieldsValue(),
       avatarPath:
@@ -170,6 +172,7 @@ const AccountForm = () => {
     if (res.data.result) {
       dispatch(actions.changeVisibleFormAccount(false));
       form.resetFields();
+      setStatusButton(false);
       notification.open({
         message: "Cập nhập thông tin tài khoản thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -197,7 +200,12 @@ const AccountForm = () => {
           <Button key="back" onClick={cancelOrderForm}>
             Huỷ
           </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
+          <Button
+            disabled={statusButton}
+            key="submit"
+            type="primary"
+            onClick={handleOk}
+          >
             {state.isEditFormAccount ? "Cập nhập" : "Thêm mới"}
           </Button>,
         ]}

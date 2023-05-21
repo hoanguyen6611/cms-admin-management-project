@@ -374,6 +374,7 @@ const ProductForm = () => {
   ];
   const [items, setItems] = useState(initialItems);
   const [activeKey, setActiveKey] = useState(initialItems[0].key);
+  const [statusButton, setStatusButton] = useState<boolean>(false);
 
   useEffect(() => {
     setId(productItem?.id);
@@ -407,11 +408,9 @@ const ProductForm = () => {
         };
       })
     : [];
-  // const [activeKeyUpdate, setActiveKeyUpdate] = useState(
-  //   variantList ? variantList[0]?.key : ""
-  // );
   const newTabIndex = useRef(2);
   const createProduct = async (urlImage: string) => {
+    setStatusButton(true);
     const product = {
       ...form.getFieldsValue(),
       image: urlImage,
@@ -437,6 +436,7 @@ const ProductForm = () => {
       form.resetFields();
       dispatch(actions.changeVisibleFormProduct(false));
       dispatch(actions.changeEditFormProduct(false));
+      setStatusButton(false);
       notification.open({
         message: "Thêm sản phẩm thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -450,6 +450,7 @@ const ProductForm = () => {
     }
   };
   const updateProduct = async () => {
+    setStatusButton(true);
     const token = localStorage.getItem("token");
     const res = await axios.put(
       "https://tech-api.herokuapp.com/v1/product/update",
@@ -475,6 +476,7 @@ const ProductForm = () => {
       form.resetFields();
       dispatch(actions.changeVisibleFormProduct(false));
       dispatch(actions.changeEditFormProduct(false));
+      setStatusButton(false);
       notification.open({
         message: "Cập nhập thông tin sản phẩm thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -525,7 +527,6 @@ const ProductForm = () => {
   };
 
   const handleCancel = () => {
-    // variants
     form.resetFields();
     dispatch(actions.changeVisibleFormProduct(false));
     dispatch(actions.changeEditFormProduct(false));
@@ -628,7 +629,7 @@ const ProductForm = () => {
           <Button key="back" onClick={handleCancel}>
             Huỷ
           </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
+          <Button disabled={statusButton} key="submit" type="primary" onClick={handleOk}>
             {state.isEditFormProduct ? "Cập nhập" : "Tạo mới"}
           </Button>,
         ]}

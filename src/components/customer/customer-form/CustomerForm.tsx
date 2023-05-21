@@ -59,6 +59,7 @@ const CustomerForm = () => {
   const [form] = Form.useForm();
   const { state, dispatch } = useStoreContext();
   const [id, setId] = useState();
+  const [statusButton, setStatusButton] = useState<boolean>(false);
   const [birthday, setBirthday] = useState<string>("");
   const { data: customer } = useSWR(
     state.idCustomer
@@ -66,7 +67,6 @@ const CustomerForm = () => {
       : "",
     fetchers
   );
-  const { data: store, error } = useSWR("/store/list", fetcher);
   const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY", "DD-MM-YYYY", "DD-MM-YY"];
   useEffect(() => {
     setId(customer?.id);
@@ -105,7 +105,7 @@ const CustomerForm = () => {
     console.log("onOk: ", value);
   };
   const createCustomer = async () => {
-    // console.log({ ...form.getFieldsValue(), password: "123456897" });
+    setStatusButton(true);
     const customer = {
       ...form.getFieldsValue(),
       avatar:
@@ -126,6 +126,7 @@ const CustomerForm = () => {
     if (res.data.result) {
       dispatch(actions.changeVisibleFormCustomer(false));
       form.resetFields();
+      setStatusButton(false);
       notification.open({
         message: 'Thêm mới khách hàng thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -138,6 +139,7 @@ const CustomerForm = () => {
     }
   };
   const updateCustomer = async () => {
+    setStatusButton(true);
     const customer = {
       ...form.getFieldsValue(),
       password: "123456897",
@@ -161,6 +163,7 @@ const CustomerForm = () => {
     if (res.data.result) {
       dispatch(actions.changeVisibleFormCustomer(true));
       form.resetFields();
+      setStatusButton(false);
       notification.open({
         message: 'Cập nhập thông tin khách hàng thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -198,8 +201,8 @@ const CustomerForm = () => {
           <Button key="back" onClick={cancelOrderForm}>
             Huỷ
           </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
-            {id ? "Cập nhập" : "Thêm mới"}
+          <Button disabled={statusButton} key="submit" type="primary" onClick={handleOk}>
+            {state.isEditFormCustomer ? "Cập nhập" : "Thêm mới"}
           </Button>,
         ]}
       >

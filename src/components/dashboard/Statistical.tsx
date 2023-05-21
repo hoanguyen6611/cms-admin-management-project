@@ -26,9 +26,29 @@ const fetchers = async (url: string) => {
   });
   return res.data.data;
 };
+const fetcherCustomer = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(
+    "https://tech-api.herokuapp.com/v1/customer/list",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  res.data.data.data.map((data: any) => {
+    data.key = data.id;
+  });
+  return res.data.data.data;
+};
 
 const Statistical = () => {
   // const { data: orders, error, mutate } = useSWR("/product-category", fetcher);
+  const {
+    data: customer,
+    error,
+    mutate,
+  } = useSWR("/customer", fetcherCustomer);
   const { state, dispatch } = useStoreContext();
   const { data: orders } = useSWR(
     state.fromDate && state.toDate
@@ -45,13 +65,13 @@ const Statistical = () => {
           </p>
           <p className="Otext-gray-600">Tổng doanh thu</p>
         </div>
-        <p className=" bg-green-200 flex justify-center items-center p-2 rounded-lg">
+        {/* <p className=" bg-green-200 flex justify-center items-center p-2 rounded-lg">
           <div className="text-red-700 text-lg flex">
-            {/* <ArrowUpOutlined /> */}
+            <ArrowUpOutlined />
             <ArrowDownOutlined />
             <span>18%</span>
           </div>
-        </p>
+        </p> */}
       </div>
       <div className="lg:col-span-2 col-span-1 bg-white flex justify-between w-full border p-4 rounded-lg">
         <div className="flex flex-col w-full pb-4">
@@ -60,13 +80,13 @@ const Statistical = () => {
           </p>
           <p className="Otext-gray-600">Tổng chiết khấu</p>
         </div>
-        <p className=" bg-green-200 flex justify-center items-center p-2 rounded-lg">
+        {/* <p className=" bg-green-200 flex justify-center items-center p-2 rounded-lg">
           <div className="text-green-700 text-lg flex">
             <ArrowUpOutlined />
-            {/* <ArrowDownOutlined /> */}
+            <ArrowDownOutlined />
             <span>12%</span>
           </div>
-        </p>
+        </p> */}
       </div>
       <div className="lg:col-span-2 col-span-1 bg-white flex justify-between w-full border p-4 rounded-lg">
         <div className="flex flex-col w-full pb-4">
@@ -75,9 +95,20 @@ const Statistical = () => {
           </p>
           <p className="Otext-gray-600">Tổng đơn hàng</p>
         </div>
-        <p className=" bg-green-200 flex justify-center items-center p-2 rounded-lg">
+        {/* <p className=" bg-green-200 flex justify-center items-center p-2 rounded-lg">
           <span className="text-green-700 text-lg">+18%</span>
-        </p>
+        </p> */}
+      </div>
+      <div className="lg:col-span-2 col-span-1 bg-white flex justify-between w-full border p-4 rounded-lg">
+        <div className="flex flex-col w-full pb-4">
+          <p className="text-2xl font-bold">
+            {customer ? customer.length : 0}
+          </p>
+          <p className="Otext-gray-600">Số lượng khách hàng</p>
+        </div>
+        {/* <p className=" bg-green-200 flex justify-center items-center p-2 rounded-lg">
+          <span className="text-green-700 text-lg">+18%</span>
+        </p> */}
       </div>
     </div>
   );

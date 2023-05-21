@@ -185,9 +185,12 @@ const OrderForm = () => {
                   disabled
                   defaultValue="Chọn trạng thái đơn hàng"
                   options={[
-                    { value: "success", label: "Hoàn tất" },
-                    { value: "delivery", label: "Đang giao hàng" },
-                    { value: "cancel", label: "Đã huỷ" },
+                    { value: 0, label: "Đã nhận đơn" }, //hồng
+                    { value: 1, label: "Đã xác nhận" },//vàng
+                    { value: 2, label: "Đang vận chuyển" }, //cam
+                    { value: 3, label: "Hoàn tất" }, //xanh
+                    { value: 4, label: "Đã huỷ" },//đỏ
+                    { value: 5, label: "Lưu trữ" },//tím
                   ]}
                 />
               </Form.Item>

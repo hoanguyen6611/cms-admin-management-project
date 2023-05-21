@@ -109,27 +109,28 @@ const ImportProductTable = () => {
       // width:70,
       render: (text) => (
         <Tag
+          className="text-center"
           style={{ width: 100, height: 25 }}
           color={
-            text === 0
+            text === 1
               ? "yellow"
-              : text === 1
-              ? "green"
               : text === 2
-              ? "orange"
+              ? "green"
               : text === 3
+              ? "orange"
+              : text === 4
               ? "red"
               : ""
           }
           key={text}
         >
-          {text === 0
+          {text === 1
             ? "ĐANG CHỜ"
-            : text === 1
-            ? "ĐÃ XÁC NHẬN"
             : text === 2
-            ? "ĐÃ TỪ CHỐI"
+            ? "ĐÃ XÁC NHẬN"
             : text === 3
+            ? "ĐÃ TỪ CHỐI"
+            : text === 4
             ? "ĐÃ HUỶ"
             : ""}
         </Tag>
@@ -137,19 +138,19 @@ const ImportProductTable = () => {
       filters: [
         {
           text: "ĐANG CHỜ",
-          value: 0,
-        },
-        {
-          text: "ĐÃ XÁC NHẬN",
           value: 1,
         },
         {
-          text: "ĐÃ TỪ CHỐI",
+          text: "ĐÃ XÁC NHẬN",
           value: 2,
         },
         {
-          text: "ĐÃ HUỶ",
+          text: "ĐÃ TỪ CHỐI",
           value: 3,
+        },
+        {
+          text: "ĐÃ HUỶ",
+          value: 4,
         },
       ],
       onFilter: (value: any, record: any) => record.state === value,

@@ -61,17 +61,12 @@ const PromotionForm = () => {
     `https://tech-api.herokuapp.com/v1/promotion/get/${state.idPromotion}`,
     fetchers
   );
-  const [createCategory, setCreateCategory] = useState(false);
   const [id, setId] = useState<number>();
-  const [name, setName] = useState("hello");
-  const [parentId, setParentId] = useState("");
-  const [status, setStatus] = useState(1);
-  const [orderSort, setOrderSort] = useState(0);
-  const [note, setNote] = useState("");
   const [icon, setIcon] = useState("");
   const [iconUpload, setIconUpload] = useState<File>();
   const [exchangeable, setExchangeable] = useState<boolean>(false);
   const [kind, setKind] = useState(0);
+  const [statusButton, setStatusButton] = useState<boolean>(false);
 
   useEffect(() => {
     setId(promotion?.id);
@@ -90,7 +85,7 @@ const PromotionForm = () => {
     } else {
       delete promotion?.point;
     }
-    console.log(promotion);
+    setStatusButton(true);
     const token = localStorage.getItem("token");
     const res = await axios.post(
       "https://tech-api.herokuapp.com/v1/promotion/create",
@@ -105,6 +100,7 @@ const PromotionForm = () => {
       dispatch(actions.changeVisibleFormPromotion(false));
       dispatch(actions.changeEditFormPromotion(false));
       form.resetFields();
+      setStatusButton(false);
       notification.open({
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -118,6 +114,7 @@ const PromotionForm = () => {
     }
   };
   const updatePromotion = async () => {
+    setStatusButton(true);
     const token = localStorage.getItem("token");
     const res = await axios.put(
       "https://tech-api.herokuapp.com/v1/product-category/update",
@@ -136,6 +133,7 @@ const PromotionForm = () => {
       dispatch(actions.changeVisibleFormPromotion(false));
       dispatch(actions.changeEditFormPromotion(false));
       form.resetFields();
+      setStatusButton(false);
       notification.open({
         message: res.data.message,
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -194,7 +192,12 @@ const PromotionForm = () => {
           <Button key="back" onClick={cancelCreatePromotion}>
             Huỷ
           </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
+          <Button
+            disabled={statusButton}
+            key="submit"
+            type="primary"
+            onClick={handleOk}
+          >
             {state.isEditFormPromotion ? "Cập nhập" : "Thêm mới"}
           </Button>,
         ]}

@@ -43,9 +43,7 @@ const fetcher = async () => {
 
 const CustomerTable = () => {
   const { data, error, mutate } = useSWR("/customer", fetcher);
-  const {state, dispatch} = useStoreContext();
-  // const dispatch = useDispatch();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const { state, dispatch } = useStoreContext();
   const deleteConfirmCustomer = (record: any) => {
     Modal.confirm({
       title: "Bạn có chắc chắn muốn xoá khách hàng này không?",
@@ -68,13 +66,13 @@ const CustomerTable = () => {
     );
     if (res.data.result) {
       notification.open({
-        message: 'Xoá tài khoản thành công',
+        message: "Xoá tài khoản thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       mutate();
     } else if (!res.data.result) {
       notification.open({
-        message: 'Xoá tài khoản thất bại',
+        message: "Xoá tài khoản thất bại",
         icon: <CloseOutlined style={{ color: "red" }} />,
       });
     }
@@ -111,11 +109,8 @@ const CustomerTable = () => {
       // width:70,
       render: (text) => (
         <Tag
-          style={
-            text?.status === 1
-              ? { width: 80, height: 25 }
-              : { width: 50, height: 25 }
-          }
+          className="text-center"
+          style={{ width: 80, height: 25 }}
           color={text?.status === 1 ? "green" : "red"}
           key={text?.status}
         >

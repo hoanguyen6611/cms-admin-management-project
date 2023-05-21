@@ -57,13 +57,13 @@ const AccountTable = () => {
     );
     if (res.data.result) {
       notification.open({
-        message: 'Xoá tài khoản thành công',
+        message: "Xoá tài khoản thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       mutate();
     } else if (!res.data.result) {
       notification.open({
-        message: 'Xoá tài khoản thất bại',
+        message: "Xoá tài khoản thất bại",
         icon: <CloseOutlined style={{ color: "red" }} />,
       });
     }
@@ -86,9 +86,8 @@ const AccountTable = () => {
       // width:70,
       render: (text) => (
         <Tag
-          style={
-            text === 1 ? { width: 80, height: 25 } : { width: 50, height: 25 }
-          }
+          className="text-center"
+          style={{ width: 80, height: 25 }}
           color={text === 1 ? "green" : "red"}
           key={text}
         >

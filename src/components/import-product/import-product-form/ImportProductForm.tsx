@@ -229,10 +229,10 @@ const ImportProductForm = () => {
                 <Select
                   defaultValue="Chọn trạng thái nhập hàng"
                   options={[
-                    { value: 0, label: "Đang chờ" },
-                    { value: 1, label: "Đã xác nhận", disabled: true },
-                    { value: 2, label: "Đã từ chối", disabled: true },
-                    { value: 2, label: "Đã huỷ" },
+                    { value: 1, label: "Đang chờ" },
+                    { value: 2, label: "Đã xác nhận", disabled: true },
+                    { value: 3, label: "Đã từ chối", disabled: true },
+                    { value: 4, label: "Đã huỷ" },
                   ]}
                 />
               </Form.Item>

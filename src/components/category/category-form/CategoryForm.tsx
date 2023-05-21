@@ -82,6 +82,7 @@ const CategoryForm = () => {
   const [icon, setIcon] = useState("");
   const [iconUpload, setIconUpload] = useState<File>();
   const [fileList, setFileList] = useState([]);
+  const [statusButton, setStatusButton] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -104,13 +105,14 @@ const CategoryForm = () => {
     });
   }, [category]);
 
-  const createCategoryForm = async () => {
+  const createCategoryForm = async (url: string) => {
+    setStatusButton(true);
     const token = localStorage.getItem("token");
     const res = await axios.post(
       "https://tech-api.herokuapp.com/v1/product-category/create",
       {
         ...form.getFieldsValue(),
-        icon: icon,
+        icon: url,
         orderSort: 0,
       },
       {
@@ -127,6 +129,7 @@ const CategoryForm = () => {
       });
       dispatch(actions.changeVisibleFormCategory(false));
       dispatch(actions.changeEditFormCategory(false));
+      setStatusButton(false);
       mutate();
     } else {
       notification.open({
@@ -136,6 +139,7 @@ const CategoryForm = () => {
     }
   };
   const updateCategory = async () => {
+    setStatusButton(true);
     const token = localStorage.getItem("token");
     const res = await axios.put(
       "https://tech-api.herokuapp.com/v1/product-category/update",
@@ -158,6 +162,7 @@ const CategoryForm = () => {
       });
       dispatch(actions.changeVisibleFormCategory(false));
       dispatch(actions.changeEditFormCategory(false));
+      setStatusButton(false);
       mutate();
     } else {
       notification.open({
@@ -172,7 +177,19 @@ const CategoryForm = () => {
     if (id) {
       updateCategory();
     } else {
-      createCategoryForm();
+      if (!iconUpload) {
+        notification.open({
+          message: "Upload ảnh chưa thành công",
+        });
+        return;
+      } else {
+        const imageRef = ref(storage, `images/${iconUpload.name + v4()}`);
+        await uploadBytes(imageRef, iconUpload).then(async (snapshot) => {
+          await getDownloadURL(snapshot.ref).then((url) => {
+            createCategoryForm(url);
+          });
+        });
+      }
     }
   };
   const cancelCreateCategory = () => {
@@ -214,7 +231,12 @@ const CategoryForm = () => {
           <Button key="back" onClick={cancelCreateCategory}>
             Huỷ
           </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
+          <Button
+            disabled={statusButton}
+            key="submit"
+            type="primary"
+            onClick={handleOk}
+          >
             {state.isEditFormCategory ? "Cập nhập" : "Thêm mới"}
           </Button>,
         ]}

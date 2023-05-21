@@ -46,7 +46,7 @@ const fetchers = async () => {
 const OrderTable = () => {
   const { data, error, mutate } = useSWR("/product", fetcher);
   const { data: store, error: errorStore } = useSWR("/store/list", fetchers);
-  const {state, dispatch} = useStoreContext();
+  const { state, dispatch } = useStoreContext();
   const deleteConfirmProduct = (record: any) => {
     Modal.confirm({
       title: "Bạn có chắc chắn muốn xoá đơn hàng này không?",
@@ -121,13 +121,38 @@ const OrderTable = () => {
       key: "state",
       render: (text) => (
         <Tag
-          style={
-            text === 1 ? { width: 80, height: 25 } : { width: 50, height: 25 }
+          className="text-center"
+          style={{ width: 100, height: 25 }}
+          color={
+            text === 0
+              ? "pink"
+              : text === 1
+              ? "yellow"
+              : text === 2
+              ? "orange"
+              : text === 3
+              ? "green"
+              : text === 4
+              ? "red"
+              : text === 5
+              ? "cyan"
+              : ""
           }
-          color={text === 1 ? "green" : "red"}
           key={text}
         >
-          {text === 1 ? "KÍCH HOẠT" : "KHOÁ"}
+          {text === 0
+            ? "ĐÃ NHẬN ĐƠN"
+            : text === 1
+            ? "ĐÃ XÁC NHẬN"
+            : text === 2
+            ? "ĐANG VẬN CHUYỂN"
+            : text === 3
+            ? "HOÀN TẤT"
+            : text === 4
+            ? "ĐÃ HUỶ"
+            : text === 5
+            ? "LƯU TRỮ"
+            : ""}
         </Tag>
       ),
     },

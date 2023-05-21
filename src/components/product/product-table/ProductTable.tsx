@@ -55,13 +55,13 @@ const ProductTable = () => {
     );
     if (res.data.result) {
       notification.open({
-        message: 'Xoá sản phẩm thành công',
+        message: "Xoá sản phẩm thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       mutate();
     } else if (!res.data.result) {
       notification.open({
-        message: 'Xoá sản phẩm thất bại',
+        message: "Xoá sản phẩm thất bại",
         icon: <CloseOutlined style={{ color: "red" }} />,
       });
     }
@@ -95,9 +95,8 @@ const ProductTable = () => {
       key: "status",
       render: (text) => (
         <Tag
-          style={
-            text === 1 ? { width: 80, height: 25 } : { width: 50, height: 25 }
-          }
+          className="text-center"
+          style={{ width: 80, height: 25 }}
           color={text === 1 ? "green" : "red"}
           key={text}
         >
@@ -118,8 +117,8 @@ const ProductTable = () => {
     },
     {
       title: "Số lượng",
-      dataIndex: "quanlity",
-      key: "quanlity",
+      dataIndex: "totalInStock",
+      key: "totalInStock",
     },
     {
       title: "",
