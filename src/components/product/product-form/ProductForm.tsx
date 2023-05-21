@@ -298,7 +298,9 @@ const Variant = (props: any) => {
       <Row className="pt-4">
         <Col span={17}></Col>
         <Col span={7}>
-          <Button onClick={addVariant}>Thêm màu</Button>
+          <Button onClick={addVariant}>
+            {state.isEditFormProduct ? "Cập nhập" : "Thêm màu"}
+          </Button>
         </Col>
       </Row>
       <Divider />

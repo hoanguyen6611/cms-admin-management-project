@@ -128,7 +128,7 @@ const ProductTable = () => {
       render: (record: number) => {
         return (
           <>
-            {/* <EditOutlined
+            <EditOutlined
               style={{ color: "green" }}
               onClick={() => isEditProduct(record)}
             />
@@ -137,7 +137,7 @@ const ProductTable = () => {
               onClick={() => {
                 deleteConfirmProduct(record);
               }}
-            /> */}
+            />
           </>
         );
       },
