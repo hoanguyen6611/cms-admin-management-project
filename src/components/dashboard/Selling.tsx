@@ -47,7 +47,7 @@ const Selling = () => {
       : "https://tech-api.herokuapp.com/v1/product/list-revenue",
     fetchers
   );
-  const [show, setShow] = useState<string>("");
+  const [show, setShow] = useState<string>("1");
   const columns: ColumnsType<any> = [
     {
       title: "Tên sản phẩm",
