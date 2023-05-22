@@ -12,6 +12,7 @@ import useSWR from "swr";
 import styles from "./ProductTable.module.scss";
 import { actions, useStoreContext } from "@/store";
 import { VND } from "@/utils/formatVNĐ";
+import { productApi } from "@/api-client/productApi";
 
 const fetcher = async () => {
   const token = localStorage.getItem("token");
@@ -43,6 +44,7 @@ const ProductTable = () => {
       },
     });
   };
+  console.log(productApi.getAllProduct());
   const deleteProduct = async (record: any) => {
     const token = localStorage.getItem("token");
     const res = await axios.delete(

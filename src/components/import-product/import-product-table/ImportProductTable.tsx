@@ -164,7 +164,7 @@ const ImportProductTable = () => {
           <>
             <EyeOutlined
               style={{ color: "green" }}
-              onClick={() => isEditCategory(record)}
+              onClick={() => isWatchImportProduct(record)}
             />
             <Tooltip title="Huỷ yêu cầu nhập hàng">
               <CloseSquareOutlined
@@ -179,7 +179,7 @@ const ImportProductTable = () => {
       },
     },
   ];
-  const isEditCategory = async (record: number) => {
+  const isWatchImportProduct = async (record: number) => {
     console.log(record);
     dispatch(actions.setIdImportProductForm(record));
     dispatch(actions.changeVisibleFormImportProduct(true));

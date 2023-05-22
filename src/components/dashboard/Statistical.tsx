@@ -63,7 +63,7 @@ const Statistical = () => {
           <p className="text-2xl font-bold">
             {orders?.revenue ? VND.format(orders.revenue) : VND.format(0)}
           </p>
-          <p className="Otext-gray-600">Tổng doanh thu</p>
+          <p className="text-gray-600">Tổng doanh thu</p>
         </div>
         {/* <p className=" bg-green-200 flex justify-center items-center p-2 rounded-lg">
           <div className="text-red-700 text-lg flex">
@@ -78,7 +78,7 @@ const Statistical = () => {
           <p className="text-2xl font-bold">
             {orders?.discount ? VND.format(orders.discount) : VND.format(0)}
           </p>
-          <p className="Otext-gray-600">Tổng chiết khấu</p>
+          <p className="text-gray-600">Tổng chiết khấu</p>
         </div>
         {/* <p className=" bg-green-200 flex justify-center items-center p-2 rounded-lg">
           <div className="text-green-700 text-lg flex">
@@ -93,7 +93,7 @@ const Statistical = () => {
           <p className="text-2xl font-bold">
             {orders?.totalOrders ? orders.totalOrders : 0}
           </p>
-          <p className="Otext-gray-600">Tổng đơn hàng</p>
+          <p className="text-gray-600">Tổng đơn hàng</p>
         </div>
         {/* <p className=" bg-green-200 flex justify-center items-center p-2 rounded-lg">
           <span className="text-green-700 text-lg">+18%</span>

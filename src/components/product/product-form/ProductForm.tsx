@@ -38,7 +38,6 @@ import { Category, Variant } from "@/models";
 import { v4 } from "uuid";
 import { actions, useStoreContext } from "@/store";
 import { VND } from "@/utils/formatVNĐ";
-import { uploadImageProduct } from "@/utils/uploadImage";
 import { ColumnsType } from "antd/es/table";
 
 const schema = yup
@@ -104,21 +103,27 @@ const Variant = (props: any) => {
   useEffect(() => {
     form.setFieldsValue({
       name: props.value?.name,
-      description: props.value?.description,
       price: props.value?.price,
       image: props.value?.image,
       status: props?.status,
     });
   }, [props]);
+  const listProductInStore = props.value?.variantStockDtoList.map(
+    (item: any) => {
+      return {
+        ...item,
+        key: item.addressDetails,
+        value: item.name,
+      };
+    }
+  );
   const [form] = Form.useForm();
   const [name, setName] = useState("");
   const [color, setColor] = useState("");
   const [price, setPrice] = useState(0);
-  const [image, setImage] = useState("");
   const [imageUpload, setImageUpload] = useState<File>();
   const [status, setStatus] = useState(0);
   const [importProduct, setImportProduct] = useState<boolean>(false);
-  const [numberImportProduct, setNumberImportProduct] = useState<number>();
   const handleFileSelected = (file: any) => {
     setImageUpload(file.target.files[0]);
   };
@@ -136,47 +141,33 @@ const Variant = (props: any) => {
           variant = {
             ...vaf,
             image: url,
+            description: "",
           };
           variants.push(variant);
         });
       });
     }
   };
-  const dataSource = [
-    {
-      id: 210,
-      key: "1",
-      store: "Teck Thủ Đức",
-      number: 5,
-    },
-    {
-      id: 373,
-      key: "2",
-      store: "Teck Quận 1",
-      number: 4,
-    },
-  ];
   const columns: ColumnsType<any> = [
     {
       title: "Chi nhánh",
-      dataIndex: "store",
-      key: "store",
+      dataIndex: "name",
+      key: "name",
     },
     {
       title: "Tồn kho",
-      dataIndex: "number",
-      key: "number",
+      dataIndex: "totalInStock",
+      key: "totalInStock",
     },
     {
       title: "Số lượng nhập",
-      dataIndex: "id",
+      dataIndex: "storeId",
       key: "action",
       render: (record) => {
         return (
           <>
             <InputNumber
               onChange={(e: any) => {
-                // setNumberImportProduct(e);
                 storeList.push({
                   storeId: record,
                   quantity: e,
@@ -193,13 +184,13 @@ const Variant = (props: any) => {
   const columnsNoImport: ColumnsType<any> = [
     {
       title: "Chi nhánh",
-      dataIndex: "store",
-      key: "store",
+      dataIndex: "name",
+      key: "name",
     },
     {
       title: "Tồn kho",
-      dataIndex: "number",
-      key: "number",
+      dataIndex: "totalInStock",
+      key: "totalInStock",
     },
   ];
   const addNumberOfProduct = async () => {
@@ -320,7 +311,7 @@ const Variant = (props: any) => {
         <Table
           size="small"
           columns={importProduct ? columns : columnsNoImport}
-          dataSource={dataSource}
+          dataSource={listProductInStore}
           pagination={false}
         />
         <Row className="pt-4" hidden={!importProduct}>
@@ -629,7 +620,12 @@ const ProductForm = () => {
           <Button key="back" onClick={handleCancel}>
             Huỷ
           </Button>,
-          <Button disabled={statusButton} key="submit" type="primary" onClick={handleOk}>
+          <Button
+            disabled={statusButton}
+            key="submit"
+            type="primary"
+            onClick={handleOk}
+          >
             {state.isEditFormProduct ? "Cập nhập" : "Tạo mới"}
           </Button>,
         ]}

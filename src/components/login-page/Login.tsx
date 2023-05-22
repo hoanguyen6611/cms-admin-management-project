@@ -11,13 +11,11 @@ import { authApi } from "@/api-client/auth-api";
 const { Header, Content } = Layout;
 const schema = yup.object({
   username: yup.string().required("Vui lòng nhập tên đăng nhập"),
-  password: yup
-    .string()
-    .required("Vui lòng nhập mật khẩu")
-    // .matches(/[0-9]/, "Mật khẩu phải bao gồm số")
-    // .matches(/[a-z]/, "Mật khẩu phải có chữ thường")
-    // .matches(/[A-Z]/, "Mật khẩu phải bao gồm chữ hoa")
-    // .matches(/[^\w]/, "Mật khẩu phải bao gồm ký tự đặc biệt"),
+  password: yup.string().required("Vui lòng nhập mật khẩu"),
+  // .matches(/[0-9]/, "Mật khẩu phải bao gồm số")
+  // .matches(/[a-z]/, "Mật khẩu phải có chữ thường")
+  // .matches(/[A-Z]/, "Mật khẩu phải bao gồm chữ hoa")
+  // .matches(/[^\w]/, "Mật khẩu phải bao gồm ký tự đặc biệt"),
 });
 type FormData = yup.InferType<typeof schema>;
 
@@ -45,20 +43,14 @@ const Login = () => {
   const login = async (e: any) => {
     // e.preventDefault();
     setButtonSignIn(true);
-    // if(!errors) {
-
-    // }
     authApi
       .login({
-        // ...form.getFieldsValue(),
         app: "cms",
         username: getValues("username"),
         password: getValues("password"),
       })
       .then((res) => {
-        console.log(res);
         if (res.result) {
-          // dispatch(setUserLogin(data.data));
           notification.open({
             message: "Đăng nhập thành công",
             icon: <CheckOutlined style={{ color: "#52c41a" }} />,
