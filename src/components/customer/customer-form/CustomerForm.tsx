@@ -87,8 +87,10 @@ const CustomerForm = () => {
     });
   }, [customer]);
 
-  const cancelOrderForm = () => {
+  const cancelCustomerForm = () => {
+    form.resetFields();
     dispatch(actions.changeVisibleFormCustomer(false));
+    dispatch(actions.changeEditFormCustomer(false));
   };
 
   const onChange = (
@@ -128,12 +130,12 @@ const CustomerForm = () => {
       form.resetFields();
       setStatusButton(false);
       notification.open({
-        message: 'Thêm mới khách hàng thành công',
+        message: "Thêm mới khách hàng thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
     } else {
       notification.open({
-        message: 'Thêm mới khách hàng thất bại',
+        message: "Thêm mới khách hàng thất bại",
         icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }
@@ -165,12 +167,12 @@ const CustomerForm = () => {
       form.resetFields();
       setStatusButton(false);
       notification.open({
-        message: 'Cập nhập thông tin khách hàng thành công',
+        message: "Cập nhật thông tin khách hàng thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
     } else {
       notification.open({
-        message: 'Cập nhập thông tin khách hàng thất bại',
+        message: "Cập nhật thông tin khách hàng thất bại",
         icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }
@@ -190,19 +192,24 @@ const CustomerForm = () => {
       <Modal
         title={
           state.isEditFormCustomer
-            ? "Cập nhập thông tin khách hàng"
+            ? "Cập nhật thông tin khách hàng"
             : "Thêm mới khách hàng"
         }
         open={state.isVisibleFormCustomer}
         okType={"danger"}
-        onCancel={cancelOrderForm}
+        onCancel={cancelCustomerForm}
         width={1000}
         footer={[
-          <Button key="back" onClick={cancelOrderForm}>
+          <Button key="back" onClick={cancelCustomerForm}>
             Huỷ
           </Button>,
-          <Button disabled={statusButton} key="submit" type="primary" onClick={handleOk}>
-            {state.isEditFormCustomer ? "Cập nhập" : "Thêm mới"}
+          <Button
+            disabled={statusButton}
+            key="submit"
+            type="primary"
+            onClick={handleOk}
+          >
+            {state.isEditFormCustomer ? "Cập nhật" : "Thêm mới"}
           </Button>,
         ]}
       >
@@ -224,7 +231,7 @@ const CustomerForm = () => {
               </Form.Item>
             </Col>
           </Row>
-          <Row hidden={!id} gutter={16}>
+          <Row hidden={!state.isEditFormCustomer} gutter={16}>
             <Col span={12}>
               <Form.Item label="Ngày gia nhập" name="createdDate">
                 <Input disabled />

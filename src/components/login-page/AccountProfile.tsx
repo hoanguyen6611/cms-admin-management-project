@@ -111,7 +111,7 @@ const AccountProfile = () => {
       </Form>
       <div className="flex justify-end">
         <Button key="submit" type="primary" onClick={handleOk}>
-          Cập nhập
+          Cập nhật
         </Button>
       </div>
     </div>

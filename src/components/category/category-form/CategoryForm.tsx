@@ -220,7 +220,7 @@ const CategoryForm = () => {
       <Modal
         title={
           state.isEditFormCategory
-            ? "Cập nhập danh mục sản phẩm"
+            ? "Cập nhật danh mục sản phẩm"
             : "Tạo mới danh mục sản phẩm"
         }
         open={state.isVisibleFormCategory}
@@ -237,18 +237,18 @@ const CategoryForm = () => {
             type="primary"
             onClick={handleOk}
           >
-            {state.isEditFormCategory ? "Cập nhập" : "Thêm mới"}
+            {state.isEditFormCategory ? "Cập nhật" : "Thêm mới"}
           </Button>,
         ]}
       >
         <Form
-          labelCol={{ span: 8 }}
+          labelCol={{ span: 4 }}
           wrapperCol={{ span: 14 }}
           layout="horizontal"
           form={form}
         >
-          <Row gutter={16}>
-            <Col span={12}>
+          <Row gutter={0}>
+            <Col span={24}>
               <Form.Item
                 label="Tên danh mục"
                 name="name"
@@ -267,28 +267,9 @@ const CategoryForm = () => {
                 {/* <p className={styles.warning}>{errors.name?.message}</p> */}
               </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item label="Danh mục cha" name="parentId">
-                <div className="flex">
-                  <Select
-                    defaultValue={
-                      category ? category : "Chọn nhóm danh mục cha"
-                    }
-                    onChange={(e) => setParentId(e)}
-                    options={data}
-                  />
-                  <button
-                    className="ml-2"
-                    onClick={() => setCreateCategory(true)}
-                  >
-                    <PlusOutlined />
-                  </button>
-                </div>
-              </Form.Item>
-            </Col>
           </Row>
-          <Row gutter={16}>
-            <Col span={12}>
+          <Row gutter={0}>
+            <Col span={24}>
               <Form.Item label="Trạng thái" name="status">
                 <Radio.Group
                   onChange={(e: RadioChangeEvent) => {
@@ -302,14 +283,18 @@ const CategoryForm = () => {
               </Form.Item>
             </Col>
           </Row>
-          <Form.Item label="Ghi chú" name="note" initialValue={note}>
-            <TextArea
-              value={note}
-              rows={4}
-              onChange={(e) => setNote(e.target.value)}
-            />
-          </Form.Item>
-          <Row gutter={16}>
+          <Row>
+            <Col span={24}>
+              <Form.Item label="Ghi chú" name="note" initialValue={note}>
+                <TextArea
+                  value={note}
+                  rows={4}
+                  onChange={(e) => setNote(e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={0}>
             <Col span={24}>
               <Form.Item>
                 <Image

@@ -94,6 +94,8 @@ const AccountForm = () => {
   }, [account]);
 
   const cancelOrderForm = () => {
+    form.resetFields();
+    dispatch(actions.changeEditFormAccount(false));
     dispatch(actions.changeVisibleFormAccount(false));
   };
 
@@ -121,6 +123,7 @@ const AccountForm = () => {
     setStatusButton(true);
     const account = {
       ...form.getFieldsValue(),
+      groupId: 5,
       avatarPath:
         "https://img6.thuthuatphanmem.vn/uploads/2022/11/18/anh-avatar-don-gian-ma-dep_081757969.jpg",
     };
@@ -174,12 +177,12 @@ const AccountForm = () => {
       form.resetFields();
       setStatusButton(false);
       notification.open({
-        message: "Cập nhập thông tin tài khoản thành công",
+        message: "Cập nhật thông tin tài khoản thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
     } else {
       notification.open({
-        message: "Cập nhập thông tin tài khoản thất bại",
+        message: "Cập nhật thông tin tài khoản thất bại",
         icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }
@@ -189,7 +192,7 @@ const AccountForm = () => {
       <Modal
         title={
           state.isEditFormAccount
-            ? "Cập nhập thông tin tài khoản"
+            ? "Cập nhật thông tin tài khoản"
             : "Tạo mới tài khoản"
         }
         open={state.isVisibleFormAccount}
@@ -206,7 +209,7 @@ const AccountForm = () => {
             type="primary"
             onClick={handleOk}
           >
-            {state.isEditFormAccount ? "Cập nhập" : "Thêm mới"}
+            {state.isEditFormAccount ? "Cập nhật" : "Thêm mới"}
           </Button>,
         ]}
       >
@@ -255,7 +258,7 @@ const AccountForm = () => {
               </Form.Item>
             </Col>
           </Row>
-          <Row gutter={16}>
+          {/* <Row gutter={16}>
             <Col span={12}>
               <Form.Item label="Nhóm phân quyền" name="groupId">
                 <Select
@@ -265,7 +268,7 @@ const AccountForm = () => {
                 />
               </Form.Item>
             </Col>
-          </Row>
+          </Row> */}
         </Form>
       </Modal>
     </div>

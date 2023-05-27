@@ -54,7 +54,7 @@ const schema = yup
   })
   .required();
 type FormData = yup.InferType<typeof schema>;
-const variants: Variant[] = [];
+var variants: Variant[] = [];
 const storeList: any = [];
 var variant: any = {};
 const list = async () => {
@@ -290,7 +290,7 @@ const Variant = (props: any) => {
         <Col span={17}></Col>
         <Col span={7}>
           <Button onClick={addVariant}>
-            {state.isEditFormProduct ? "Cập nhập" : "Thêm màu"}
+            {state.isEditFormProduct ? "Cập nhật" : "Thêm màu"}
           </Button>
         </Col>
       </Row>
@@ -401,7 +401,6 @@ const ProductForm = () => {
     : [];
   const newTabIndex = useRef(2);
   const createProduct = async (urlImage: string) => {
-    setStatusButton(true);
     const product = {
       ...form.getFieldsValue(),
       image: urlImage,
@@ -432,7 +431,7 @@ const ProductForm = () => {
         message: "Thêm sản phẩm thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
-      variants;
+      variants = [];
     } else {
       notification.open({
         message: "Thêm sản phẩm thất bại",
@@ -469,12 +468,12 @@ const ProductForm = () => {
       dispatch(actions.changeEditFormProduct(false));
       setStatusButton(false);
       notification.open({
-        message: "Cập nhập thông tin sản phẩm thành công",
+        message: "Cập nhật thông tin sản phẩm thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
     } else {
       notification.open({
-        message: "Cập nhập thông tin sản phẩm thất bại",
+        message: "Cập nhật thông tin sản phẩm thất bại",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
     }
@@ -510,6 +509,7 @@ const ProductForm = () => {
         const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
         await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
           await getDownloadURL(snapshot.ref).then((url) => {
+            setStatusButton(true);
             createProduct(url);
           });
         });
@@ -610,7 +610,7 @@ const ProductForm = () => {
     <div>
       <Modal
         title={
-          state.isEditFormProduct ? "Cập nhập sản phẩm" : "Tạo mới sản phẩm"
+          state.isEditFormProduct ? "Cập nhật sản phẩm" : "Tạo mới sản phẩm"
         }
         open={state.isVisibleFormProduct}
         onOk={handleOk}
@@ -626,7 +626,7 @@ const ProductForm = () => {
             type="primary"
             onClick={handleOk}
           >
-            {state.isEditFormProduct ? "Cập nhập" : "Tạo mới"}
+            {state.isEditFormProduct ? "Cập nhật" : "Tạo mới"}
           </Button>,
         ]}
       >

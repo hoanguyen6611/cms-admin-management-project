@@ -1,8 +1,9 @@
-import { ListResponse, Product } from "@/models";
+import axiosClient from "./axiosClient";
 
-const productApi = {
-  // getAll(): Promise<ListResponse<Product>> {
-  //     return
-  // }
+export const productApi = {
+  async getAllProduct() {
+    const data = await axiosClient.get("product/list");
+    console.log(data.data.data);
+    return { data: data.data.data };
+  },
 };
-export default productApi;

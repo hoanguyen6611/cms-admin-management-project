@@ -52,6 +52,7 @@ const CustomerTable = () => {
       onOk: () => {
         deleteCustomer(record);
       },
+      cancelText: "HUỶ"
     });
   };
   const deleteCustomer = async (record: any) => {

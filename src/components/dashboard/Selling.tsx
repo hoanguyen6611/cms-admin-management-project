@@ -100,7 +100,7 @@ const Selling = () => {
           onChange={handleChange}
           options={[
             { value: "1", label: "Thống kế sản phẩm" },
-            { value: "2", label: "Thống kế doanh thu các chi nhánh" },
+            { value: "2", label: "Thống kế doanh thu các cửa hàng" },
           ]}
         />
       </div>

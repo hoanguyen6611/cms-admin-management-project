@@ -35,12 +35,13 @@ const StoreTable = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const deleteConfirmCategory = (record: any) => {
     Modal.confirm({
-      title: "Bạn có chắc chắn muốn xoá danh mục sản phẩm này không?",
+      title: "Bạn có chắc chắn muốn xoá cửa hàng này không?",
       okText: "OK",
       okType: "danger",
       onOk: () => {
         deleteCategory(record);
       },
+      cancelText: "HUỶ"
     });
   };
   const deleteCategory = async (record: any) => {

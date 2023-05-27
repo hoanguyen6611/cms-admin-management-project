@@ -46,6 +46,7 @@ const PromotionTable = () => {
       onOk: () => {
         deletePromotion(record);
       },
+      cancelText: "HUỶ"
     });
   };
   const deletePromotion = async (record: any) => {
@@ -73,12 +74,12 @@ const PromotionTable = () => {
   };
   const columns: ColumnsType<Category> = [
     {
-      title: "Tên ưu đãi",
+      title: "Tên mã giảm giá",
       dataIndex: "title",
       key: "title",
     },
     {
-      title: "Chi tiết ưu đãi",
+      title: "Chi tiết mã giảm giá",
       dataIndex: "description",
       key: "description",
     },

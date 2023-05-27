@@ -156,6 +156,7 @@ const PromotionForm = () => {
   };
   const cancelCreatePromotion = () => {
     dispatch(actions.changeVisibleFormPromotion(false));
+    dispatch(actions.changeEditFormPromotion(false));
     form.resetFields();
   };
   const handleFileSelected = (file: any) => {
@@ -180,7 +181,7 @@ const PromotionForm = () => {
       <Modal
         title={
           state.isEditFormPromotion
-            ? "Cập nhập mã giảm giá"
+            ? "Cập nhật mã giảm giá"
             : "Tạo mới mã giá giá"
         }
         open={state.isVisibleFormPromotion}
@@ -198,7 +199,7 @@ const PromotionForm = () => {
             type="primary"
             onClick={handleOk}
           >
-            {state.isEditFormPromotion ? "Cập nhập" : "Thêm mới"}
+            {state.isEditFormPromotion ? "Cập nhật" : "Thêm mới"}
           </Button>,
         ]}
       >
@@ -210,12 +211,12 @@ const PromotionForm = () => {
         >
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label="Tên ưu đãi" name="title">
+              <Form.Item label="Tên mã giảm giá" name="title">
                 <Input style={{ width: 300 }} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Chi tiết ưu đãi" name="description">
+              <Form.Item label="Chi tiết giảm giá" name="description">
                 <Input style={{ width: 300 }} />
               </Form.Item>
             </Col>

@@ -75,15 +75,25 @@ const GroupPermissionTable = () => {
       key: "status",
       render: (text) => (
         <Tag
-          style={
-            text === 1 ? { width: 80, height: 25 } : { width: 50, height: 25 }
-          }
+          className="text-center"
+          style={{ width: 80, height: 25 }}
           color={text === 1 ? "green" : "red"}
           key={text}
         >
           {text === 1 ? "KÍCH HOẠT" : "KHOÁ"}
         </Tag>
       ),
+      filters: [
+        {
+          text: "KÍCH HOẠT",
+          value: 1,
+        },
+        {
+          text: "KHOÁ",
+          value: 0,
+        },
+      ],
+      onFilter: (value: any, record: any) => record.status === value,
     },
     {
       title: "",

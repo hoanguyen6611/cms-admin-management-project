@@ -47,6 +47,7 @@ const ImportProductTable = () => {
       onOk: () => {
         cancelImportProduct(record);
       },
+      cancelText: "HUỶ"
     });
   };
   const cancelImportProduct = async (record: any) => {

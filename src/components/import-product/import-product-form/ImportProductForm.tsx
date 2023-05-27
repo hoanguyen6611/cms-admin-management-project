@@ -198,7 +198,7 @@ const ImportProductForm = () => {
   return (
     <div>
       <Modal
-        title={"Cập nhập trạng thái nhập hàng"}
+        title={"Xem yêu cầu nhập hàng"}
         open={state.isVisibleFormImportProduct}
         onOk={handleOk}
         onCancel={cancelCreateCategory}
@@ -206,9 +206,6 @@ const ImportProductForm = () => {
         footer={[
           <Button key="back" onClick={cancelCreateCategory}>
             Huỷ
-          </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
-            {'Cập nhập trạng thái'}
           </Button>,
         ]}
       >
@@ -227,6 +224,7 @@ const ImportProductForm = () => {
             <Col span={12}>
               <Form.Item label="Trạng thái nhập hàng" name="state">
                 <Select
+                disabled
                   defaultValue="Chọn trạng thái nhập hàng"
                   options={[
                     { value: 1, label: "Đang chờ" },

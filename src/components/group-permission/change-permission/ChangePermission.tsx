@@ -156,7 +156,7 @@ const ChangePermission = () => {
   return (
     <div>
       <Modal
-        title={"Cập nhập phân quyền"}
+        title={"Cập nhật phân quyền"}
         open={state.isVisibleFormGroupPermission}
         onOk={handleOk}
         onCancel={cancelCreatePermissionGroup}
@@ -166,7 +166,7 @@ const ChangePermission = () => {
             Huỷ
           </Button>,
           <Button key="submit" type="primary" onClick={handleOk}>
-            {"Cập nhập"}
+            {"Cập nhật"}
           </Button>,
         ]}
       >

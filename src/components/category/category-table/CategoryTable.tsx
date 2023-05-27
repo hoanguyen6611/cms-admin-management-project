@@ -43,6 +43,7 @@ const CategoryTable = () => {
       onOk: () => {
         deleteCategory(record);
       },
+      cancelText:"HUỶ"
     });
   };
   const deleteCategory = async (record: any) => {

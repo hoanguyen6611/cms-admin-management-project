@@ -41,6 +41,7 @@ const ProductTable = () => {
       onOk: () => {
         deleteProduct(record);
       },
+      cancelText: "HUỶ"
     });
   };
   const deleteProduct = async (record: any) => {

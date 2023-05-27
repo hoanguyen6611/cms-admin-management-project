@@ -37,12 +37,13 @@ const AccountTable = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const deleteConfirmAccount = (record: any) => {
     Modal.confirm({
-      title: "Bạn có chắc chắn muốn xoá tài khoản này không?",
+      title: "Bạn có chắc chắn muốn xoá quản trị viên này không?",
       okText: "OK",
       okType: "danger",
       onOk: () => {
         deleteAccount(record);
       },
+      cancelText: "HUỶ"
     });
   };
   const deleteAccount = async (record: any) => {

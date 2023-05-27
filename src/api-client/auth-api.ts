@@ -1,10 +1,8 @@
-
 import axiosClient from "./axiosClient";
 
 export const authApi = {
   async login(payload: any) {
     const data: any = await axiosClient.post<any>("account/login", payload);
-
     if (data && data.data && "token" in data.data) {
       localStorage.setItem("token", data.data.token);
       localStorage.setItem(
@@ -23,8 +21,4 @@ export const authApi = {
     }
   },
 };
-export const productApi = {
-  getAllProduct() {
-    return axiosClient.get("/product/client-list");
-  },
-};
+

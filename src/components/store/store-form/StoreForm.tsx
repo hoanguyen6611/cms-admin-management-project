@@ -233,6 +233,8 @@ const StoreForm = () => {
     }
   };
   const cancelFormStore = () => {
+    form.resetFields();
+    dispatch(actions.changeEditFormStore(false));
     dispatch(actions.changeVisibleFormStore(false));
   };
   const handleChangeProvince = (value: any) => {
@@ -249,7 +251,7 @@ const StoreForm = () => {
       <Modal
         title={
           state.isEditFormStore
-            ? "Cập nhập thông tin cửa hàng"
+            ? "Cập nhật thông tin cửa hàng"
             : "Tạo mới cửa hàng"
         }
         open={state.isVisibleFormStore}
@@ -267,7 +269,7 @@ const StoreForm = () => {
             type="primary"
             onClick={handleOk}
           >
-            {state.isEditFormStore ? "Cập nhập" : "Thêm mới"}
+            {state.isEditFormStore ? "Cập nhật" : "Thêm mới"}
           </Button>,
         ]}
       >

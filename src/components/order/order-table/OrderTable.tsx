@@ -45,6 +45,7 @@ const fetchers = async () => {
 
 const OrderTable = () => {
   const { data, error, mutate } = useSWR("/product", fetcher);
+  console.log(data);
   const { data: store, error: errorStore } = useSWR("/store/list", fetchers);
   const { state, dispatch } = useStoreContext();
   const deleteConfirmProduct = (record: any) => {
@@ -184,12 +185,6 @@ const OrderTable = () => {
     dispatch(actions.changeVisibleFormOrder(true));
     dispatch(actions.setIdOrderForm(record));
   };
-  if (!data)
-    return (
-      <Spin tip="Loading" size="small">
-        <div className="content" />
-      </Spin>
-    );
   return <Table columns={columns} dataSource={data} className="mt-4" />;
 };
 
