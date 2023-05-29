@@ -69,7 +69,9 @@ const CategoryForm = () => {
   const { state, dispatch } = useStoreContext();
   const { data, error, mutate } = useSWR("product-category", fetcherCategory);
   const { data: category } = useSWR(
-    `https://tech-api.herokuapp.com/v1/product-category/get/${state.idCategory}`,
+    state.idCategory
+      ? `https://tech-api.herokuapp.com/v1/product-category/get/${state.idCategory}`
+      : null,
     fetchers
   );
   const [createCategory, setCreateCategory] = useState(false);

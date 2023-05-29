@@ -7,7 +7,7 @@ import { Provider } from "@/store/Provider";
 
 export default function App({ Component, pageProps, ...appProps }: AppProps) {
   if (
-    [`/login`].includes(appProps.router.pathname) ||
+    [`/`].includes(appProps.router.pathname) ||
     [`/forgetPassword`].includes(appProps.router.pathname)
   )
     return (

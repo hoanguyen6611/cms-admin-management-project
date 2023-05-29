@@ -17,7 +17,7 @@ const Profile = () => {
       message: "Đăng xuất thành công",
       icon: <CheckOutlined style={{ color: "#52c41a" }} />,
     });
-    router.push("/login");
+    router.push("/");
     localStorage.clear();
   };
   const items: MenuProps["items"] = [

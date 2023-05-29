@@ -126,9 +126,9 @@ const OrderTable = () => {
           style={{ width: 100, height: 25 }}
           color={
             text === 0
-              ? "pink"
-              : text === 1
               ? "yellow"
+              : text === 1
+              ? "blue"
               : text === 2
               ? "orange"
               : text === 3
@@ -142,9 +142,9 @@ const OrderTable = () => {
           key={text}
         >
           {text === 0
-            ? "ĐÃ NHẬN ĐƠN"
+            ? "ĐANG CHỜ"
             : text === 1
-            ? "ĐÃ XÁC NHẬN"
+            ? "ĐÃ NHẬN ĐƠN"
             : text === 2
             ? "ĐANG VẬN CHUYỂN"
             : text === 3
@@ -156,6 +156,33 @@ const OrderTable = () => {
             : ""}
         </Tag>
       ),
+      filters: [
+        {
+          text: "ĐANG CHỜ",
+          value: 0,
+        },
+        {
+          text: "ĐÃ NHẬN ĐƠN",
+          value: 1,
+        },
+        {
+          text: "ĐANG VẬN CHUYỂN",
+          value: 2,
+        },
+        {
+          text: "HOÀN TẤT",
+          value: 3,
+        },
+        {
+          text: "ĐÃ HUỶ",
+          value: 4,
+        },
+        {
+          text: "LƯU TRỮ",
+          value: 5,
+        },
+      ],
+      onFilter: (value: any, record: any) => record.state === value,
     },
     {
       title: "",

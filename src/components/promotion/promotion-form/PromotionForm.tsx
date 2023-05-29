@@ -58,7 +58,9 @@ const PromotionForm = () => {
   const { state, dispatch } = useStoreContext();
   const { data, error } = useSWR("product-category/list", fetcher);
   const { data: promotion } = useSWR(
-    `https://tech-api.herokuapp.com/v1/promotion/get/${state.idPromotion}`,
+    state.idPromotion
+      ? `https://tech-api.herokuapp.com/v1/promotion/get/${state.idPromotion}`
+      : null,
     fetchers
   );
   const [id, setId] = useState<number>();

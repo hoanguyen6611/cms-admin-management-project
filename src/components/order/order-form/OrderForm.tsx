@@ -67,9 +67,11 @@ const stores = async () => {
 
 const OrderForm = () => {
   const [form] = Form.useForm();
-  const {state, dispatch} = useStoreContext();
+  const { state, dispatch } = useStoreContext();
   const { data: order } = useSWR(
-    `https://tech-api.herokuapp.com/v1/orders/get/${state.idOrder}`,
+    state.idOrder
+      ? `https://tech-api.herokuapp.com/v1/orders/get/${state.idOrder}`
+      : null,
     fetchers
   );
   const { data: store, error } = useSWR("/store/list", fetcher);
@@ -186,11 +188,11 @@ const OrderForm = () => {
                   defaultValue="Chọn trạng thái đơn hàng"
                   options={[
                     { value: 0, label: "Đã nhận đơn" }, //hồng
-                    { value: 1, label: "Đã xác nhận" },//vàng
+                    { value: 1, label: "Đã xác nhận" }, //vàng
                     { value: 2, label: "Đang vận chuyển" }, //cam
                     { value: 3, label: "Hoàn tất" }, //xanh
-                    { value: 4, label: "Đã huỷ" },//đỏ
-                    { value: 5, label: "Lưu trữ" },//tím
+                    { value: 4, label: "Đã huỷ" }, //đỏ
+                    { value: 5, label: "Lưu trữ" }, //tím
                   ]}
                 />
               </Form.Item>

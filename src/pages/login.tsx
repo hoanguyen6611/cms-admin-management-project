@@ -9,7 +9,6 @@ const LoginPage = () => {
       <Head>
         <title>Đăng nhập</title>
       </Head>
-      {/* <Logins></Logins> */}
       <Login></Login>
     </div>
   );

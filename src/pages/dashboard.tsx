@@ -1,15 +1,16 @@
 import Dashboard from "@/components/dashboard/DashBoard";
-import Login from "@/components/login-page/Login";
 import Head from "next/head";
+import React from "react";
 
-const Home = () => {
+const Dashborad = () => {
   return (
     <div>
       <Head>
-        <title>Đăng nhập</title>
+        <title>Tổng quan</title>
       </Head>
-      <Login/>
+      <Dashboard></Dashboard>
     </div>
   );
 };
-export default Home;
+
+export default Dashborad;

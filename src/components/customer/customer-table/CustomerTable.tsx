@@ -28,7 +28,7 @@ import { Customer } from "@/models/customer";
 const fetcher = async () => {
   const token = localStorage.getItem("token");
   const res = await axios.get(
-    "https://tech-api.herokuapp.com/v1/customer/list",
+    "https://tech-api.herokuapp.com/v1/customer/list?groupId=7",
     {
       headers: {
         Authorization: `Bearer ${token}`,

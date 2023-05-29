@@ -47,7 +47,7 @@ const ImportProductTable = () => {
       onOk: () => {
         cancelImportProduct(record);
       },
-      cancelText: "HUỶ"
+      cancelText: "HUỶ",
     });
   };
   const cancelImportProduct = async (record: any) => {
@@ -169,6 +169,11 @@ const ImportProductTable = () => {
             />
             <Tooltip title="Huỷ yêu cầu nhập hàng">
               <CloseSquareOutlined
+                hidden={
+                  importList.find((item: any) => item.id === record).state ===
+                    2 ||
+                  importList.find((item: any) => item.id === record).state === 4
+                }
                 style={{ color: "red", marginLeft: 12 }}
                 onClick={() => {
                   cancelImportProductConfirn(record);

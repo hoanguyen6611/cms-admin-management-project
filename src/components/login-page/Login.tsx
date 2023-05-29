@@ -55,7 +55,7 @@ const Login = () => {
             message: "Đăng nhập thành công",
             icon: <CheckOutlined style={{ color: "#52c41a" }} />,
           });
-          router.push("/");
+          router.push("/dashboard");
         } else {
           setButtonSignIn(false);
           notification.open({

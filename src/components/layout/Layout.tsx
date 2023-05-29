@@ -40,9 +40,8 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem("Tổng quan", "", <AppstoreOutlined />),
+  getItem("Tổng quan", "dashboard", <AppstoreOutlined />),
   getItem("Phân quyền", "group", <ApartmentOutlined />),
-  // getItem("Quyền", "permission"),
   getItem("Sản phẩm", "sub1", <SettingOutlined />, [
     getItem("Danh mục", "category"),
     getItem("Sản phẩm", "product"),

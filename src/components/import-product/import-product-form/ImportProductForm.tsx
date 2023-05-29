@@ -74,7 +74,7 @@ const ImportProductForm = () => {
   const { data: importId } = useSWR(
     state.idImportProduct
       ? `https://tech-api.herokuapp.com/v1/import/get/${state.idImportProduct}`
-      : "",
+      : null,
     fetchers
   );
   const [id, setId] = useState<number>();

@@ -335,7 +335,7 @@ const ProductForm = () => {
   const { data: productItem } = useSWR(
     state?.idProduct
       ? `https://tech-api.herokuapp.com/v1/product/get/${state?.idProduct}`
-      : "",
+      : null,
     fetchers
   );
   const {
@@ -366,9 +366,12 @@ const ProductForm = () => {
   const [items, setItems] = useState(initialItems);
   const [activeKey, setActiveKey] = useState(initialItems[0].key);
   const [statusButton, setStatusButton] = useState<boolean>(false);
+  const [variantsList, setVariantsList] = useState();
 
   useEffect(() => {
     setId(productItem?.id);
+    setImage(productItem?.image);
+    setVariantsList(productItem?.productConfigs[0]?.variants);
     form.setFieldsValue({
       name: productItem?.name,
       description: productItem?.description,
@@ -433,6 +436,7 @@ const ProductForm = () => {
       });
       variants = [];
     } else {
+      setStatusButton(false);
       notification.open({
         message: "Thêm sản phẩm thất bại",
         icon: <WarningOutlined style={{ color: "red" }} />,
@@ -440,7 +444,7 @@ const ProductForm = () => {
     }
   };
   const updateProduct = async () => {
-    setStatusButton(true);
+    // setStatusButton(true);
     const token = localStorage.getItem("token");
     const res = await axios.put(
       "https://tech-api.herokuapp.com/v1/product/update",
@@ -448,11 +452,13 @@ const ProductForm = () => {
         ...form.getFieldsValue(),
         id: id,
         image: image,
+        isSoldOut: true,
+        parentProductId: 0,
         productConfigs: [
           {
-            name: form.getFieldsValue().nameConfig,
-            status: form.getFieldsValue().statusConfig,
-            variants: variants,
+            name: "Màu sắc",
+            status: 1,
+            variants: variantsList,
           },
         ],
       },
@@ -472,6 +478,7 @@ const ProductForm = () => {
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
     } else {
+      setStatusButton(false);
       notification.open({
         message: "Cập nhật thông tin sản phẩm thất bại",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -497,7 +504,7 @@ const ProductForm = () => {
   };
   const handleOk = async () => {
     if (id) {
-      await uploadImageProduct();
+      // setStatusButton(true);
       updateProduct();
     } else {
       if (!imageUpload) {

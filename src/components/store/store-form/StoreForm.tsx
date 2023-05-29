@@ -104,16 +104,22 @@ const StoreForm = () => {
   const [wardCode, setWardCode] = useState();
   const [statusButton, setStatusButton] = useState<boolean>(false);
   const { data: store } = useSWR(
-    `https://tech-api.herokuapp.com/v1/store/get/${state.idStore}`,
+    state.idStore
+      ? `https://tech-api.herokuapp.com/v1/store/get/${state.idStore}`
+      : null,
     fetchers
   );
   const { data: province } = useSWR("/", fetcherProvince);
   const { data: district } = useSWR(
-    `https://online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${provinceCode}`,
+    provinceCode
+      ? `https://online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${provinceCode}`
+      : null,
     fetchersDistrict
   );
   const { data: ward } = useSWR(
-    `https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${districtCode}`,
+    districtCode
+      ? `https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${districtCode}`
+      : null,
     fetchersWard
   );
   const {
