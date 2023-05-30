@@ -61,13 +61,13 @@ const PromotionTable = () => {
     );
     if (res.data.result) {
       notification.open({
-        message: res.data.message,
+        message: 'Xoá mã giảm giá thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       mutate();
     } else if (!res.data.result) {
       notification.open({
-        message: res.data.message,
+        message: 'Xoá mã giảm giá thất bại',
         icon: <CloseOutlined style={{ color: "red" }} />,
       });
     }

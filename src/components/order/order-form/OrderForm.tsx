@@ -83,6 +83,7 @@ const OrderForm = () => {
       storeId: store?.find((item: any) => item.id === order?.storeId)?.name,
       receiverFullName: order?.customerAddressDto?.receiverFullName,
       ordersDetailDtoList: order?.ordersDetailDtoList,
+      state: order?.state,
       totalMoney: VND.format(order?.totalMoney),
       deliveryFee: VND.format(order?.deliveryFee),
       amount: order?.amount,
@@ -182,7 +183,7 @@ const OrderForm = () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Trạng thái đơn hàng" name="status">
+              <Form.Item label="Trạng thái đơn hàng" name="state">
                 <Select
                   disabled
                   defaultValue="Chọn trạng thái đơn hàng"

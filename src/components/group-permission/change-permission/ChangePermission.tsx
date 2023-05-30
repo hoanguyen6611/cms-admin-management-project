@@ -62,22 +62,22 @@ const ChangePermission = () => {
   const { state, dispatch } = useStoreContext();
 
   const { data: group } = useSWR(
-    `https://tech-api.herokuapp.com/v1/group/get/${state.idGroupPermission}`,
+    state.idGroupPermission
+      ? `https://tech-api.herokuapp.com/v1/group/get/${state.idGroupPermission}`
+      : null,
     fetchers
   );
   useEffect(() => {
     setId(group?.id);
     setCheckedKeys(group?.permissions.map((item: any) => item.id));
-    console.log(checkedKeys);
     form.setFieldsValue({
       name: group?.name,
       description: group?.description,
       status: group?.status,
+      permissions: group?.permissions.map((item: any) => item.id),
     });
   }, [group]);
   const permissionList = group?.permissions.map((item: any) => item.id);
-  console.log(permissionList);
-  console.log(checkedKeys);
 
   const checkNumber = (a: any) => {
     return typeof a === "number";
@@ -146,13 +146,6 @@ const ChangePermission = () => {
     console.log("onCheck", checkedKeys);
     setCheckedKeys(checkedKeys);
   };
-  const list = [
-    286, 4, 31, 38, 42, 26, 27, 28, 29, 30, 32, 142, 143, 33, 34, 35, 36, 37,
-    144, 145, 146, 246, 249, 251, 147, 148, 149, 150, 151, 152, 159, 160, 161,
-    162, 163, 164, 165, 166, 167, 168, 169, 224, 170, 171, 172, 173, 153, 155,
-    158, 156, 157, 154, 198, 199, 200, 179, 176, 177, 178, 250, 223, 240, 242,
-    245, 1, 2, 3, 45, 226, 295, 308,
-  ];
   return (
     <div>
       <Modal
@@ -178,14 +171,14 @@ const ChangePermission = () => {
           name="basic"
         >
           <Form.Item label="Tên" name="name" initialValue={name}>
-            <Input
+            <Input disabled
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setName(e.target.value)
               }
             ></Input>
           </Form.Item>
           <Form.Item label="Chi tiết" name="description">
-            <TextArea rows={4} onChange={(e) => setDes(e.target.value)} />
+            <TextArea disabled rows={4} onChange={(e) => setDes(e.target.value)} />
           </Form.Item>
           <Form.Item name="permissions">
             <Tree
@@ -193,6 +186,7 @@ const ChangePermission = () => {
               onSelect={onSelect}
               onCheck={onCheck}
               treeData={permissions}
+              defaultCheckedKeys={permissionList}
             />
           </Form.Item>
         </Form>

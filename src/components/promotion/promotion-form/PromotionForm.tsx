@@ -104,13 +104,13 @@ const PromotionForm = () => {
       form.resetFields();
       setStatusButton(false);
       notification.open({
-        message: res.data.message,
+        message: 'Tạo mã giảm giá thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       mutate("/product-category", fetcher, false);
     } else {
       notification.open({
-        message: res.data.message,
+        message: 'Tạo mã giảm giá thất bại',
         icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }
@@ -137,12 +137,12 @@ const PromotionForm = () => {
       form.resetFields();
       setStatusButton(false);
       notification.open({
-        message: res.data.message,
+        message: 'Cập nhật thông tin giảm giá thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
     } else {
       notification.open({
-        message: res.data,
+        message: 'Cập nhật thông tin giảm giá thất bại',
         icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }

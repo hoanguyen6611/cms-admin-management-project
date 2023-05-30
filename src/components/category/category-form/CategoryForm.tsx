@@ -97,6 +97,7 @@ const CategoryForm = () => {
   });
   useEffect(() => {
     setId(category?.id);
+    setIcon(category?.icon);
     form.setFieldsValue({
       name: category?.name,
       parentId: category?.parentId,
@@ -126,7 +127,7 @@ const CategoryForm = () => {
     if (res.data.result) {
       form.resetFields();
       notification.open({
-        message: res.data.message,
+        message: 'Tạo danh mục sản phẩm thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       dispatch(actions.changeVisibleFormCategory(false));
@@ -135,7 +136,7 @@ const CategoryForm = () => {
       mutate();
     } else {
       notification.open({
-        message: res.data,
+        message: 'Tạo danh mục sản phẩm thất bại',
         icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }
@@ -149,6 +150,7 @@ const CategoryForm = () => {
         ...form.getFieldsValue(),
         id: id,
         icon: icon,
+        orderSort: 0,
       },
       {
         headers: {
@@ -159,7 +161,7 @@ const CategoryForm = () => {
     if (res.data.result) {
       form.resetFields();
       notification.open({
-        message: res.data.message,
+        message: 'Cập nhật thông tin danh mục thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       dispatch(actions.changeVisibleFormCategory(false));
@@ -168,14 +170,13 @@ const CategoryForm = () => {
       mutate();
     } else {
       notification.open({
-        message: res.data,
+        message: 'Cập nhật thông tin danh mục thất bại',
         icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }
   };
 
   const handleOk = async () => {
-    uploadImage();
     if (id) {
       updateCategory();
     } else {

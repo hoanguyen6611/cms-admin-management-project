@@ -58,13 +58,13 @@ const CategoryTable = () => {
     );
     if (res.data.result) {
       notification.open({
-        message: res.data.message,
+        message: "Xoá danh mục thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       mutate();
     } else if (!res.data.result) {
       notification.open({
-        message: res.data.message,
+        message: 'Xoá danh mục thất bại',
         icon: <CloseOutlined style={{ color: "red" }} />,
       });
     }

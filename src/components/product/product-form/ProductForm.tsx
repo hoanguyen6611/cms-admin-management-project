@@ -367,11 +367,13 @@ const ProductForm = () => {
   const [activeKey, setActiveKey] = useState(initialItems[0].key);
   const [statusButton, setStatusButton] = useState<boolean>(false);
   const [variantsList, setVariantsList] = useState();
+  const [idConfig, setIdConfig] = useState();
 
   useEffect(() => {
     setId(productItem?.id);
     setImage(productItem?.image);
     setVariantsList(productItem?.productConfigs[0]?.variants);
+    setIdConfig(productItem?.productConfigs[0]?.id);
     form.setFieldsValue({
       name: productItem?.name,
       description: productItem?.description,
@@ -381,7 +383,7 @@ const ProductForm = () => {
       saleOff: productItem?.saleOff,
       status: productItem?.status,
       image: productItem?.image,
-      categoryId: productItem?.productCategoryName,
+      categoryId: productItem?.productCategoryId,
       statusConfig: productItem?.productConfigs
         ? productItem?.productConfigs[0]?.status
         : "",
@@ -402,6 +404,8 @@ const ProductForm = () => {
         };
       })
     : [];
+  const [activeKeyUpdate, setActiveKeyUpdate] = useState(variantList[0]?.key);
+
   const newTabIndex = useRef(2);
   const createProduct = async (urlImage: string) => {
     const product = {
@@ -435,6 +439,7 @@ const ProductForm = () => {
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       variants = [];
+      console.log(variants);
     } else {
       setStatusButton(false);
       notification.open({
@@ -445,23 +450,25 @@ const ProductForm = () => {
   };
   const updateProduct = async () => {
     // setStatusButton(true);
+    const productUpdate = {
+      ...form.getFieldsValue(),
+      id: id,
+      image: image,
+      isSoldOut: true,
+      parentProductId: 563,
+      productConfigs: [
+        {
+          id: idConfig,
+          name: "Màu sắc",
+          status: 1,
+          variants: variantsList,
+        },
+      ],
+    };
     const token = localStorage.getItem("token");
     const res = await axios.put(
       "https://tech-api.herokuapp.com/v1/product/update",
-      {
-        ...form.getFieldsValue(),
-        id: id,
-        image: image,
-        isSoldOut: true,
-        parentProductId: 0,
-        productConfigs: [
-          {
-            name: "Màu sắc",
-            status: 1,
-            variants: variantsList,
-          },
-        ],
-      },
+      productUpdate,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -558,8 +565,13 @@ const ProductForm = () => {
     if (res.data.result) {
       setCreateCategory(false);
       notification.open({
-        message: res.data.message,
+        message: "Tạo danh mục thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+      });
+    } else {
+      notification.open({
+        message: "Tạo danh mục thất bại",
+        icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }
   };
@@ -768,7 +780,7 @@ const ProductForm = () => {
             <Tabs
               type="editable-card"
               onChange={onChangeTabs}
-              activeKey={activeKey}
+              activeKey={state.isEditFormProduct ? activeKeyUpdate : activeKey}
               onEdit={onEdit}
               items={state.isEditFormProduct ? variantList : items}
             />

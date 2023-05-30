@@ -13,7 +13,7 @@ import {
   Upload,
 } from "antd";
 import React, { useEffect, useState } from "react";
-import { CheckOutlined, WarningOutlined } from "@ant-design/icons";
+import { CheckOutlined, CloseOutlined, WarningOutlined } from "@ant-design/icons";
 import axios from "axios";
 import useSWR from "swr";
 import { actions, useStoreContext } from "@/store";
@@ -190,8 +190,13 @@ const StoreForm = () => {
       form.resetFields();
       setStatusButton(false);
       notification.open({
-        message: res.data.message,
+        message: 'Thêm cửa hàng thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+      });
+    }else if (!res.data.result) {
+      notification.open({
+        message: 'Thêm cửa hàng thất bại',
+        icon: <CloseOutlined style={{ color: "red" }} />,
       });
     }
   };
@@ -220,12 +225,12 @@ const StoreForm = () => {
       form.resetFields();
       setStatusButton(false);
       notification.open({
-        message: res.data.message,
+        message: 'Cập nhật thông tin cửa hàng thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
     } else {
       notification.open({
-        message: res.data,
+        message: 'Cập nhật thông tin cửa hàng thất bại',
         icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }

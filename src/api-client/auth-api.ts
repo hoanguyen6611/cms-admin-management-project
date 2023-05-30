@@ -15,10 +15,13 @@ export const authApi = {
           kind: data.data.kind,
         })
       );
-      return { result: data.result, message: data.message };
+      return {
+        result: data.result,
+        message: data.message,
+        admin: data.data.isSuperAdmin,
+      };
     } else {
       return { result: data.result, message: data.message };
     }
   },
 };
-

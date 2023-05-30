@@ -40,6 +40,14 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  useEffect(() => {
+    if (!(typeof window !== "undefined")) {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        router.push("/");
+      }
+    }
+  }, [router]);
   const login = async (e: any) => {
     // e.preventDefault();
     setButtonSignIn(true);
@@ -50,7 +58,7 @@ const Login = () => {
         password: getValues("password"),
       })
       .then((res) => {
-        if (res.result) {
+        if (res.result && res.admin) {
           notification.open({
             message: "Đăng nhập thành công",
             icon: <CheckOutlined style={{ color: "#52c41a" }} />,

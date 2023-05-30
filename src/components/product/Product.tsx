@@ -16,7 +16,7 @@ const ProductShow = () => {
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("token");
       if (!token) {
-        router.push("/login");
+        router.push("/");
       }
     }
   }, [router]);
