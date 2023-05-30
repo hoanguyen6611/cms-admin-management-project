@@ -449,13 +449,11 @@ const ProductForm = () => {
     }
   };
   const updateProduct = async () => {
-    // setStatusButton(true);
     const productUpdate = {
       ...form.getFieldsValue(),
       id: id,
       image: image,
       isSoldOut: true,
-      parentProductId: 563,
       productConfigs: [
         {
           id: idConfig,
@@ -511,7 +509,7 @@ const ProductForm = () => {
   };
   const handleOk = async () => {
     if (id) {
-      // setStatusButton(true);
+      setStatusButton(true);
       updateProduct();
     } else {
       if (!imageUpload) {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Input, Modal, notification, Tree } from "antd";
 import useSWR from "swr";
-import { CheckOutlined } from "@ant-design/icons";
+import { CheckOutlined, WarningOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { actions, useStoreContext } from "@/store";
 const { TextArea } = Input;
@@ -51,6 +51,15 @@ const fetchers = async (url: string) => {
   });
   return res.data.data;
 };
+const fetcherId = async (url: string) => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data.data?.permissions.map((item: any) => item.id);
+};
 const ChangePermission = () => {
   const [form] = Form.useForm();
   const { data: permissions, error } = useSWR("/permission", getPermission);
@@ -67,6 +76,13 @@ const ChangePermission = () => {
       : null,
     fetchers
   );
+  const { data: groupId } = useSWR(
+    state.idGroupPermission
+      ? `https://tech-api.herokuapp.com/v1/group/get/${state.idGroupPermission}`
+      : null,
+    fetcherId
+  );
+  console.log(groupId);
   useEffect(() => {
     setId(group?.id);
     setCheckedKeys(group?.permissions.map((item: any) => item.id));
@@ -111,15 +127,15 @@ const ChangePermission = () => {
   };
 
   const updatePermissionGroup = async () => {
+    const value = {
+      ...form.getFieldsValue(),
+      id: id,
+      permissions: checkedKeys.filter(checkNumber),
+    };
     const token = localStorage.getItem("token");
     const res = await axios.put(
       "https://tech-api.herokuapp.com/v1/group/update",
-      {
-        description: des,
-        id: id,
-        name: name,
-        permissions: checkedKeys.filter(checkNumber),
-      },
+      value,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -128,8 +144,13 @@ const ChangePermission = () => {
     );
     if (res.data.result) {
       notification.open({
-        message: res.data.message,
+        message: 'Cập nhật quyền thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
+      });
+    } else {
+      notification.open({
+        message: 'Cập nhật quyền thất bại',
+        icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }
   };
@@ -171,14 +192,19 @@ const ChangePermission = () => {
           name="basic"
         >
           <Form.Item label="Tên" name="name" initialValue={name}>
-            <Input disabled
+            <Input
+              disabled
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setName(e.target.value)
               }
             ></Input>
           </Form.Item>
           <Form.Item label="Chi tiết" name="description">
-            <TextArea disabled rows={4} onChange={(e) => setDes(e.target.value)} />
+            <TextArea
+              disabled
+              rows={4}
+              onChange={(e) => setDes(e.target.value)}
+            />
           </Form.Item>
           <Form.Item name="permissions">
             <Tree
@@ -186,7 +212,9 @@ const ChangePermission = () => {
               onSelect={onSelect}
               onCheck={onCheck}
               treeData={permissions}
-              defaultCheckedKeys={permissionList}
+              defaultCheckedKeys={group?.permissions.map(
+                (item: any) => item.id
+              )}
             />
           </Form.Item>
         </Form>
