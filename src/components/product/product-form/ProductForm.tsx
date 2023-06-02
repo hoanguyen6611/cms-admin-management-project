@@ -55,7 +55,7 @@ const schema = yup
   .required();
 type FormData = yup.InferType<typeof schema>;
 var variants: Variant[] = [];
-const storeList: any = [];
+var storeList: any = [];
 var variant: any = {};
 const list = async () => {
   const token = localStorage.getItem("token");
@@ -208,6 +208,7 @@ const Variant = (props: any) => {
     );
     if (res.data.result) {
       setImportProduct(false);
+      storeList = [];
       notification.open({
         message: "Tạo yêu cầu nhập hàng thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
