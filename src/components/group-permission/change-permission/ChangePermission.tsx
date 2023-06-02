@@ -143,13 +143,14 @@ const ChangePermission = () => {
       }
     );
     if (res.data.result) {
+      dispatch(actions.changeVisibleFormGroupPermission(false));
       notification.open({
-        message: 'Cập nhật quyền thành công',
+        message: "Cập nhật quyền thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
     } else {
       notification.open({
-        message: 'Cập nhật quyền thất bại',
+        message: "Cập nhật quyền thất bại",
         icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }

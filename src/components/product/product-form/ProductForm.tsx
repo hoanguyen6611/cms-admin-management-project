@@ -440,7 +440,6 @@ const ProductForm = () => {
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       variants = [];
-      console.log(variants);
     } else {
       setStatusButton(false);
       notification.open({
@@ -535,6 +534,7 @@ const ProductForm = () => {
     dispatch(actions.changeVisibleFormProduct(false));
     dispatch(actions.changeEditFormProduct(false));
     dispatch(actions.setIdProductForm(0));
+    variants = [];
   };
   const handleChange = (value: string) => {
     setCategoryId(value);
