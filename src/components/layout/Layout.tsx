@@ -72,10 +72,10 @@ const LayoutPage = (props: any) => {
           style={{
             height: 32,
             margin: 16,
-            background: "rgba(255, 255, 255, 0.2)",
+            color: "#fff",
           }}
-          className="logo"
-        />
+          className="logo text-center font-bold text-xl"
+        >Chi nhánh tổng</div>
         <div className="SideMenu">
           <Menu
             theme="dark"
