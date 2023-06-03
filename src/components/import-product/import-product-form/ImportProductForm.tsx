@@ -179,9 +179,8 @@ const ImportProductForm = () => {
     },
     {
       title: "Tên sản phẩm",
-      dataIndex: "variantDto",
-      key: "nameProduct",
-      render: (text) => text?.name,
+      dataIndex: "productName",
+      key: "productName",
     },
     {
       title: "Cấu hình",
