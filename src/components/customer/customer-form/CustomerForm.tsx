@@ -74,15 +74,15 @@ const CustomerForm = () => {
   const [form] = Form.useForm();
   const { state, dispatch } = useStoreContext();
   const [id, setId] = useState();
-  const [statusButton, setStatusButton] = useState<boolean>(false);
   const [birthday, setBirthday] = useState<string>("");
   const { data: customer } = useSWR(
     state.idCustomer
       ? `https://tech-api.herokuapp.com/v1/customer/get/${state.idCustomer}`
-      : "",
+      : null,
     fetchers
   );
-  const { data, error, mutate } = useSWR("/customer", fetcherList);
+  const { data: store, error } = useSWR("/store/list", fetcher);
+  const { data, mutate } = useSWR("/customer", fetcherList);
   const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY", "DD-MM-YYYY", "DD-MM-YY"];
   useEffect(() => {
     setId(customer?.id);
@@ -103,27 +103,14 @@ const CustomerForm = () => {
     });
   }, [customer]);
 
-  const cancelCustomerForm = () => {
-    form.resetFields();
+  const cancelOrderForm = () => {
     dispatch(actions.changeVisibleFormCustomer(false));
     dispatch(actions.changeEditFormCustomer(false));
+    form.resetFields();
   };
 
-  const onChange = (
-    value: DatePickerProps["value"] | RangePickerProps["value"],
-    dateString: [string, string] | string
-  ) => {
-    console.log("Selected Time: ", value);
-    console.log("Formatted Selected Time: ", dateString);
-  };
-
-  const onOk = (
-    value: DatePickerProps["value"] | RangePickerProps["value"]
-  ) => {
-    console.log("onOk: ", value);
-  };
   const createCustomer = async () => {
-    setStatusButton(true);
+    // console.log({ ...form.getFieldsValue(), password: "123456897" });
     const customer = {
       ...form.getFieldsValue(),
       avatar:
@@ -144,21 +131,19 @@ const CustomerForm = () => {
     if (res.data.result) {
       dispatch(actions.changeVisibleFormCustomer(false));
       form.resetFields();
-      setStatusButton(false);
       notification.open({
-        message: "Thêm mới khách hàng thành công",
+        message: "Thêm khách hàng thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       mutate();
     } else {
       notification.open({
-        message: "Thêm mới khách hàng thất bại",
+        message: "Thêm khách hàng thất bại",
         icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }
   };
   const updateCustomer = async () => {
-    setStatusButton(true);
     const customer = {
       ...form.getFieldsValue(),
       password: "123456897",
@@ -168,7 +153,6 @@ const CustomerForm = () => {
       id,
     };
     delete customer.createdDate;
-    console.log(customer);
     const token = localStorage.getItem("token");
     const res = await axios.put(
       "https://tech-api.herokuapp.com/v1/customer/update",
@@ -182,7 +166,6 @@ const CustomerForm = () => {
     if (res.data.result) {
       dispatch(actions.changeVisibleFormCustomer(true));
       form.resetFields();
-      setStatusButton(false);
       notification.open({
         message: "Cập nhật thông tin khách hàng thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
@@ -210,24 +193,19 @@ const CustomerForm = () => {
       <Modal
         title={
           state.isEditFormCustomer
-            ? "Cập nhật thông tin khách hàng"
+            ? "Cập nhập thông tin khách hàng"
             : "Thêm mới khách hàng"
         }
         open={state.isVisibleFormCustomer}
         okType={"danger"}
-        onCancel={cancelCustomerForm}
+        onCancel={cancelOrderForm}
         width={1000}
         footer={[
-          <Button key="back" onClick={cancelCustomerForm}>
+          <Button key="back" onClick={cancelOrderForm}>
             Huỷ
           </Button>,
-          <Button
-            disabled={statusButton}
-            key="submit"
-            type="primary"
-            onClick={handleOk}
-          >
-            {state.isEditFormCustomer ? "Cập nhật" : "Thêm mới"}
+          <Button key="submit" type="primary" onClick={handleOk}>
+            {state.isEditFormCustomer ? "Cập nhập" : "Thêm mới"}
           </Button>,
         ]}
       >
@@ -249,14 +227,12 @@ const CustomerForm = () => {
               </Form.Item>
             </Col>
           </Row>
-          <Row hidden={!state.isEditFormCustomer} gutter={16}>
-            <Col span={12}>
+          <Row gutter={16}>
+            <Col hidden={!state.isEditFormCustomer} span={12}>
               <Form.Item label="Ngày gia nhập" name="createdDate">
                 <Input disabled />
               </Form.Item>
             </Col>
-          </Row>
-          <Row gutter={16}>
             <Col span={12}>
               <Form.Item label="Trạng thái" name="status">
                 <Radio.Group onChange={(e: RadioChangeEvent) => {}}>
@@ -265,13 +241,11 @@ const CustomerForm = () => {
                 </Radio.Group>
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={12} hidden={state.isEditFormCustomer}>
               <Form.Item label="Số điện thoại" name="phone">
                 <Input />
               </Form.Item>
             </Col>
-          </Row>
-          <Row gutter={16}>
             <Col span={12}>
               <Form.Item label="Giới tính" name="gender">
                 <Select
@@ -283,7 +257,7 @@ const CustomerForm = () => {
                 />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={12} hidden={state.isEditFormCustomer}>
               <Form.Item label="Ngày sinh" name="birthday">
                 <DatePicker
                   format={dateFormatList}
