@@ -80,6 +80,8 @@ const ChangePermission = () => {
   const [id, setId] = useState<number>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<any>([]);
+  const [selectedKeys, setSelectedKeys] = useState<any>();
+  const [defaultCheckedKeys, setDefaultCheckedKeys] = useState<any>();
   const { state, dispatch } = useStoreContext();
   const { data, mutate } = useSWR("/group-permission", fetcher);
 
@@ -98,6 +100,7 @@ const ChangePermission = () => {
   useEffect(() => {
     setId(group?.id);
     setCheckedKeys(group?.permissions.map((item: any) => item.id));
+    setDefaultCheckedKeys(group?.permissions.map((item: any) => item.id));
     form.setFieldsValue({
       name: group?.name,
       description: group?.description,
@@ -144,6 +147,7 @@ const ChangePermission = () => {
       id: id,
       permissions: checkedKeys.filter(checkNumber),
     };
+    console.log(value);
     const token = localStorage.getItem("token");
     const res = await axios.put(
       "https://tech-api.herokuapp.com/v1/group/update",
@@ -174,7 +178,7 @@ const ChangePermission = () => {
   };
 
   const onSelect: TreeProps["onSelect"] = (selectedKeys, info) => {
-    console.log("selected", selectedKeys, info);
+    setSelectedKeys(selectedKeys);
   };
 
   const onCheck: TreeProps["onCheck"] = (checkedKeys, info) => {
@@ -222,13 +226,13 @@ const ChangePermission = () => {
           </Form.Item>
           <Form.Item name="permissions">
             <Tree
+              checkedKeys={group?.permissions.map((item: any) => item.id)}
               checkable
               onSelect={onSelect}
+              selectedKeys={selectedKeys}
               onCheck={onCheck}
               treeData={permissions}
-              defaultCheckedKeys={group?.permissions.map(
-                (item: any) => item.id
-              )}
+              // defaultCheckedKeys={defaultCheckedKeys}
             />
           </Form.Item>
         </Form>
