@@ -4,13 +4,10 @@ import {
   Form,
   Image,
   Input,
-  InputNumber,
   Modal,
   notification,
   Radio,
   Row,
-  Select,
-  Upload,
 } from "antd";
 import React, { useEffect, useState } from "react";
 const { TextArea } = Input;
@@ -45,6 +42,7 @@ const fetcher = async () => {
   });
   return res.data.data.data;
 };
+
 const fetchers = async (url: string) => {
   const token = localStorage.getItem("token");
   const res = await axios.get(url, {
@@ -62,19 +60,16 @@ type FormData = yup.InferType<typeof schema>;
 const CategoryForm = () => {
   const [form] = Form.useForm();
   const { state, dispatch } = useStoreContext();
-  const { data, error, mutate } = useSWR("product-category", fetcher);
+  const { data, error, mutate } = useSWR("/product-category", fetcher);
   const { data: category } = useSWR(
     state.idCategory
       ? `https://tech-api.herokuapp.com/v1/product-category/get/${state.idCategory}`
       : null,
     fetchers
   );
-  const [createCategory, setCreateCategory] = useState(false);
   const [id, setId] = useState<number>();
   const [name, setName] = useState("");
-  const [parentId, setParentId] = useState("");
   const [status, setStatus] = useState(1);
-  const [orderSort, setOrderSort] = useState(0);
   const [note, setNote] = useState("");
   const [icon, setIcon] = useState("");
   const [iconUpload, setIconUpload] = useState<File>();
@@ -198,20 +193,6 @@ const CategoryForm = () => {
   const handleFileSelected = (file: any) => {
     setIconUpload(file.target.files[0]);
   };
-  const uploadImage = async () => {
-    if (!iconUpload) {
-      notification.open({
-        message: "Upload ảnh chưa thành công",
-      });
-    } else {
-      const imageRef = ref(storage, `images/${iconUpload.name + v4()}`);
-      await uploadBytes(imageRef, iconUpload).then(async (snapshot) => {
-        await getDownloadURL(snapshot.ref).then((url) => {
-          setIcon(url);
-        });
-      });
-    }
-  };
   return (
     <div>
       <Modal
@@ -248,13 +229,8 @@ const CategoryForm = () => {
             <Col span={24}>
               <Form.Item
                 label="Tên danh mục"
+                required
                 name="name"
-                rules={[
-                  {
-                    required: true,
-                    message: "Tên danh mục là trường bắt buộc",
-                  },
-                ]}
               >
                 <Input
                   // {...register("name")}
@@ -267,7 +243,7 @@ const CategoryForm = () => {
           </Row>
           <Row gutter={0}>
             <Col span={24}>
-              <Form.Item label="Trạng thái" name="status">
+              <Form.Item required label="Trạng thái" name="status">
                 <Radio.Group
                   onChange={(e: RadioChangeEvent) => {
                     setStatus(e.target.value);
@@ -282,7 +258,7 @@ const CategoryForm = () => {
           </Row>
           <Row>
             <Col span={24}>
-              <Form.Item label="Ghi chú" name="note" initialValue={note}>
+              <Form.Item required label="Ghi chú" name="note" initialValue={note}>
                 <TextArea
                   value={note}
                   rows={4}
@@ -293,7 +269,7 @@ const CategoryForm = () => {
           </Row>
           <Row gutter={0}>
             <Col span={24}>
-              <Form.Item>
+              <Form.Item required label="Hình ảnh">
                 <Image
                   hidden={!state.isEditFormCategory}
                   width={150}

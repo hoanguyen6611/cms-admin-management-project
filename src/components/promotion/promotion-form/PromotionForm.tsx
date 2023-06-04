@@ -74,10 +74,10 @@ const PromotionForm = () => {
   const [form] = Form.useForm();
   const { state, dispatch } = useStoreContext();
   const { data, error } = useSWR("product-category/list", fetcher);
-  const {
-    data: promotionList,
-    mutate,
-  } = useSWR("/v1/promotion/list", fetcherList);
+  const { data: promotionList, mutate } = useSWR(
+    "/v1/promotion/list",
+    fetcherList
+  );
   const { data: promotion } = useSWR(
     state.idPromotion
       ? `https://tech-api.herokuapp.com/v1/promotion/get/${state.idPromotion}`
@@ -93,11 +93,17 @@ const PromotionForm = () => {
 
   useEffect(() => {
     setId(promotion?.id);
+    setExchangeable(promotion?.exchangeable);
+    setKind(promotion?.kind);
     form.setFieldsValue({
       title: promotion?.title,
       description: promotion?.description,
       value: promotion?.value,
       status: promotion?.status,
+      kind: promotion?.kind,
+      maxValueForPercent: promotion?.maxValueForPercent,
+      exchangeable: promotion?.exchangeable,
+      point: promotion?.point,
     });
   }, [promotion]);
 
@@ -125,13 +131,13 @@ const PromotionForm = () => {
       form.resetFields();
       setStatusButton(false);
       notification.open({
-        message: 'Tạo mã giảm giá thành công',
+        message: "Tạo mã giảm giá thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       mutate();
     } else {
       notification.open({
-        message: 'Tạo mã giảm giá thất bại',
+        message: "Tạo mã giảm giá thất bại",
         icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }
@@ -158,13 +164,13 @@ const PromotionForm = () => {
       form.resetFields();
       setStatusButton(false);
       notification.open({
-        message: 'Cập nhật thông tin giảm giá thành công',
+        message: "Cập nhật thông tin giảm giá thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       mutate();
     } else {
       notification.open({
-        message: 'Cập nhật thông tin giảm giá thất bại',
+        message: "Cập nhật thông tin giảm giá thất bại",
         icon: <WarningOutlined style={{ color: "red" }} />,
       });
     }
@@ -255,8 +261,8 @@ const PromotionForm = () => {
                     setKind(Number(e));
                   }}
                   options={[
-                    { value: "1", label: "Tiền" },
-                    { value: "2", label: "Phần trăm" },
+                    { value: 1, label: "Tiền" },
+                    { value: 2, label: "Phần trăm" },
                   ]}
                 />
               </Form.Item>
@@ -269,13 +275,13 @@ const PromotionForm = () => {
                       addonAfter={
                         kind === 1 ? "VNĐ" : "" && kind === 2 ? "%" : ""
                       }
-                      style={{ width: 100 }}
+                      style={{ width: 150 }}
                     />
                   </Form.Item>
                 </Col>
                 <Col span={12} hidden={kind !== 2}>
                   <Form.Item label="Giảm tối đa" name="maxValueForPercent">
-                    <InputNumber style={{ width: 100 }} />
+                    <InputNumber style={{ width: 150 }} addonAfter={"VNĐ"} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -285,6 +291,7 @@ const PromotionForm = () => {
             <Col span={12}>
               <Form.Item label="Có cho chuyển đổi không" name="exchangeable">
                 <Switch
+                  checked={exchangeable}
                   style={{ width: 50 }}
                   onChange={(e: boolean) => setExchangeable(e)}
                 />

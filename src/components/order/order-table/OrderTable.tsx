@@ -45,42 +45,8 @@ const fetchers = async () => {
 
 const OrderTable = () => {
   const { data, error, mutate } = useSWR("/product", fetcher);
-  console.log(data);
   const { data: store, error: errorStore } = useSWR("/store/list", fetchers);
   const { state, dispatch } = useStoreContext();
-  const deleteConfirmProduct = (record: any) => {
-    Modal.confirm({
-      title: "Bạn có chắc chắn muốn xoá đơn hàng này không?",
-      okText: "OK",
-      okType: "danger",
-      onOk: () => {
-        deleteProduct(record);
-      },
-    });
-  };
-  const deleteProduct = async (record: any) => {
-    const token = localStorage.getItem("token");
-    const res = await axios.delete(
-      `https://tech-api.herokuapp.com/v1/product/delete/${record}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    if (res.data.result) {
-      notification.open({
-        message: res.data.message,
-        icon: <CheckOutlined style={{ color: "#52c41a" }} />,
-      });
-      mutate();
-    } else if (!res.data.result) {
-      notification.open({
-        message: res.data.message,
-        icon: <CloseOutlined style={{ color: "red" }} />,
-      });
-    }
-  };
 
   const columns: ColumnsType<Product> = [
     {
@@ -107,8 +73,9 @@ const OrderTable = () => {
     },
     {
       title: "Giảm giá",
-      dataIndex: "saleOff",
-      key: "saleOff",
+      dataIndex: "saleOffMoney",
+      key: "saleOffMoney",
+      render: (text) => VND.format(text),
     },
     {
       title: "Cửa hàng",
@@ -197,12 +164,6 @@ const OrderTable = () => {
                 onClick={() => isEditProduct(record)}
               />
             </Tooltip>
-            <DeleteOutlined
-              style={{ color: "red", marginLeft: 12 }}
-              onClick={() => {
-                deleteConfirmProduct(record);
-              }}
-            />
           </>
         );
       },

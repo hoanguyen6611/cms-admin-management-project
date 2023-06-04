@@ -126,12 +126,12 @@ const PromotionTable = () => {
               style={{ color: "green" }}
               onClick={() => isEditPromotion(record)}
             />
-            <DeleteOutlined
+            {/* <DeleteOutlined
               style={{ color: "red", marginLeft: 12 }}
               onClick={() => {
                 deleteConfirmPromotion(record);
               }}
-            />
+            /> */}
           </>
         );
       },

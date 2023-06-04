@@ -15,7 +15,6 @@ import { Category } from "@/models/category";
 import styles from "./ImportProductTable.module.scss";
 import useSWR from "swr";
 import { actions, useStoreContext } from "@/store";
-import { fetcherCategory } from "@/utils/category";
 
 const fetcher = async () => {
   const token = localStorage.getItem("token");

@@ -87,12 +87,11 @@ const OrderForm = () => {
       totalMoney: VND.format(order?.totalMoney),
       deliveryFee: VND.format(order?.deliveryFee),
       amount: order?.amount,
-      saleOff: VND.format(
-        (Number(order?.totalMoney) * Number(order?.saleOff)) / 100
-      ),
+      saleOff: VND.format(order?.saleOffMoney),
       paymentMoney: VND.format(
         Number(order?.totalMoney) + Number(order?.deliveryFee)
       ),
+      paymentMethod: order?.paymentMethod
     });
   }, [order]);
 
@@ -207,14 +206,13 @@ const OrderForm = () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Hình thức thanh toán" name="status">
+              <Form.Item label="Hình thức thanh toán" name="paymentMethod">
                 <Select
                   disabled
                   defaultValue="Chọn hình thức"
                   options={[
-                    { value: "cod", label: "Giao hàng thu tiền" },
-                    { value: "bank", label: "Chuyển khoản" },
-                    { value: "momo", label: "Momo" },
+                    { value: 1, label: "Giao hàng thu tiền" },
+                    { value: 2, label: "Thanh toán online" },
                   ]}
                 />
               </Form.Item>

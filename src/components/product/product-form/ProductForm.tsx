@@ -350,7 +350,7 @@ const ProductForm = () => {
   const [form] = Form.useForm();
   const { data, error } = useSWR("/product-category", fetcher);
   const { state, dispatch } = useStoreContext();
-  const { data:productList, mutate } = useSWR("/product", fetcherList);
+  const { data: productList, mutate } = useSWR("/product", fetcherList);
 
   const { data: productItem } = useSWR(
     state?.idProduct
@@ -394,11 +394,13 @@ const ProductForm = () => {
     setImage(productItem?.image);
     setVariantsList(productItem?.productConfigs[0]?.variants);
     setIdConfig(productItem?.productConfigs[0]?.id);
+    setSaleOff(productItem?.isSaleOff);
+    setSoldOut(productItem?.isSoldOut);
     form.setFieldsValue({
       name: productItem?.name,
       description: productItem?.description,
       price: productItem?.price,
-      soldOut: productItem?.soldOut,
+      soldOut: productItem?.isSoldOut,
       isSaleOff: productItem?.isSaleOff,
       saleOff: productItem?.saleOff,
       status: productItem?.status,
@@ -730,6 +732,7 @@ const ProductForm = () => {
                 <Form.Item label="Đã bán hết" name="isSoldOut">
                   <div className="ml-10">
                     <Switch
+                      checked={soldOut}
                       style={{ width: 50 }}
                       onChange={(checked: boolean) => {
                         setSoldOut(checked);
@@ -743,6 +746,7 @@ const ProductForm = () => {
               <Col span={8}>
                 <Form.Item label="Giảm giá" name="isSaleOff">
                   <Switch
+                    checked={saleOff}
                     style={{ width: 50 }}
                     onChange={(checked: boolean) => setSaleOff(checked)}
                   />
