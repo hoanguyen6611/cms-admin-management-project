@@ -23,9 +23,10 @@ import {
 import axios from "axios";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/utils/firebase";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { actions, useStoreContext } from "@/store";
 import { v4 } from "uuid";
+import { VND } from "@/utils/formatVNĐ";
 
 const fetcher = async () => {
   const token = localStorage.getItem("token");
@@ -52,11 +53,31 @@ const fetchers = async (url: string) => {
   });
   return res.data.data;
 };
+const fetcherList = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(
+    "https://tech-api.herokuapp.com/v1/promotion/list",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  res.data.data.data.map((data: any) => {
+    data.key = data.id;
+    data.value = VND.format(data.value);
+  });
+  return res.data.data.data;
+};
 
 const PromotionForm = () => {
   const [form] = Form.useForm();
   const { state, dispatch } = useStoreContext();
   const { data, error } = useSWR("product-category/list", fetcher);
+  const {
+    data: promotionList,
+    mutate,
+  } = useSWR("/v1/promotion/list", fetcherList);
   const { data: promotion } = useSWR(
     state.idPromotion
       ? `https://tech-api.herokuapp.com/v1/promotion/get/${state.idPromotion}`
@@ -107,7 +128,7 @@ const PromotionForm = () => {
         message: 'Tạo mã giảm giá thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
-      mutate("/product-category", fetcher, false);
+      mutate();
     } else {
       notification.open({
         message: 'Tạo mã giảm giá thất bại',
@@ -140,6 +161,7 @@ const PromotionForm = () => {
         message: 'Cập nhật thông tin giảm giá thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      mutate();
     } else {
       notification.open({
         message: 'Cập nhật thông tin giảm giá thất bại',

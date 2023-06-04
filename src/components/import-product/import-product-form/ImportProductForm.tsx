@@ -2,40 +2,28 @@ import {
   Button,
   Col,
   Form,
-  Image,
   Input,
-  InputNumber,
   Modal,
   notification,
-  Radio,
   Row,
   Select,
   Table,
-  Upload,
 } from "antd";
-import React, { useContext, useEffect, useState } from "react";
-const { TextArea } = Input;
+import React, {  useEffect, useState } from "react";
 import {
   CheckOutlined,
-  PlusOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "@/utils/firebase";
-import type { RadioChangeEvent } from "antd";
 import useSWR from "swr";
-import { Category, ImportProduct } from "@/models";
-import Context from "@/store/Context";
+import { ImportProduct } from "@/models";
 import { actions, useStoreContext } from "@/store";
 import { v4 } from "uuid";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import styles from "./CategoryForm.module.scss";
-import { fetcherCategory } from "@/utils/category";
 import { ColumnsType } from "antd/es/table";
-import { VND } from "@/utils/formatVNĐ";
 
 const fetcher = async () => {
   const token = localStorage.getItem("token");

@@ -12,7 +12,6 @@ import { Category } from "@/models/category";
 import styles from "./CategoryTable.module.scss";
 import useSWR from "swr";
 import { actions, useStoreContext } from "@/store";
-import { fetcherCategory } from "@/utils/category";
 
 const fetcher = async () => {
   const token = localStorage.getItem("token");
@@ -26,14 +25,12 @@ const fetcher = async () => {
   );
   res.data.data.data.map((data: any) => {
     data.key = data.id;
-    data.value = data.id;
-    data.label = data.name;
   });
   return res.data.data.data;
 };
 
 const CategoryTable = () => {
-  const { data, error, mutate } = useSWR("/product-category", fetcherCategory);
+  const { data, error, mutate } = useSWR("/product-category", fetcher);
   const { state, dispatch } = useStoreContext();
   const deleteConfirmCategory = (record: any) => {
     Modal.confirm({

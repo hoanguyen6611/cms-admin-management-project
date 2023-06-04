@@ -66,6 +66,21 @@ const group = async () => {
   });
   return res.data.data.data;
 };
+const fetcherList = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(
+    "https://tech-api.herokuapp.com/v1/account/list?kind=1",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  res.data.data.data.map((data: any) => {
+    data.key = data.id;
+  });
+  return res.data.data.data;
+};
 const AccountForm = () => {
   const [id, setId] = useState();
   const [statusButton, setStatusButton] = useState<boolean>(false);
@@ -77,6 +92,7 @@ const AccountForm = () => {
       : "",
     fetchers
   );
+  const { data, error, mutate } = useSWR("/account", fetcher);
   const { data: groups, error: errorGroup } = useSWR(
     "/group-permission",
     group
@@ -145,6 +161,7 @@ const AccountForm = () => {
         message: "Tạo tài khoản thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      mutate();
     } else {
       notification.open({
         message: "Tạo tài khoản thất bại",
@@ -180,6 +197,7 @@ const AccountForm = () => {
         message: "Cập nhật thông tin tài khoản thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      mutate();
     } else {
       notification.open({
         message: "Cập nhật thông tin tài khoản thất bại",

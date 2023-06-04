@@ -60,6 +60,18 @@ const fetcherId = async (url: string) => {
   });
   return res.data.data?.permissions.map((item: any) => item.id);
 };
+const fetcher = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get("https://tech-api.herokuapp.com/v1/group/list", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  res.data.data.data.map((data: any) => {
+    data.key = data.id;
+  });
+  return res.data.data.data;
+};
 const ChangePermission = () => {
   const [form] = Form.useForm();
   const { data: permissions, error } = useSWR("/permission", getPermission);
@@ -69,6 +81,7 @@ const ChangePermission = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<any>([]);
   const { state, dispatch } = useStoreContext();
+  const { data, mutate } = useSWR("/group-permission", fetcher);
 
   const { data: group } = useSWR(
     state.idGroupPermission
@@ -82,7 +95,6 @@ const ChangePermission = () => {
       : null,
     fetcherId
   );
-  console.log(groupId);
   useEffect(() => {
     setId(group?.id);
     setCheckedKeys(group?.permissions.map((item: any) => item.id));
@@ -148,6 +160,7 @@ const ChangePermission = () => {
         message: "Cập nhật quyền thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      mutate();
     } else {
       notification.open({
         message: "Cập nhật quyền thất bại",

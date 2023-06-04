@@ -98,6 +98,22 @@ const fetchers = async (url: string) => {
   });
   return res.data.data;
 };
+const fetcherList = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(
+    "https://tech-api.herokuapp.com/v1/product/list",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  res.data.data.data.map((data: any) => {
+    data.key = data.id;
+    data.price = data.price;
+  });
+  return res.data.data.data;
+};
 const Variant = (props: any) => {
   const { state, dispatch } = useStoreContext();
   useEffect(() => {
@@ -208,11 +224,12 @@ const Variant = (props: any) => {
     );
     if (res.data.result) {
       setImportProduct(false);
-      storeList = [];
       notification.open({
         message: "Tạo yêu cầu nhập hàng thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      storeList = [];
+      console.log(storeList);
     } else {
       notification.open({
         message: "Tạo yêu cầu nhập hàng thất bại",
@@ -333,6 +350,8 @@ const ProductForm = () => {
   const [form] = Form.useForm();
   const { data, error } = useSWR("/product-category", fetcher);
   const { state, dispatch } = useStoreContext();
+  const { data:productList, mutate } = useSWR("/product", fetcherList);
+
   const { data: productItem } = useSWR(
     state?.idProduct
       ? `https://tech-api.herokuapp.com/v1/product/get/${state?.idProduct}`
@@ -440,6 +459,7 @@ const ProductForm = () => {
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
       variants = [];
+      mutate();
     } else {
       setStatusButton(false);
       notification.open({
@@ -482,6 +502,7 @@ const ProductForm = () => {
         message: "Cập nhật thông tin sản phẩm thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      mutate();
     } else {
       setStatusButton(false);
       notification.open({

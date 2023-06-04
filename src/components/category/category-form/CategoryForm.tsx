@@ -12,11 +12,10 @@ import {
   Select,
   Upload,
 } from "antd";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 const { TextArea } = Input;
 import {
   CheckOutlined,
-  PlusOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
@@ -24,15 +23,12 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/utils/firebase";
 import type { RadioChangeEvent } from "antd";
 import useSWR from "swr";
-import { Category } from "@/models";
-import Context from "@/store/Context";
 import { actions, useStoreContext } from "@/store";
 import { v4 } from "uuid";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import styles from "./CategoryForm.module.scss";
-import { fetcherCategory } from "@/utils/category";
 
 const fetcher = async () => {
   const token = localStorage.getItem("token");
@@ -45,8 +41,7 @@ const fetcher = async () => {
     }
   );
   res.data.data.data.map((data: any) => {
-    data.value = data.id;
-    data.label = data.name;
+    data.key = data.id;
   });
   return res.data.data.data;
 };
@@ -67,7 +62,7 @@ type FormData = yup.InferType<typeof schema>;
 const CategoryForm = () => {
   const [form] = Form.useForm();
   const { state, dispatch } = useStoreContext();
-  const { data, error, mutate } = useSWR("product-category", fetcherCategory);
+  const { data, error, mutate } = useSWR("product-category", fetcher);
   const { data: category } = useSWR(
     state.idCategory
       ? `https://tech-api.herokuapp.com/v1/product-category/get/${state.idCategory}`
@@ -199,7 +194,6 @@ const CategoryForm = () => {
     form.resetFields();
     dispatch(actions.changeVisibleFormCategory(false));
     dispatch(actions.changeEditFormCategory(false));
-    dispatch(actions.setIdCategoryForm(0));
   };
   const handleFileSelected = (file: any) => {
     setIconUpload(file.target.files[0]);

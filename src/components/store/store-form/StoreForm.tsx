@@ -93,6 +93,21 @@ const fetcherProvince = async () => {
   });
   return res.data.data;
 };
+const fetcherList = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(
+    "https://tech-api.herokuapp.com/v1/store/auto-complete",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  res.data.data.map((data: any) => {
+    data.key = data.id;
+  });
+  return res.data.data;
+};
 
 const StoreForm = () => {
   const [form] = Form.useForm();
@@ -109,6 +124,7 @@ const StoreForm = () => {
       : null,
     fetchers
   );
+  const { data: storeList, error, mutate } = useSWR("/store", fetcherList);
   const { data: province } = useSWR("/", fetcherProvince);
   const { data: district } = useSWR(
     provinceCode
@@ -193,6 +209,7 @@ const StoreForm = () => {
         message: 'Thêm cửa hàng thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      mutate();
     }else if (!res.data.result) {
       notification.open({
         message: 'Thêm cửa hàng thất bại',
@@ -228,6 +245,7 @@ const StoreForm = () => {
         message: 'Cập nhật thông tin cửa hàng thành công',
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      mutate();
     } else {
       notification.open({
         message: 'Cập nhật thông tin cửa hàng thất bại',

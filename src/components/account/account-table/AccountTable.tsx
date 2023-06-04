@@ -31,7 +31,7 @@ const fetcher = async () => {
 };
 
 const AccountTable = () => {
-  const { data, error, mutate } = useSWR("/product-category", fetcher);
+  const { data, error, mutate } = useSWR("/account", fetcher);
   const { state, dispatch } = useStoreContext();
   // const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);

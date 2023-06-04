@@ -54,6 +54,21 @@ const stores = async () => {
   });
   return res.data.data.data;
 };
+const fetcherList = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(
+    "https://tech-api.herokuapp.com/v1/customer/list?groupId=7",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  res.data.data.data.map((data: any) => {
+    data.key = data.id;
+  });
+  return res.data.data.data;
+};
 
 const CustomerForm = () => {
   const [form] = Form.useForm();
@@ -67,6 +82,7 @@ const CustomerForm = () => {
       : "",
     fetchers
   );
+  const { data, error, mutate } = useSWR("/customer", fetcherList);
   const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY", "DD-MM-YYYY", "DD-MM-YY"];
   useEffect(() => {
     setId(customer?.id);
@@ -133,6 +149,7 @@ const CustomerForm = () => {
         message: "Thêm mới khách hàng thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      mutate();
     } else {
       notification.open({
         message: "Thêm mới khách hàng thất bại",
@@ -170,6 +187,7 @@ const CustomerForm = () => {
         message: "Cập nhật thông tin khách hàng thành công",
         icon: <CheckOutlined style={{ color: "#52c41a" }} />,
       });
+      mutate();
     } else {
       notification.open({
         message: "Cập nhật thông tin khách hàng thất bại",
