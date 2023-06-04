@@ -193,6 +193,7 @@ const OrderForm = () => {
                     { value: 3, label: "Hoàn tất" }, //xanh
                     { value: 4, label: "Đã huỷ" }, //đỏ
                     { value: 5, label: "Lưu trữ" }, //tím
+                    { value: 6, label: "Chờ thanh toán" }, //tím
                   ]}
                 />
               </Form.Item>
