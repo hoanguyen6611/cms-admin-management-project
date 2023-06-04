@@ -120,7 +120,7 @@ const OrderTable = () => {
             ? "ĐÃ HUỶ"
             : text === 5
             ? "LƯU TRỮ"
-            : ""}
+            : text === 6?"CHỜ THANH TOÁN":''}
         </Tag>
       ),
       filters: [
@@ -147,6 +147,10 @@ const OrderTable = () => {
         {
           text: "LƯU TRỮ",
           value: 5,
+        },
+        {
+          text: "CHỜ THANH TOÁN",
+          value: 6,
         },
       ],
       onFilter: (value: any, record: any) => record.state === value,
