@@ -116,12 +116,15 @@ const fetcherList = async () => {
 };
 const Variant = (props: any) => {
   const { state, dispatch } = useStoreContext();
+  const [id, setId] = useState();
   useEffect(() => {
+    setId(props.value?.id);
     form.setFieldsValue({
       name: props.value?.name,
       price: props.value?.price,
       image: props.value?.image,
       status: props?.status,
+      color: props.value?.color,
     });
   }, [props]);
   const listProductInStore = props.value?.variantStockDtoList.map(
@@ -143,6 +146,14 @@ const Variant = (props: any) => {
   const handleFileSelected = (file: any) => {
     setImageUpload(file.target.files[0]);
   };
+  const variantOk = () => {
+    if (id) {
+      updateVariant();
+    } else {
+      addVariant();
+    }
+  };
+  const updateVariant = async () => {};
   const addVariant = async () => {
     if (!imageUpload) {
       notification.open({
@@ -307,7 +318,7 @@ const Variant = (props: any) => {
       <Row className="pt-4">
         <Col span={17}></Col>
         <Col span={7}>
-          <Button onClick={addVariant}>
+          <Button onClick={variantOk}>
             {state.isEditFormProduct ? "Cập nhật" : "Thêm màu"}
           </Button>
         </Col>
@@ -320,6 +331,7 @@ const Variant = (props: any) => {
           <Col span={7}>
             <Form.Item label="Nhập hàng" name="importProduct">
               <Switch
+                checked={importProduct}
                 style={{ width: 50 }}
                 onChange={(checked: boolean) => setImportProduct(checked)}
               />
