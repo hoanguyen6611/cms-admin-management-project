@@ -132,12 +132,12 @@ const ProductTable = () => {
               style={{ color: "green" }}
               onClick={() => isEditProduct(record)}
             />
-            <DeleteOutlined
+            {/* <DeleteOutlined
               style={{ color: "red", marginLeft: 12 }}
               onClick={() => {
                 deleteConfirmProduct(record);
               }}
-            />
+            /> */}
           </>
         );
       },
