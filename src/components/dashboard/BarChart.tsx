@@ -13,8 +13,6 @@ import {
 import axios from "axios";
 import useSWR from "swr";
 import { DatePicker, DatePickerProps } from "antd";
-import { VND } from "@/utils/formatVNĐ";
-import { faker } from "@faker-js/faker";
 import dayjs from 'dayjs';
 
 ChartJS.register(
