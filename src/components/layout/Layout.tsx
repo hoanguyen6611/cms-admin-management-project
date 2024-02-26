@@ -75,7 +75,7 @@ const LayoutPage = (props: any) => {
             color: "#fff",
           }}
           className="logo text-center font-bold text-xl"
-        >Chi nhánh tổng</div>
+        >ADMIN</div>
         <div className="SideMenu">
           <Menu
             theme="dark"
